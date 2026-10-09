@@ -205,7 +205,9 @@ textarea.note {
   border-radius: 999px;
   padding: 2px 8px;
 }
-.micro-tag.ok { color: var(--tab-tint); background: #ecfdf5; }
+.micro-tag.ok, .micro-tag.run { color: var(--tab-tint); background: #ecfdf5; }
+.micro-tag.bad { color: #9f1239; background: #fff1f2; }
+.upload-detail { display: block; margin-top: 4px; font-size: 12px; line-height: 1.5; color: var(--ink-2); }
 .item .point { font-size: 12px; color: var(--ink-3); margin-top: 4px; line-height: 1.5; }
 .progress { height: 4px; background: #e7e5e4; border-radius: 99px; margin-top: 8px; overflow: hidden; }
 .progress span { display: block; height: 100%; background: var(--accent); }
@@ -541,7 +543,9 @@ textarea.note {
   padding: 9px 16px;
   border-radius: 999px;
   z-index: 60;
-  white-space: nowrap;
+  max-width: min(320px, calc(100% - 32px));
+  line-height: 1.45;
+  text-align: center;
 }
 
 .graph-page .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
