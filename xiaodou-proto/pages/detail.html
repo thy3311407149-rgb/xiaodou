@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=393, height=852" />
+  <title>文档详情 · 第二大脑</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="../css/common.css" />
+  <style>
+    .cover-hero {
+      height: 140px; margin: 0 -20px 18px; position: relative; overflow: hidden;
+      background: #2B2B2B;
+    }
+    .cover-hero img { width: 100%; height: 100%; object-fit: cover; opacity: .55; }
+    .cover-hero .overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(180deg, transparent 20%, var(--bg) 95%);
+    }
+    .action-row { display: flex; gap: 8px; margin-top: 16px; flex-wrap: wrap; }
+  </style>
+</head>
+<body>
+  <div class="phone">
+    <div class="status-bar">
+      <span class="time-pill">9:41</span>
+      <div class="right">
+        <span class="signal"><i></i><i></i><i></i><i></i></span>
+        <span>5G</span>
+        <i class="fa-solid fa-battery-full"></i>
+      </div>
+    </div>
+
+    <div class="main with-tab">
+      <div class="back-row">
+        <a href="library.html"><i class="fa-solid fa-chevron-left"></i> 知识库</a>
+      </div>
+
+      <div class="cover-hero">
+        <img src="https://images.unsplash.com/photo-1456513080800-b6bbe86bb991?w=800&q=80" alt="" />
+        <div class="overlay"></div>
+      </div>
+
+      <h1 class="article-title">认知负荷理论_Sweller.pdf</h1>
+      <div class="article-meta">PDF · 18 页 · 已拆解 · 昨天入库 · <span class="tag tag-ai">AI 拆解</span></div>
+
+      <div class="action-row">
+        <a class="btn btn-primary" href="pdf-preview.html"><i class="fa-solid fa-book-open"></i> 原文预览</a>
+        <a class="btn btn-ghost" href="ask-chat.html"><i class="fa-solid fa-comments"></i> 问小豆</a>
+        <a class="btn btn-ghost" href="related.html"><i class="fa-solid fa-share-nodes"></i> 相关</a>
+      </div>
+
+      <div class="article-h">小豆摘要</div>
+      <div class="article-summary">
+        <p>这篇文档围绕 Sweller 的认知负荷理论展开：学习效果并不只取决于内容难度，更取决于工作记忆如何被占用。作者区分了内在、外在与相关负荷，并强调教学设计应优先削减外在负荷。</p>
+        <p>对你当前的课堂录音与作业场景，这意味着：与其反复回听整段录音，不如先提炼结构化要点，再按页码回跳原文核验。</p>
+      </div>
+
+      <div class="article-h">章节大纲</div>
+      <a class="chapter-item" href="pdf-preview.html">
+        <div class="pg">p.2</div>
+        <div>
+          <div class="ctitle">三类负荷：内在、外在、相关</div>
+          <div class="cdesc">界定认知负荷的基本分类，说明教学设计应识别哪一类负荷正在挤占工作记忆。</div>
+          <div class="jump">查看原文 →</div>
+        </div>
+      </a>
+      <a class="chapter-item" href="pdf-preview.html">
+        <div class="pg">p.6</div>
+        <div>
+          <div class="ctitle">降低外在负荷，给工作记忆留空</div>
+          <div class="cdesc">讨论冗余信息、分裂注意等问题，强调一次只引入一个新概念。</div>
+          <div class="jump">查看原文 →</div>
+        </div>
+      </a>
+      <a class="chapter-item" href="pdf-preview.html">
+        <div class="pg">p.11</div>
+        <div>
+          <div class="ctitle">组块化与样例学习对新手更有效</div>
+          <div class="cdesc">说明样例如何帮助新手建立可用图式，降低问题解决中的搜索成本。</div>
+          <div class="jump">查看原文 →</div>
+        </div>
+      </a>
+      <a class="chapter-item" href="pdf-preview.html">
+        <div class="pg">p.14</div>
+        <div>
+          <div class="ctitle">外部存储可降低内在负荷</div>
+          <div class="cdesc">提出把知识外化到笔记或工具中，作为扩展工作记忆的策略。</div>
+          <div class="jump">查看原文 →</div>
+        </div>
+      </a>
+
+      <div class="article-h">相关知识</div>
+      <a class="item" href="related.html" style="border-top:1px solid var(--line);padding-top:14px">
+        <div class="badge" style="color:var(--purple)"><i class="fa-solid fa-circle-nodes"></i></div>
+        <div>
+          <h4>认知负荷 <span class="tag tag-ai">相关度 96%</span></h4>
+          <p>本文的核心概念节点。组块化、外部存储与样例学习都围绕它展开。</p>
+        </div>
+      </a>
+    </div>
+
+    <nav class="tabbar">
+      <a class="tab on" href="library.html"><span class="ico"><i class="fa-solid fa-book"></i></span><span>知识库</span></a>
+      <a class="tab" href="ask.html"><span class="ico"><i class="fa-solid fa-comments"></i></span><span>问小豆</span></a>
+      <a class="tab" href="graph.html"><span class="ico"><i class="fa-solid fa-share-nodes"></i></span><span>小豆图谱</span></a>
+    </nav>
+    <div class="home-indicator"></div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=393, height=852" />
+  <title>笔记详情 · 第二大脑</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="../css/common.css" />
+</head>
+<body>
+  <div class="phone">
+    <div class="status-bar">
+      <span class="time-pill">9:41</span>
+      <div class="right">
+        <span class="signal"><i></i><i></i><i></i><i></i></span>
+        <span>5G</span>
+        <i class="fa-solid fa-battery-full"></i>
+      </div>
+    </div>
+
+    <div class="main with-tab">
+      <div class="back-row">
+        <a href="library.html"><i class="fa-solid fa-chevron-left"></i> 知识库</a>
+        <div style="margin-left:auto;display:flex;gap:8px">
+          <button class="icon-btn" type="button"><i class="fa-solid fa-pen"></i></button>
+          <button class="icon-btn" type="button"><i class="fa-solid fa-trash"></i></button>
+        </div>
+      </div>
+
+      <h1 class="article-title">小记 · 课堂</h1>
+      <div class="article-meta">笔记 · 今天 08:40 · <span class="tag tag-inbox">待处理</span></div>
+
+      <div class="chips" style="margin-top:14px">
+        <span class="chip">课堂</span>
+        <span class="chip">作业</span>
+        <span class="chip">社会认同</span>
+      </div>
+
+      <div class="card" style="margin-top:18px">
+        <div class="article-summary" style="margin-top:0">
+          <p>下周小组作业要用到社会认同实验。需要从第 3 讲录音里补一条证据。</p>
+        </div>
+      </div>
+
+      <div class="section-label">关联条目</div>
+      <div class="card" style="padding:8px 16px">
+        <a class="item" href="detail-voice.html">
+          <div class="badge" style="color:#6B86B2"><i class="fa-solid fa-waveform-lines"></i></div>
+          <div>
+            <h4>组织行为学 · 第3讲</h4>
+            <p>可能包含社会认同实验相关证据</p>
+          </div>
+        </a>
+      </div>
+
+      <div style="display:flex;gap:8px;margin-top:8px">
+        <a class="btn btn-primary" href="ask-chat.html" style="flex:1">让小豆补全证据</a>
+        <button class="btn btn-ghost" type="button">标为已处理</button>
+      </div>
+    </div>
+
+    <nav class="tabbar">
+      <a class="tab on" href="library.html"><span class="ico"><i class="fa-solid fa-book"></i></span><span>知识库</span></a>
+      <a class="tab" href="ask.html"><span class="ico"><i class="fa-solid fa-comments"></i></span><span>问小豆</span></a>
+      <a class="tab" href="graph.html"><span class="ico"><i class="fa-solid fa-share-nodes"></i></span><span>小豆图谱</span></a>
+    </nav>
+    <div class="home-indicator"></div>
+  </div>
+</body>
+</html>

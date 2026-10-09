@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=393, height=852" />
+  <title>知识库 · 第二大脑</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="../css/common.css" />
+  <script>
+    tailwind.config = { theme: { extend: { colors: {
+      bg: '#F5F2ED', ink: '#2B2B2B', muted: '#8A8580', accent: '#3A3530', ai: '#6B5B9A', purple: '#7C5CFA'
+    } } } };
+  </script>
+  <style>
+    .parse-panel {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 0; min-height: 148px;
+      border: 1.5px dashed var(--line-2); border-radius: var(--radius-md); overflow: hidden;
+      background: radial-gradient(70% 90% at 82% 40%, rgba(124,92,250,.10), transparent 58%), var(--surface);
+      margin-bottom: 12px;
+    }
+    .parse-left {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 6px; padding: 16px 10px; text-align: center; border-right: 1px dashed var(--line);
+    }
+    .parse-left .up-ico {
+      width: 36px; height: 36px; border-radius: 12px; background: var(--surface-2);
+      border: 1px solid var(--line); display: grid; place-items: center; color: var(--ink-2);
+    }
+    .parse-left h3 { font-size: 13px; font-weight: 700; }
+    .parse-left p { font-size: 11px; color: var(--ink-2); line-height: 1.4; }
+    .parse-right { display: grid; place-items: center; padding: 8px; }
+    .parse-right img { width: 72px; height: 78px; object-fit: contain; }
+    .mic {
+      width: 44px; height: 44px; border-radius: 50%; background: var(--surface);
+      color: var(--ink); display: grid; place-items: center; border: 1px solid var(--line);
+      box-shadow: 0 1px 6px rgba(58,53,48,.08); margin: 0 auto 8px; font-size: 16px;
+      text-decoration: none;
+    }
+    .timer { font-variant-numeric: tabular-nums; font-size: 20px; font-weight: 600; letter-spacing: -.3px; }
+    .timer-sub { font-size: 12px; color: var(--ink-2); margin-top: 4px; line-height: 1.45; }
+  </style>
+</head>
+<body>
+  <div class="phone">
+    <div class="status-bar">
+      <span class="time-pill">9:41</span>
+      <div class="right">
+        <span class="signal"><i></i><i></i><i></i><i></i></span>
+        <span>5G</span>
+        <i class="fa-solid fa-battery-full"></i>
+      </div>
+    </div>
+
+    <div class="main with-tab">
+      <header class="showcase">
+        <div class="showcase-top">
+          <div class="greet"><h1>Hi, Tina</h1></div>
+          <a class="icon-btn" href="search.html" aria-label="搜索"><i class="fa-solid fa-magnifying-glass"></i></a>
+        </div>
+        <div class="showcase-body">
+          <p class="ip-bubble"><b>Hi！我是小豆</b>，有什么可以帮你的吗？</p>
+          <div class="ip-mascot"><img src="../assets/xiaodou-wave.svg" alt="小豆" /></div>
+        </div>
+      </header>
+
+      <div class="section-label">录音</div>
+      <div class="card" style="text-align:center;padding:14px 12px">
+        <a class="mic" href="recording.html" aria-label="开始录音"><i class="fa-solid fa-microphone"></i></a>
+        <div class="timer">00:00</div>
+        <div class="timer-sub">点按开始录音，再点结束。转写后进入知识库。</div>
+      </div>
+
+      <div class="section-label">随心记</div>
+      <div class="card">
+        <textarea class="note" placeholder="课后一句、会议金句、待办……随手记下，AI 自动打标签。"></textarea>
+        <div style="display:flex;justify-content:flex-end;margin-top:12px">
+          <button class="btn btn-primary" type="button">保存</button>
+        </div>
+      </div>
+
+      <div class="section-label">解析文件</div>
+      <div class="parse-panel">
+        <div class="parse-left">
+          <div class="up-ico"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+          <h3>拖拽或点击加入文件</h3>
+          <p>PDF、Word、图片、音频<br>进入同一收集箱</p>
+        </div>
+        <div class="parse-right">
+          <img src="../assets/xiaodou-wave.svg" alt="小豆陪伴" />
+        </div>
+      </div>
+
+      <div class="filter-row">
+        <span class="chip on">全部</span>
+        <span class="chip">待处理</span>
+        <span class="chip">笔记</span>
+        <span class="chip">录音</span>
+        <span class="chip">文档</span>
+      </div>
+
+      <div class="card" style="padding:8px 16px">
+        <a class="item" href="detail-voice.html">
+          <div class="badge" style="color:#6B86B2"><i class="fa-solid fa-waveform-lines"></i></div>
+          <div class="flex-1 min-w-0">
+            <h4>组织行为学 · 第3讲 <span class="tag tag-ok">已入库</span></h4>
+            <p>专家权比职位权更稳。知识外化后不依赖当场表现。</p>
+            <p style="margin-top:6px;color:var(--ink-3)">今天 08:12 · 录音 24:18</p>
+          </div>
+        </a>
+        <a class="item" href="detail-note.html">
+          <div class="badge"><i class="fa-solid fa-pen-to-square"></i></div>
+          <div class="flex-1 min-w-0">
+            <h4>小记 · 课堂 <span class="tag tag-inbox">待处理</span></h4>
+            <p>下周小组作业要用到社会认同实验。</p>
+            <p style="margin-top:6px;color:var(--ink-3)">今天 08:40</p>
+          </div>
+        </a>
+        <a class="item" href="detail.html">
+          <div class="badge" style="padding:0">
+            <img src="https://images.unsplash.com/photo-1456513080800-b6bbe86bb991?w=120&h=120&fit=crop" alt="" />
+          </div>
+          <div class="flex-1 min-w-0">
+            <h4>认知负荷理论_Sweller.pdf <span class="tag tag-ai">已拆解</span></h4>
+            <p>PDF · 18 页 · 已拆解 · 可阅读</p>
+            <p style="margin-top:6px;color:var(--ink-3)">昨天</p>
+          </div>
+        </a>
+        <a class="item" href="detail.html">
+          <div class="badge" style="padding:0">
+            <img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=120&h=120&fit=crop" alt="" />
+          </div>
+          <div class="flex-1 min-w-0">
+            <h4>实习周报_第4周.docx <span class="tag tag-run">拆解中</span></h4>
+            <p>Word · 已加入 · 排队拆解</p>
+            <div class="progress"><span style="width:55%"></span></div>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <a class="fab-ask" href="ask.html" aria-label="问小豆">
+      <img src="../assets/xiaodou-fab.svg" alt="小豆" />
+    </a>
+
+    <nav class="tabbar">
+      <a class="tab on" href="library.html"><span class="ico"><i class="fa-solid fa-book"></i></span><span>知识库</span></a>
+      <a class="tab" href="ask.html"><span class="ico"><i class="fa-solid fa-comments"></i></span><span>问小豆</span></a>
+      <a class="tab" href="graph.html"><span class="ico"><i class="fa-solid fa-share-nodes"></i></span><span>小豆图谱</span></a>
+    </nav>
+    <div class="home-indicator"></div>
+  </div>
+</body>
+</html>

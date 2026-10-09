@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 130" fill="none">
+  <defs>
+    <linearGradient id="body" x1="20" y1="20" x2="100" y2="120" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#B8A4F5"/>
+      <stop offset="1" stop-color="#7C5CFA"/>
+    </linearGradient>
+    <linearGradient id="cheek" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#FFB4C8" stop-opacity=".9"/>
+      <stop offset="1" stop-color="#FF8FB3" stop-opacity=".55"/>
+    </linearGradient>
+  </defs>
+  <!-- shadow -->
+  <ellipse cx="60" cy="122" rx="28" ry="5" fill="#7C5CFA" opacity=".12"/>
+  <!-- body -->
+  <path d="M60 18c22 0 40 18 40 44 0 28-16 48-40 52C36 110 20 90 20 62 20 36 38 18 60 18Z" fill="url(#body)"/>
+  <!-- highlight -->
+  <ellipse cx="46" cy="42" rx="12" ry="16" fill="#fff" opacity=".22"/>
+  <!-- eyes -->
+  <ellipse cx="46" cy="58" rx="5.5" ry="7" fill="#2B2B2B"/>
+  <ellipse cx="74" cy="58" rx="5.5" ry="7" fill="#2B2B2B"/>
+  <circle cx="48" cy="55" r="2" fill="#fff"/>
+  <circle cx="76" cy="55" r="2" fill="#fff"/>
+  <!-- cheeks -->
+  <ellipse cx="34" cy="70" rx="7" ry="4.5" fill="url(#cheek)"/>
+  <ellipse cx="86" cy="70" rx="7" ry="4.5" fill="url(#cheek)"/>
+  <!-- smile -->
+  <path d="M50 76c4 6 16 6 20 0" stroke="#2B2B2B" stroke-width="2.2" stroke-linecap="round"/>
+  <!-- waving arm -->
+  <path d="M92 62c14-10 22-6 24 2 2 8-4 14-12 12" stroke="url(#body)" stroke-width="12" stroke-linecap="round"/>
+  <circle cx="108" cy="70" r="8" fill="#9B84F2"/>
+  <!-- leaf sprout -->
+  <path d="M60 18c0-8 6-14 10-16-2 8 2 12 0 16" fill="#6B8F71"/>
+  <path d="M60 18c0-7-7-12-12-14 3 7-1 11 0 14" fill="#8BB894"/>
+</svg>

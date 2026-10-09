@@ -1,0 +1,114 @@
+import { Router, type RequestHandler } from 'express'
+import multer from 'multer'
+import { randomUUID } from 'node:crypto'
+import { mkdirSync, unlink } from 'node:fs'
+import { join } from 'node:path'
+import { config } from '../core/config.js'
+import { ApplicationError } from '../core/errors/application-error.js'
+import { FileService } from '../services/file-service.js'
+
+type FileRouterOptions = {
+  fileService?: FileService
+  uploadDir?: string
+  maxFileSizeBytes?: number
+}
+
+function uploadMiddleware(uploadDirectory: string, maxFileSizeBytes: number): RequestHandler {
+  const upload = multer({
+    storage: multer.diskStorage({
+      destination: (_request, _file, callback) => {
+        const temporaryDirectory = join(uploadDirectory, '.tmp')
+        mkdirSync(temporaryDirectory, { recursive: true })
+        callback(null, temporaryDirectory)
+      },
+      filename: (_request, _file, callback) => callback(null, `${randomUUID()}.upload`),
+    }),
+    limits: { fileSize: maxFileSizeBytes },
+    fileFilter: (_request, file, callback) => {
+      const extension = file.originalname.toLowerCase().endsWith('.pdf')
+      if (file.mimetype !== 'application/pdf' || !extension) {
+        callback(new ApplicationError('INVALID_FILE_TYPE'))
+        return
+      }
+      callback(null, true)
+    },
+  })
+
+  return (request, response, next) => {
+    upload.single('file')(request, response, (error: unknown) => {
+      if (!error) {
+        next()
+        return
+      }
+      if (error instanceof ApplicationError) {
+        next(error)
+        return
+      }
+      if (error instanceof multer.MulterError && error.code === 'LIMIT_FILE_SIZE') {
+        next(new ApplicationError('FILE_TOO_LARGE'))
+        return
+      }
+      next(new ApplicationError('INVALID_REQUEST', { cause: error }))
+    })
+  }
+}
+
+export function createFileRouter(options: FileRouterOptions = {}): Router {
+  const router = Router()
+  const service = options.fileService ?? new FileService()
+  const uploadDirectory = options.uploadDir ?? config.uploadDir
+  const maxFileSizeBytes = options.maxFileSizeBytes ?? config.maxFileSizeBytes
+
+  router.post('/api/files', uploadMiddleware(uploadDirectory, maxFileSizeBytes), async (request, response, next) => {
+    try {
+      if (!request.file) {
+        throw new ApplicationError('INVALID_REQUEST', { message: '缺少 file 字段' })
+      }
+      if (request.file.size === 0) {
+        unlink(request.file.path, () => undefined)
+        throw new ApplicationError('INVALID_REQUEST', { message: '文件不能为空' })
+      }
+
+      const file = await service.upload({
+        temporaryPath: request.file.path,
+        originalName: request.file.originalname,
+        mimeType: request.file.mimetype,
+        size: request.file.size,
+        requestId: request.requestId,
+      })
+
+      response.status(201).json({ requestId: request.requestId, data: { file } })
+    } catch (error: unknown) {
+      next(error)
+    }
+  })
+
+  router.get('/api/files', (request, response) => {
+    const page = Math.max(Number(request.query.page ?? 1), 1)
+    const pageSize = Math.min(Math.max(Number(request.query.pageSize ?? 20), 1), 100)
+    const items = service.list('demo-user', pageSize, (page - 1) * pageSize)
+    response.json({ requestId: request.requestId, data: { items, page, pageSize, total: items.length } })
+  })
+
+  router.get('/api/files/:fileId', (request, response, next) => {
+    try {
+      const file = service.getById(request.params.fileId)
+      response.json({ requestId: request.requestId, data: { file, task: null, summary: null } })
+    } catch (error: unknown) {
+      next(error)
+    }
+  })
+
+  router.delete('/api/files/:fileId', async (request, response, next) => {
+    try {
+      const file = await service.delete(request.params.fileId, request.requestId)
+      response.json({ requestId: request.requestId, data: { fileId: file.id, status: file.status } })
+    } catch (error: unknown) {
+      next(error)
+    }
+  })
+
+  return router
+}
+
+export const fileRouter = createFileRouter()

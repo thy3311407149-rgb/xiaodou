@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=393, height=852" />
+  <title>录音中 · 第二大脑</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="../css/common.css" />
+  <style>
+    .wave-wrap {
+      height: 64px; margin: 2px 0 10px; border-radius: 12px;
+      background: var(--surface-2); border: 1px solid var(--line);
+      overflow: hidden; position: relative;
+      display: flex; align-items: center; justify-content: center; gap: 3px; padding: 0 12px;
+    }
+    .wave-wrap span {
+      width: 3px; border-radius: 2px; background: var(--purple);
+      animation: wave 1s ease-in-out infinite;
+    }
+    .wave-wrap span:nth-child(1){height:18px;animation-delay:0s}
+    .wave-wrap span:nth-child(2){height:34px;animation-delay:.1s}
+    .wave-wrap span:nth-child(3){height:48px;animation-delay:.2s}
+    .wave-wrap span:nth-child(4){height:28px;animation-delay:.3s}
+    .wave-wrap span:nth-child(5){height:52px;animation-delay:.15s}
+    .wave-wrap span:nth-child(6){height:22px;animation-delay:.25s}
+    .wave-wrap span:nth-child(7){height:40px;animation-delay:.05s}
+    .wave-wrap span:nth-child(8){height:30px;animation-delay:.35s}
+    .wave-wrap span:nth-child(9){height:46px;animation-delay:.12s}
+    .wave-wrap span:nth-child(10){height:20px;animation-delay:.22s}
+    .wave-wrap span:nth-child(11){height:38px;animation-delay:.08s}
+    .wave-wrap span:nth-child(12){height:50px;animation-delay:.18s}
+    .wave-wrap span:nth-child(13){height:26px;animation-delay:.28s}
+    .wave-wrap span:nth-child(14){height:42px;animation-delay:.04s}
+    .wave-wrap span:nth-child(15){height:32px;animation-delay:.32s}
+    @keyframes wave { 0%,100%{transform:scaleY(.55);opacity:.65} 50%{transform:scaleY(1);opacity:1} }
+    .hz-tag {
+      position: absolute; top: 6px; right: 8px; font-size: 10px; font-weight: 700;
+      color: var(--ink-3); font-variant-numeric: tabular-nums;
+    }
+    .live-transcript {
+      text-align: left; min-height: 72px; max-height: 120px; overflow-y: auto;
+      background: var(--surface-2); border: 1px solid var(--line); border-radius: 12px;
+      padding: 10px 12px; font-size: 13px; line-height: 1.55; margin-bottom: 12px;
+    }
+    .live-dot { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: #D64545; }
+    .live-dot i { width: 7px; height: 7px; border-radius: 50%; background: #D64545; animation: blink 1s ease-in-out infinite; display:block; }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.35} }
+    .rec-controls { display: flex; align-items: center; justify-content: center; gap: 12px; }
+  </style>
+</head>
+<body>
+  <div class="phone">
+    <div class="status-bar">
+      <span class="time-pill">9:41</span>
+      <div class="right">
+        <span class="signal"><i></i><i></i><i></i><i></i></span>
+        <span>5G</span>
+        <i class="fa-solid fa-battery-full"></i>
+      </div>
+    </div>
+
+    <div class="main with-tab">
+      <div class="back-row">
+        <a href="library.html"><i class="fa-solid fa-chevron-left"></i> 知识库</a>
+      </div>
+
+      <div class="section-label" style="margin-top:0">录音</div>
+      <div class="card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+          <span class="live-dot"><i></i><span>录音中</span></span>
+          <div style="font-variant-numeric:tabular-nums;font-size:20px;font-weight:600">02:18</div>
+        </div>
+        <div class="wave-wrap">
+          <span></span><span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span><span></span><span></span>
+          <span class="hz-tag">248 Hz</span>
+        </div>
+        <div class="live-transcript">
+          今天讲到专家权：当你把知识外化成可检索的笔记，影响力就不依赖当场表现。
+          <span style="color:var(--ink-3)">建议把认知负荷和组块写进第二大脑…</span>
+        </div>
+        <div class="rec-controls">
+          <button class="btn btn-primary" type="button" style="min-width:96px">
+            <i class="fa-solid fa-pause"></i> 暂停
+          </button>
+          <a class="btn btn-danger" href="transcript.html" style="min-width:96px">
+            <i class="fa-solid fa-stop"></i> 结束
+          </a>
+        </div>
+      </div>
+
+      <div class="card" style="display:flex;gap:12px;align-items:center">
+        <img src="../assets/xiaodou-wave.svg" alt="" style="width:48px;height:52px" />
+        <div style="flex:1;font-size:12.5px;color:var(--ink-2);line-height:1.5">
+          <b style="color:var(--ai)">小豆</b> 正在实时转写。结束后你可以改稿，再放入知识库。
+        </div>
+      </div>
+    </div>
+
+    <nav class="tabbar">
+      <a class="tab on" href="library.html"><span class="ico"><i class="fa-solid fa-book"></i></span><span>知识库</span></a>
+      <a class="tab" href="ask.html"><span class="ico"><i class="fa-solid fa-comments"></i></span><span>问小豆</span></a>
+      <a class="tab" href="graph.html"><span class="ico"><i class="fa-solid fa-share-nodes"></i></span><span>小豆图谱</span></a>
+    </nav>
+    <div class="home-indicator"></div>
+  </div>
+</body>
+</html>

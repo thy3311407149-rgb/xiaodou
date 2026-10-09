@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>第二大脑 · 小豆 — 原型总览</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --brand: #7C5CFA;
+      --cream: #F5F2ED;
+      --phone-w: 393px;
+      --phone-h: 852px;
+      /* 常规约 0.65；矮屏自动下调，保证 1440×900 一屏可见两行 */
+      --scale: clamp(0.48, min(0.65, (100vh - 72px) / 2 / 880px), 0.68);
+      --slot-w: calc(var(--phone-w) * var(--scale));
+      --slot-h: calc(var(--phone-h) * var(--scale));
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(ellipse 70% 45% at 12% -8%, rgba(124,92,250,.22), transparent),
+        radial-gradient(ellipse 50% 35% at 90% 0%, rgba(107,143,113,.12), transparent),
+        #141210;
+      color: #f5f2ed;
+      font-family: Manrope, system-ui, sans-serif;
+    }
+    .logo { font-family: Fraunces, serif; }
+
+    .page {
+      max-width: 1920px;
+      margin: 0 auto;
+      padding: 8px 18px 16px;
+    }
+
+    .page-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 4px 16px;
+      padding: 0 0 8px;
+    }
+    .header-left {
+      display: flex;
+      align-items: baseline;
+      flex-wrap: wrap;
+      gap: 4px 10px;
+      min-width: 0;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 1px 7px;
+      border-radius: 999px;
+      font-size: 10px;
+      font-weight: 500;
+      background: rgba(124,92,250,.18);
+      color: #C4B5FD;
+      flex-shrink: 0;
+    }
+    .page-header h1 {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin: 0;
+      line-height: 1.15;
+      white-space: nowrap;
+    }
+    .page-header .sub {
+      margin: 0;
+      font-size: 11px;
+      color: rgba(245,242,237,0.4);
+      line-height: 1.2;
+    }
+    .page-header .sub code {
+      color: rgba(245,242,237,0.7);
+      font-size: 10px;
+    }
+    .stats {
+      display: flex;
+      gap: 14px;
+      font-size: 10px;
+      color: rgba(245,242,237,0.35);
+      flex-shrink: 0;
+    }
+    .stats strong {
+      display: block;
+      font-size: 14px;
+      color: #fff;
+      font-family: Fraunces, serif;
+      font-weight: 700;
+      line-height: 1.1;
+    }
+
+    .screen-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 12px 14px;
+      justify-items: center;
+      align-items: start;
+    }
+
+    .section-title {
+      grid-column: 1 / -1;
+      font-size: 9px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: rgba(245,242,237,0.28);
+      margin: 2px 0 0;
+      padding: 0;
+      line-height: 1;
+      justify-self: start;
+      width: 100%;
+    }
+
+    .screen-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      width: 100%;
+      max-width: var(--slot-w);
+    }
+
+    .phone-slot {
+      width: var(--slot-w);
+      height: var(--slot-h);
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .phone-frame {
+      width: var(--phone-w);
+      height: var(--phone-h);
+      border-radius: 54px;
+      overflow: hidden;
+      background: #000;
+      box-shadow:
+        0 0 0 2px #2a2622,
+        0 0 0 4px #111,
+        0 12px 28px rgba(0,0,0,0.4);
+      position: absolute;
+      top: 0;
+      left: 0;
+      transform: scale(var(--scale));
+      transform-origin: top left;
+    }
+    .phone-frame iframe {
+      width: 393px;
+      height: 852px;
+      border: 0;
+      display: block;
+      background: var(--cream);
+    }
+
+    .screen-label {
+      font-size: 10px;
+      color: rgba(245,242,237,0.45);
+      letter-spacing: 0.01em;
+      text-align: center;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100%;
+      line-height: 1.2;
+    }
+    .screen-label strong {
+      color: rgba(255,255,255,0.9);
+      font-weight: 600;
+      margin-right: 4px;
+    }
+
+    @media (min-width: 1600px) {
+      :root { --scale: clamp(0.62, min(0.68, (100vh - 72px) / 2 / 880px), 0.68); }
+    }
+    @media (max-width: 1100px) {
+      .page { padding-left: 16px; padding-right: 16px; }
+      .screen-grid { gap: 12px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="page-header">
+      <div class="header-left">
+        <div class="badge"><i class="fa-solid fa-brain"></i> iPhone 15 Pro</div>
+        <h1 class="logo">第二大脑 <span style="color:var(--brand)">小豆</span></h1>
+        <p class="sub">高保真原型 · <code>docs/PRODUCT.md</code></p>
+      </div>
+      <div class="stats">
+        <div><strong class="logo">14</strong>界面</div>
+        <div><strong class="logo">3</strong>Tab</div>
+        <div><strong class="logo">393×852</strong>分辨率</div>
+      </div>
+    </header>
+
+    <main class="screen-grid">
+      <h2 class="section-title">核心导航 · Tab</h2>
+      <div class="screen-card">
+        <div class="phone-slot"><div class="phone-frame"><iframe src="pages/library.html" title="知识库" loading="lazy"></iframe></div></div>
+        <div class="screen-label"><strong>01</strong>知识库 · library.html</div>
+      </div>
+      <div class="screen-card">
+        <div class="phone-slot"><div class="phone-frame"><iframe src="pages/ask.html" title="问小豆" loading="lazy"></iframe></div></div>
+        <div class="screen-label"><strong>02</strong>问小豆 · ask.html</div>
+      </div>
+      <div class="screen-card">
+        <div class="phone-slot"><div class="phone-frame"><iframe src="pages/graph.html" title="小豆图谱" loading="lazy"></iframe></div></div>
+        <div class="screen-label"><strong>03</strong>小豆图谱 · graph.html</div>
+      </div>
+
+      <h2 class="section-title">采集流程</h2>
+      <div class="screen-card">
+        <div class="phone-slot"><div class="phone-frame"><iframe src="pages/recording.html" title="录音中" loading="lazy"></iframe></div></div>
+        <div class="screen-label"><strong>04</strong>录音中 · recording.html</div>
+      </div>
+      <div class="screen-card">
+        <div class="phone-slot"><div class="phone-frame"><iframe src="pages/transcript.html" title="转写预览" loading="lazy"></iframe></div></div>
+        <div class="screen-label"><strong>05</strong>转写预览 · transcript.html</div>
+      </div>
+      <div class="screen-card">
+        <div class="phone-slot"><div class="phone-frame"><iframe src="pages/search.html" title="搜索" loading="lazy"></iframe></div></div>
+        <div class="screen-label"><strong>06</strong>全局搜索 · search.html</div>
+      </div>
+
+      <h2 class="section-title">详情与 AI 拆解</h2>
+      <div class="screen-card">
+        <div class="phone-slot"><div class="phone-frame"><iframe src="pages/detail.html" title="文档详情" loading="lazy"></iframe></div></div>
+        <div class="screen-label"><strong>07</strong>文档详情 · detail.html</div>
+      </div>
+      <div class="screen-card">
+        <div class="phone-slot"><div class="phone-frame"><iframe src="pages/detail-voice.html" title="录音详情" loading="lazy"></iframe></div></div>
+        <div class="screen-label"><strong>08</strong>录音详情 · detail-voice.html</div>
+      </div>
+      <div class="screen-card">
+        <div class="phone-slot"><div class="phone-frame"><iframe src="pages/detail-note.html" title="笔记详情" loading="lazy"></iframe></div></div>
+        <div class="screen-label"><strong>09</strong>笔记详情 · detail-note.html</div>
+      </div>
+      <div class="screen-card">
+        <div class="phone-slot"><div class="phone-frame"><iframe src="pages/pdf-preview.html" title="原文预览" loading="lazy"></iframe></div></div>
+        <div class="screen-label"><strong>10</strong>原文预览 · pdf-preview.html</div>
+      </div>
+      <div class="screen-card">
+        <div class="phone-slot"><div class="phone-frame"><iframe src="pages/related.html" title="相关知识" loading="lazy"></iframe></div></div>
+        <div class="screen-label"><strong>11</strong>相关知识 · related.html</div>
+      </div>
+
+      <h2 class="section-title">对话 · 系统</h2>
+      <div class="screen-card">
+        <div class="phone-slot"><div class="phone-frame"><iframe src="pages/ask-chat.html" title="对话中" loading="lazy"></iframe></div></div>
+        <div class="screen-label"><strong>12</strong>问小豆对话 · ask-chat.html</div>
+      </div>
+      <div class="screen-card">
+        <div class="phone-slot"><div class="phone-frame"><iframe src="pages/settings.html" title="设置" loading="lazy"></iframe></div></div>
+        <div class="screen-label"><strong>13</strong>设置 · settings.html</div>
+      </div>
+      <div class="screen-card">
+        <div class="phone-slot"><div class="phone-frame"><iframe src="pages/login.html" title="登录" loading="lazy"></iframe></div></div>
+        <div class="screen-label"><strong>14</strong>登录引导 · login.html</div>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

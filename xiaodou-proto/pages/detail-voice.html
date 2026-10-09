@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=393, height=852" />
+  <title>录音详情 · 第二大脑</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="../css/common.css" />
+  <style>
+    .player-bar {
+      display: flex; align-items: center; gap: 12px; padding: 14px;
+      background: linear-gradient(135deg, #2B2B2B, #3A3530); border-radius: var(--radius-md);
+      color: #fff; margin-bottom: 16px;
+    }
+    .player-bar .play {
+      width: 44px; height: 44px; border-radius: 50%; background: #C8F135; color: #111;
+      display: grid; place-items: center; flex-shrink: 0; font-size: 14px;
+    }
+    .scrub { flex: 1; }
+    .scrub .track { height: 4px; background: rgba(255,255,255,.2); border-radius: var(--pill); position: relative; margin: 8px 0 6px; }
+    .scrub .track i { position: absolute; left: 0; top: 0; height: 100%; width: 38%; background: #C8F135; border-radius: var(--pill); display:block; }
+    .scrub .times { display: flex; justify-content: space-between; font-size: 11px; color: rgba(255,255,255,.55); font-variant-numeric: tabular-nums; }
+  </style>
+</head>
+<body>
+  <div class="phone">
+    <div class="status-bar">
+      <span class="time-pill">9:41</span>
+      <div class="right">
+        <span class="signal"><i></i><i></i><i></i><i></i></span>
+        <span>5G</span>
+        <i class="fa-solid fa-battery-full"></i>
+      </div>
+    </div>
+
+    <div class="main with-tab">
+      <div class="back-row">
+        <a href="library.html"><i class="fa-solid fa-chevron-left"></i> 知识库</a>
+      </div>
+
+      <h1 class="article-title">组织行为学 · 第3讲</h1>
+      <div class="article-meta">录音 · 24:18 · 今天 08:12 · <span class="tag tag-ok">已入库</span></div>
+
+      <div class="chips" style="margin-top:14px">
+        <span class="chip on">组织行为学</span>
+        <span class="chip on">专家权</span>
+        <span class="chip">认知负荷</span>
+      </div>
+
+      <div class="player-bar" style="margin-top:18px">
+        <div class="play"><i class="fa-solid fa-play" style="margin-left:2px"></i></div>
+        <div class="scrub">
+          <div style="font-size:13px;font-weight:600">课堂录音</div>
+          <div class="track"><i></i></div>
+          <div class="times"><span>09:12</span><span>24:18</span></div>
+        </div>
+      </div>
+
+      <div class="article-h">转写正文</div>
+      <div class="article-summary">
+        <p>今天讲到专家权：当你把知识外化成可检索的笔记，影响力不依赖当场表现。</p>
+        <p>建议把「认知负荷」和「组块」写进第二大脑，方便之后提问和复习。这也是个人知识库能够成为「第二大脑」的理论基础。</p>
+        <p style="color:var(--ink-2);font-size:13px">下周小组作业会用到社会认同实验，记得从本节补一条证据。</p>
+      </div>
+
+      <div class="action-row" style="display:flex;gap:8px;margin-top:20px">
+        <a class="btn btn-primary" href="ask-chat.html"><i class="fa-solid fa-comments"></i> 基于此问小豆</a>
+        <a class="btn btn-ghost" href="graph.html"><i class="fa-solid fa-share-nodes"></i> 看图谱</a>
+      </div>
+    </div>
+
+    <nav class="tabbar">
+      <a class="tab on" href="library.html"><span class="ico"><i class="fa-solid fa-book"></i></span><span>知识库</span></a>
+      <a class="tab" href="ask.html"><span class="ico"><i class="fa-solid fa-comments"></i></span><span>问小豆</span></a>
+      <a class="tab" href="graph.html"><span class="ico"><i class="fa-solid fa-share-nodes"></i></span><span>小豆图谱</span></a>
+    </nav>
+    <div class="home-indicator"></div>
+  </div>
+</body>
+</html>

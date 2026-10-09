@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=393, height=852" />
+  <title>转写预览 · 第二大脑</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="../css/common.css" />
+</head>
+<body>
+  <div class="phone">
+    <div class="status-bar">
+      <span class="time-pill">9:41</span>
+      <div class="right">
+        <span class="signal"><i></i><i></i><i></i><i></i></span>
+        <span>5G</span>
+        <i class="fa-solid fa-battery-full"></i>
+      </div>
+    </div>
+
+    <div class="main with-tab">
+      <div class="back-row">
+        <a href="library.html"><i class="fa-solid fa-chevron-left"></i> 知识库</a>
+      </div>
+
+      <div class="card" style="text-align:center;padding:14px">
+        <div style="font-size:12px;font-weight:600;color:var(--ink-2);margin-bottom:6px">已停止 · 时长 02:18</div>
+        <div style="font-size:13px;color:var(--ink-2)">转写可直接修改后再入库</div>
+      </div>
+
+      <div class="section-label">转写预览 · 可改</div>
+      <div class="card">
+        <textarea class="note" style="min-height:160px">今天讲到专家权：当你把知识外化成可检索的笔记，影响力就不依赖当场表现。建议把「认知负荷」和「组块」写进第二大脑，方便之后提问和复习。</textarea>
+        <div class="chips" style="margin-top:12px">
+          <span class="chip on">组织行为学</span>
+          <span class="chip on">专家权</span>
+          <span class="chip on">认知负荷</span>
+          <span class="chip">+ 标签</span>
+        </div>
+        <a class="btn btn-primary btn-block" href="library.html">放入知识库</a>
+      </div>
+    </div>
+
+    <div class="toast-demo">已放入知识库</div>
+
+    <nav class="tabbar">
+      <a class="tab on" href="library.html"><span class="ico"><i class="fa-solid fa-book"></i></span><span>知识库</span></a>
+      <a class="tab" href="ask.html"><span class="ico"><i class="fa-solid fa-comments"></i></span><span>问小豆</span></a>
+      <a class="tab" href="graph.html"><span class="ico"><i class="fa-solid fa-share-nodes"></i></span><span>小豆图谱</span></a>
+    </nav>
+    <div class="home-indicator"></div>
+  </div>
+</body>
+</html>

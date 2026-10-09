@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>小豆 · 让信息真正成为你的知识</title>
+  <meta name="description" content="小豆产品作品集：从信息没有成为知识，到个人知识理解层。区分已实现、Beta 1.2 与下一版本。">
+  <link rel="icon" href="assets/mark.svg">
+  <link rel="stylesheet" href="styles.css?v=3">
+</head>
+<body>
+  <a class="skip" href="#problem">跳到正文</a>
+  <header class="nav">
+    <div class="wrap">
+      <a class="brand" href="#top"><img src="assets/mark.svg" alt=""><span>小豆</span></a>
+      <nav class="nav__links" aria-label="页面">
+        <a href="#problem">问题</a>
+        <a href="#gap">断层</a>
+        <a href="#position">定位</a>
+        <a href="#model">Knowledge</a>
+        <a href="#network">关联</a>
+        <a href="#progress">进展</a>
+        <a href="#roadmap">路线</a>
+        <a href="#vision">愿景</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="wrap hero__grid">
+        <div>
+          <p class="kicker">Personal Knowledge Understanding Layer</p>
+          <h1>让信息真正成为你的知识</h1>
+          <p class="lede">文件、录音、笔记每天都在增加。保存下来，并不等于理解了，也不等于以后还能用上。小豆要做的是一条更长的路径：先理解，再沉淀成知识，让它们彼此关联，在需要时被重新看见。</p>
+          <ol class="chain">
+            <li>理解</li>
+            <li>沉淀</li>
+            <li>关联</li>
+            <li>回顾</li>
+            <li>再次使用</li>
+          </ol>
+        </div>
+        <div>
+          <ol class="filament" aria-label="从文档到提问的理解路径">
+            <li style="--i:0"><strong>Document</strong><span>用户原始内容</span></li>
+            <li style="--i:1"><strong>Knowledge Point</strong><span>可独立成立的知识单元</span></li>
+            <li style="--i:2"><strong>Knowledge</strong><span>可长期沉淀的知识对象</span></li>
+            <li style="--i:3"><strong>Related Knowledge</strong><span>说明为什么相关</span></li>
+            <li style="--i:4"><strong>AI Brief</strong><span>主动发现 <i class="pill" data-state="beta">Beta 1.2</i></span></li>
+            <li style="--i:5"><strong>Ask Xiaodou</strong><span>向自己的知识提问 <i class="pill" data-state="beta">Beta 1.2</i></span></li>
+          </ol>
+          <p class="sub">小豆不是一轮对话。它是一套个人知识理解系统。后面两步仍在 Beta 1.2，前面的知识对象和语义关联已经跑通。</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="problem">
+      <div class="wrap split">
+        <div class="reveal">
+          <span class="index">01</span>
+          <h2>我们真正想解决的，不是“信息太多”，而是“信息没有成为知识”</h2>
+          <p class="pull">用户拥有越来越多的信息，却没有获得与之匹配的知识能力。</p>
+        </div>
+        <div class="inflow reveal" aria-hidden="true">
+          <div class="inflow__sources">
+            <span class="chip" style="--i:0">PDF</span>
+            <span class="chip" style="--i:1">会议录音</span>
+            <span class="chip" style="--i:2">课程</span>
+            <span class="chip" style="--i:3">文章</span>
+            <span class="chip" style="--i:4">随手记录</span>
+          </div>
+          <div class="inflow__mass">大量信息</div>
+          <div class="inflow__islands">
+            <span class="island">分散</span>
+            <span class="island">难理解</span>
+            <span class="island">难关联</span>
+            <span class="island">易遗忘</span>
+            <span class="island">需要时找不到</span>
+          </div>
+        </div>
+      </div>
+      <ol class="sr-only">
+        <li>PDF、会议录音、课程、文章和随手记录不断进入。</li>
+        <li>它们汇成大量信息。</li>
+        <li>随后变成分散、难理解、难关联、易遗忘的孤岛。</li>
+        <li>真正需要时，又找不到。</li>
+      </ol>
+    </section>
+
+    <section class="section" id="gap">
+      <div class="wrap">
+        <div class="reveal">
+          <span class="index">02</span>
+          <h2>现有工具停在总结之前，长期知识还没有发生</h2>
+          <p class="sub">保存、搜索、总结、对话，各自都有用。真正困难的是：让不同时间产生的信息持续沉淀、相互关联，并在未来重新产生价值。</p>
+        </div>
+        <div class="flow reveal">
+          <article><strong>内容产生</strong><p>文件、录音、笔记在不同时刻出现。</p></article>
+          <article><strong>内容存储</strong><p>文件夹、笔记软件把原文留下。</p></article>
+          <article><strong>AI 总结</strong><p>一次阅读被压缩成一段摘要。</p></article>
+          <article class="gap"><strong>Knowledge Gap</strong><p>摘要结束之后，知识并没有继续活着。</p></article>
+          <article><strong>长期知识</strong><p>可回溯、可关联、以后还能用。</p></article>
+        </div>
+        <ul class="note-list">
+          <li>这里不比较具体产品，也不引用未经核实的份额。</li>
+          <li>缺口是机制上的：一次处理完成了，个人知识却没有开始。</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section" id="position">
+      <div class="wrap">
+        <div class="reveal">
+          <span class="index">03</span>
+          <h2>小豆</h2>
+          <p class="sub">Personal Knowledge Understanding Layer。它站在原始信息和个人知识之间，负责理解、结构、关联和再次使用。</p>
+        </div>
+        <div class="cycle reveal" data-cycle>
+          <div class="cycle__track" role="tablist" aria-label="小豆的使用循环">
+            <button type="button" data-step role="tab" aria-selected="true">Input<small>输入信息</small></button>
+            <button type="button" data-step role="tab" aria-selected="false">Understand<small>AI 理解</small></button>
+            <button type="button" data-step role="tab" aria-selected="false">Structure<small>形成 Knowledge</small></button>
+            <button type="button" data-step role="tab" aria-selected="false">Connect<small>建立关联</small></button>
+            <button type="button" data-step role="tab" aria-selected="false">Recall<small>主动回顾</small></button>
+            <button type="button" data-step role="tab" aria-selected="false">Ask<small>向小豆提问</small></button>
+          </div>
+          <div class="cycle__copy">
+            <p data-cycle-text><strong>输入信息。</strong> 当前真正进入理解管道的是 PDF。录音和随笔在 Beta 1.2 接入同一条路径。</p>
+            <p data-cycle-text hidden><strong>AI 理解。</strong> 文本被清洗、分块，再抽出可以独立成立的知识点。摘要只是中间结果。</p>
+            <p data-cycle-text hidden><strong>形成 Knowledge。</strong> 知识点被去重、聚合、抽象，变成可以保存和检索的知识对象，并进一步识别核心知识。</p>
+            <p data-cycle-text hidden><strong>建立关联。</strong> 向量负责召回可能相关的知识，Agent 判断是不是真有信息关系，以及为什么相关。</p>
+            <p data-cycle-text hidden><strong>主动回顾。</strong> Beta 1.2 的 AI 简报会做交叉关联和遗忘提醒。这一步还没有上线。</p>
+            <p data-cycle-text hidden><strong>向小豆提问。</strong> Beta 1.2 希望基于已经沉淀的知识回答，并带出引用。当前界面仍是静态演示。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="loop">
+      <div class="wrap">
+        <div class="reveal">
+          <span class="index">04</span>
+          <h2>一条闭环，而不是一组功能</h2>
+          <p class="sub">悬停或点选节点。右侧说明它解决什么、用户得到什么、以及现在做到哪一步。</p>
+        </div>
+        <div class="system reveal">
+          <div class="map" aria-label="产品闭环">
+            <button class="node" type="button" data-pick="user"><b>用户信息</b></button>
+            <span class="stem"></span>
+            <div class="map__row">
+              <button class="node" type="button" data-pick="file"><b>文件</b><i class="pill" data-state="live">已实现</i></button>
+              <button class="node" type="button" data-pick="audio"><b>录音</b><i class="pill" data-state="beta">Beta 1.2</i></button>
+              <button class="node" type="button" data-pick="note"><b>随笔</b><i class="pill" data-state="beta">Beta 1.2</i></button>
+            </div>
+            <span class="stem"></span>
+            <button class="node" type="button" data-pick="ai"><b>小豆 AI</b><i class="pill" data-state="live">PDF 已实现</i></button>
+            <span class="stem"></span>
+            <button class="node" type="button" data-pick="knowledge"><b>Knowledge</b><i class="pill" data-state="live">已实现</i></button>
+            <span class="stem"></span>
+            <div class="map__row">
+              <button class="node" type="button" data-pick="relate"><b>知识关联</b><i class="pill" data-state="live">已实现</i></button>
+              <button class="node" type="button" data-pick="brief"><b>AI 简报</b><i class="pill" data-state="beta">Beta 1.2</i></button>
+              <button class="node" type="button" data-pick="ask"><b>问小豆</b><i class="pill" data-state="beta">Beta 1.2</i></button>
+            </div>
+            <div class="map__row">
+              <button class="node" type="button" data-pick="topic"><b>主题集合</b><i class="pill" data-state="beta">Beta 1.2</i></button>
+              <button class="node" type="button" data-pick="forget"><b>遗忘提醒</b><i class="pill" data-state="beta">Beta 1.2</i></button>
+              <button class="node" type="button" data-pick="qa"><b>知识问答</b><i class="pill" data-state="beta">Beta 1.2</i></button>
+            </div>
+          </div>
+          <aside class="detail-card" aria-live="polite">
+            <div data-pick-panel="intro">
+              <span class="pill">阅读方式</span>
+              <h3>从节点看闭环</h3>
+              <p>把指针移到任意节点上。每个节点都标明当前状态，避免把规划中的能力说成已经完成。</p>
+            </div>
+            <div data-pick-panel="user" hidden>
+              <span class="pill">起点</span>
+              <h3>用户信息</h3>
+              <p><strong>解决什么。</strong> 信息散落在文件、谈话和随手记下的句子里。</p>
+              <p><strong>用户得到什么。</strong> 它们有机会进入同一套理解，而不是各自躺在不同工具里。</p>
+              <p><strong>当前状态。</strong> PDF 已接入。录音与随笔是 Beta 1.2。</p>
+            </div>
+            <div data-pick-panel="file" hidden>
+              <span class="pill" data-state="live">已实现</span>
+              <h3>文件</h3>
+              <p><strong>解决什么。</strong> 读完的 PDF 如果只是被存档，下次还得重新读。</p>
+              <p><strong>用户得到什么。</strong> 上传之后进入抽取、分块、摘要和知识生成。</p>
+              <p><strong>当前状态。</strong> 已实现 PDF 上传与处理。其他格式不在当前管道内。</p>
+            </div>
+            <div data-pick-panel="audio" hidden>
+              <span class="pill" data-state="beta">Beta 1.2</span>
+              <h3>录音</h3>
+              <p><strong>解决什么。</strong> 课堂和会议说完就过去了。</p>
+              <p><strong>用户得到什么。</strong> 说过的话可以变成可编辑、可入库的文本。</p>
+              <p><strong>当前状态。</strong> 规划中。录音过程中做实时转写；录音结束后才做说话人分离。不是实时 Speaker Diarization。前端已有计时和转写预览的静态演示。</p>
+            </div>
+            <div data-pick-panel="note" hidden>
+              <span class="pill" data-state="beta">Beta 1.2</span>
+              <h3>随笔</h3>
+              <p><strong>解决什么。</strong> 一句话的想法没有去处，过后就散了。</p>
+              <p><strong>用户得到什么。</strong> 随手记录也能进入知识库，等待后续理解。</p>
+              <p><strong>当前状态。</strong> 规划中。前端可以在本地演示里保存一条笔记，尚未进入后端知识管道。</p>
+            </div>
+            <div data-pick-panel="ai" hidden>
+              <span class="pill" data-state="live">PDF 已实现</span>
+              <h3>小豆 AI</h3>
+              <p><strong>解决什么。</strong> 原文还在，理解仍然靠人自己完成。</p>
+              <p><strong>用户得到什么。</strong> 系统先判断什么值得留下，并保留回到原文的路径。</p>
+              <p><strong>当前状态。</strong> PDF 的摘要、知识点、知识和核心知识已实现。录音和随笔的理解还没开始。</p>
+            </div>
+            <div data-pick-panel="knowledge" hidden>
+              <span class="pill" data-state="live">已实现</span>
+              <h3>Knowledge</h3>
+              <p><strong>解决什么。</strong> 摘要看完就结束，无法被再次检索和关联。</p>
+              <p><strong>用户得到什么。</strong> 一个去重、聚合之后的知识对象，限定词保持原样。</p>
+              <p><strong>当前状态。</strong> 已实现。它引用自己的 Knowledge Point，因此可以回溯。</p>
+            </div>
+            <div data-pick-panel="relate" hidden>
+              <span class="pill" data-state="live">已实现</span>
+              <h3>知识关联</h3>
+              <p><strong>解决什么。</strong> 不同时间留下的知识互相看不见。</p>
+              <p><strong>用户得到什么。</strong> 相关知识，以及一句能从两边内容里找到依据的理由。</p>
+              <p><strong>当前状态。</strong> 已实现。关系只有四种：同主题补充、因果逻辑、概念同源、同类对比。</p>
+            </div>
+            <div data-pick-panel="brief" hidden>
+              <span class="pill" data-state="beta">Beta 1.2</span>
+              <h3>AI 简报</h3>
+              <p><strong>解决什么。</strong> 新知识和旧知识要靠用户自己想起来对照。</p>
+              <p><strong>用户得到什么。</strong> 系统主动指出交叉，而不是等着被搜索。</p>
+              <p><strong>当前状态。</strong> Beta 1.2，尚未上线。不要把它理解成已经完成的推荐流。</p>
+            </div>
+            <div data-pick-panel="topic" hidden>
+              <span class="pill" data-state="beta">Beta 1.2</span>
+              <h3>主题集合</h3>
+              <p><strong>解决什么。</strong> 关联一条条存在着，却进不了一个可以回访的主题。</p>
+              <p><strong>用户得到什么。</strong> 文件库里按主题把相关内容收在一起。</p>
+              <p><strong>当前状态。</strong> Beta 1.2。前端文件库已有冷启动说明和添加入口，主题集合本身还没有生成。</p>
+            </div>
+            <div data-pick-panel="forget" hidden>
+              <span class="pill" data-state="beta">Beta 1.2</span>
+              <h3>遗忘提醒</h3>
+              <p><strong>解决什么。</strong> 当时理解了，过一段时间就从使用里消失。</p>
+              <p><strong>用户得到什么。</strong> 超过一段时间后，被带回原来的知识。</p>
+              <p><strong>当前状态。</strong> Beta 1.2，尚未上线。</p>
+            </div>
+            <div data-pick-panel="ask" hidden>
+              <span class="pill" data-state="beta">Beta 1.2</span>
+              <h3>问小豆</h3>
+              <p><strong>解决什么。</strong> 想用自己的知识时，只能重新翻文件。</p>
+              <p><strong>用户得到什么。</strong> 直接向已经沉淀的知识提问。</p>
+              <p><strong>当前状态。</strong> Beta 1.2。底部导航里已有入口，回答仍是静态演示，没有接入知识库。</p>
+            </div>
+            <div data-pick-panel="qa" hidden>
+              <span class="pill" data-state="beta">Beta 1.2</span>
+              <h3>知识问答</h3>
+              <p><strong>解决什么。</strong> 答不上来源的回答很难被信任。</p>
+              <p><strong>用户得到什么。</strong> 回答带出知识引用，并能回到原文。</p>
+              <p><strong>当前状态。</strong> 知识对象的原文回溯已经实现。问答里的引用属于 Beta 1.2，还没有上线。</p>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="model">
+      <div class="wrap">
+        <div class="reveal">
+          <span class="index">05</span>
+          <h2>Knowledge 是产品核心</h2>
+          <p class="sub">小豆把一份文档拆成可以单独成立、可以长期保存、也可以再被归纳的对象。点开每一层，看它是什么、为什么需要、在产品里怎么用。</p>
+        </div>
+        <div class="model reveal">
+          <div class="layers" role="tablist" aria-label="知识结构">
+            <button class="layer is-on" type="button" data-layer="document" role="tab" aria-selected="true">Document <span>原文</span></button>
+            <button class="layer" type="button" data-layer="chunk" role="tab" aria-selected="false">Chunk <span>文本单元</span></button>
+            <button class="layer" type="button" data-layer="point" role="tab" aria-selected="false">Knowledge Point <span>知识单元</span></button>
+            <button class="layer" type="button" data-layer="knowledge" role="tab" aria-selected="false">Knowledge <span>知识对象</span></button>
+            <button class="layer" type="button" data-layer="core" role="tab" aria-selected="false">Core Knowledge <span>核心知识</span></button>
+          </div>
+          <div class="panel">
+            <article data-layer-panel="document">
+              <h3>Document</h3>
+              <dl>
+                <dt>它是什么</dt>
+                <dd>用户的原始内容。当前是按页保存的 PDF 文本。</dd>
+                <dt>为什么需要</dt>
+                <dd>后面所有理解都必须能回到这份原文，不能只留下模型的转述。</dd>
+                <dt>在产品中如何使用</dt>
+                <dd>上传 PDF 后抽取文本、清洗，再进入分块。它是来源，不是最终的知识。</dd>
+              </dl>
+            </article>
+            <article data-layer-panel="chunk" hidden>
+              <h3>Chunk</h3>
+              <dl>
+                <dt>它是什么</dt>
+                <dd>AI 理解内容时使用的基础文本单元，带有顺序、页码和长度。</dd>
+                <dt>为什么需要</dt>
+                <dd>整篇文档太长，无法稳定地抽出彼此独立的意思。分块是理解的工作单位。</dd>
+                <dt>在产品中如何使用</dt>
+                <dd>后续知识点只能引用真实存在的 chunk 序号，并附上原文中的连续片段。</dd>
+              </dl>
+            </article>
+            <article data-layer-panel="point" hidden>
+              <h3>Knowledge Point</h3>
+              <dl>
+                <dt>它是什么</dt>
+                <dd>从内容里抽出的、具有独立语义和价值的知识单元。可以是几句话，也可以是一句话里的几个独立意思。</dd>
+                <dt>为什么需要</dt>
+                <dd>过渡句和修辞没有长期价值。先把值得留下的意思单独拿走。</dd>
+                <dt>在产品中如何使用</dt>
+                <dd>每个知识点带着 source quote：必须是原文连续片段，不能改写。这是溯源的第一层。</dd>
+              </dl>
+            </article>
+            <article data-layer-panel="knowledge" hidden>
+              <h3>Knowledge</h3>
+              <dl>
+                <dt>它是什么</dt>
+                <dd>把知识点去重、聚合、抽象之后，形成的可长期沉淀、检索和关联的知识对象。</dd>
+                <dt>为什么需要</dt>
+                <dd>知识点仍然贴近局部原文。知识对象才是以后会被嵌入、召回和关联的东西。</dd>
+                <dt>在产品中如何使用</dt>
+                <dd>高度重复的点会合并。一个点也可以支撑多个知识。数字、时间、人物、条件和预测不得被改写成更确定的说法。</dd>
+              </dl>
+            </article>
+            <article data-layer-panel="core" hidden>
+              <h3>Core Knowledge</h3>
+              <dl>
+                <dt>它是什么</dt>
+                <dd>从多个 Knowledge 中进一步识别出的高价值核心知识。一份文档原则上 3 到 6 条；不够就不凑。</dd>
+                <dt>为什么需要</dt>
+                <dd>不是每条知识都同样重要。核心知识是用户以后最值得重新看见的那一层。</dd>
+                <dt>在产品中如何使用</dt>
+                <dd>类别只包括结论、关键事实、定义、逻辑关系、重要清单和核心论点。多个知识可以被二次抽象成一条核心知识，并记录来源序号。</dd>
+              </dl>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="contrast">
+      <div class="wrap">
+        <div class="reveal">
+          <span class="index">06</span>
+          <h2>小豆不是总结器</h2>
+          <p class="sub">一次 AI 处理只是开始。持续形成个人知识，才是产品目标。</p>
+        </div>
+        <div class="compare reveal">
+          <article>
+            <span class="pill">传统 AI 文件处理</span>
+            <ol>
+              <li>上传</li>
+              <li>总结</li>
+              <li>结束</li>
+            </ol>
+          </article>
+          <article class="long">
+            <span class="pill" data-state="live">小豆</span>
+            <ol>
+              <li>上传</li>
+              <li>理解</li>
+              <li>Knowledge</li>
+              <li>Embedding</li>
+              <li>语义关联</li>
+              <li>AI Brief <i class="pill" data-state="beta">Beta 1.2</i></li>
+              <li>回顾 <i class="pill" data-state="beta">Beta 1.2</i></li>
+              <li>问答 <i class="pill" data-state="beta">Beta 1.2</i></li>
+              <li>继续积累</li>
+            </ol>
+            <p class="end">处理完成的时候，知识才刚刚可以开始被使用。</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="network">
+      <div class="wrap">
+        <div class="reveal">
+          <span class="index">07</span>
+          <h2>关联要回答“为什么”，不只是“像不像”</h2>
+          <p class="sub">Embedding 负责找到可能相关的知识，Agent 负责判断为什么相关。向量相似度高，并不等于存在真实的信息关系。下面四种关系来自当前 Agent 的判断集合。</p>
+        </div>
+        <div class="net-wrap reveal">
+          <div class="net">
+            <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+              <line data-edge="b" x1="50" y1="50" x2="20" y2="24" />
+              <line data-edge="c" x1="50" y1="50" x2="80" y2="24" />
+              <line data-edge="d" x1="50" y1="50" x2="20" y2="78" />
+              <line data-edge="e" x1="50" y1="50" x2="80" y2="78" />
+            </svg>
+            <button class="net__node core is-on" type="button" data-rel="a" style="left:50%;top:50%"><b>Knowledge A</b><small>外部结构分担工作记忆</small></button>
+            <button class="net__node" type="button" data-rel="b" style="left:20%;top:24%"><b>补充</b><small>同主题补全</small></button>
+            <button class="net__node" type="button" data-rel="c" style="left:80%;top:24%"><b>因果</b><small>前提与推导</small></button>
+            <button class="net__node" type="button" data-rel="d" style="left:20%;top:78%"><b>同源</b><small>共享概念基础</small></button>
+            <button class="net__node" type="button" data-rel="e" style="left:80%;top:78%"><b>对比</b><small>同类对象对照</small></button>
+          </div>
+          <div>
+            <article data-rel-copy="a">
+              <h3 class="display" style="font-size:32px;margin:0">示意网络</h3>
+              <p class="sub">节点内容来自产品里的认知负荷示例，只用于说明关系，不是实时知识库。</p>
+            </article>
+            <article data-rel-copy="b" hidden>
+              <h3 class="display" style="font-size:32px;margin:0">同主题补充</h3>
+              <p class="sub">SAME_TOPIC_COMPLEMENT。同一主题下互相补全，例如把“外化成可检索笔记”补进工作记忆这条知识。</p>
+            </article>
+            <article data-rel-copy="c" hidden>
+              <h3 class="display" style="font-size:32px;margin:0">因果逻辑</h3>
+              <p class="sub">CAUSAL_LOGICAL。前提、因果或推导承接。外在负荷下降，当前推理才有空间。</p>
+            </article>
+            <article data-rel-copy="d" hidden>
+              <h3 class="display" style="font-size:32px;margin:0">概念同源</h3>
+              <p class="sub">CONCEPT_SAME_ORIGIN。共享核心概念或定义基础，而不是仅仅用了相近的词。</p>
+            </article>
+            <article data-rel-copy="e" hidden>
+              <h3 class="display" style="font-size:32px;margin:0">同类对比</h3>
+              <p class="sub">SAME_CATEGORY_COMPARISON。笔记、图表、知识库都是外部存储，可以对照，但不是同一句话的复述。</p>
+            </article>
+            <ol class="steps">
+              <li>Embedding</li>
+              <li>Candidate Retrieval</li>
+              <li>AI Semantic Understanding</li>
+              <li>Relation Judgment</li>
+              <li>Knowledge Relation</li>
+            </ol>
+            <p class="sub">知识写入 Qdrant 的向量是 1024 维、余弦距离。召回之后，Agent 看不到相似度数字，必须根据两边内容给出关系类型和理由。完全重复、只有主题词相似、原文无法支撑的关系，都不会被收下。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="brief">
+      <div class="wrap" data-tabs>
+        <div class="reveal">
+          <span class="index">08</span>
+          <h2>AI 简报 <i class="pill" data-state="beta">Beta 1.2</i></h2>
+          <p class="sub">发现和提醒的管道还没有上线。知识库原型里已经能切换两条静态卡片，用来预览交叉关联和遗忘提醒，数据是写好的。</p>
+          <div class="tabs" role="tablist" aria-label="AI 简报">
+            <button type="button" role="tab" id="tab-cross" aria-controls="panel-cross" aria-selected="true">交叉关联发现</button>
+            <button type="button" role="tab" id="tab-forget" aria-controls="panel-forget" aria-selected="false" tabindex="-1">遗忘曲线提醒</button>
+          </div>
+        </div>
+        <article class="panel tab-panel reveal" role="tabpanel" id="panel-cross" aria-labelledby="tab-cross">
+          <h3>新知识遇见历史知识</h3>
+          <ol class="path">
+            <li>一条新的 Knowledge 进入个人知识库</li>
+            <li>与更早留下的知识放在一起看</li>
+            <li>AI 发现它们之间的关联</li>
+            <li>这些关联可以长成一个新的主题</li>
+          </ol>
+          <p class="sub">已实现的 Related Knowledge 判断的是两条知识为什么相关。简报里的交叉关联更进一步：把这种关系主动交给用户，并收成主题。后者仍是规划。</p>
+        </article>
+        <article class="panel tab-panel reveal" role="tabpanel" id="panel-forget" aria-labelledby="tab-forget" hidden>
+          <h3>过一段时间，再看见一次</h3>
+          <ol class="path">
+            <li>过去已经理解过的知识</li>
+            <li>超过一定时间没有被使用</li>
+            <li>系统重新提醒</li>
+            <li>用户回到原始知识，而不是只看到一句提醒</li>
+          </ol>
+          <p class="sub">遗忘提醒的具体时间规则还没有产品化。这里只说明方向：提醒必须能回到原来的知识。</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="journey">
+      <div class="wrap">
+        <div class="reveal">
+          <span class="index">09</span>
+          <h2>三条使用路径</h2>
+          <p class="sub">点开路径，再点开每一步。手机里的界面是作品集静态演示，使用当前产品的暖色界面，不是实时数据。</p>
+        </div>
+        <div class="journey-nav reveal" role="group" aria-label="选择路径">
+          <button type="button" data-journey="a" aria-pressed="true">Journey A<small>PDF 已实现</small></button>
+          <button type="button" data-journey="b" aria-pressed="false">Journey B<small>录音 · Beta 1.2</small></button>
+          <button type="button" data-journey="c" aria-pressed="false">Journey C<small>持续使用 · Beta 1.2</small></button>
+        </div>
+
+        <div data-journey-panel="a">
+          <div class="journey">
+            <div class="jsteps">
+              <button class="is-on" type="button" data-jstep="a1">PDF <span class="pill" data-state="live">已实现</span></button>
+              <button type="button" data-jstep="a2">AI 理解 <span class="pill" data-state="live">已实现</span></button>
+              <button type="button" data-jstep="a3">Knowledge <span class="pill" data-state="live">已实现</span></button>
+              <button type="button" data-jstep="a4">Core Knowledge <span class="pill" data-state="live">已实现</span></button>
+              <button type="button" data-jstep="a5">知识库 <span class="pill" data-state="live">已实现</span></button>
+            </div>
+            <div class="phone">
+              <div class="phone__bar"><span>10:32</span><span>知识库</span></div>
+              <div class="phone__screen" data-jscreen="a1">
+                <span class="demo-tag">Portfolio Demo</span>
+                <h3>认知负荷理论_Sweller.pdf</h3>
+                <p>PDF · 已加入处理队列</p>
+                <div class="row"><b>上传完成</b><span>只接受 PDF。文本抽取从这里开始。</span></div>
+              </div>
+              <div class="phone__screen" data-jscreen="a2" hidden>
+                <span class="demo-tag">Portfolio Demo</span>
+                <h3>正在理解</h3>
+                <p>抽取文本、保存正文、分块、生成摘要，再生成知识。</p>
+                <div class="row"><b>当前步骤</b><span>GENERATE_KNOWLEDGE</span><div class="meter"><i></i></div></div>
+              </div>
+              <div class="phone__screen" data-jscreen="a3" hidden>
+                <span class="demo-tag">Portfolio Demo</span>
+                <h3>外部结构可以分担工作记忆</h3>
+                <p>由知识点聚合而成。限定词保持原文。</p>
+                <div class="row"><b>出处</b><span>p.6 · 原文连续摘录，可回溯到 Chunk</span></div>
+              </div>
+              <div class="phone__screen" data-jscreen="a4" hidden>
+                <span class="demo-tag">Portfolio Demo</span>
+                <h3>核心结论</h3>
+                <p>把复杂概念外化成可检索结构，相当于扩展工作记忆。</p>
+                <div class="row"><b>CORE_CONCLUSION</b><span>一份文档通常 3 到 6 条，不凑数。</span></div>
+              </div>
+              <div class="phone__screen" data-jscreen="a5" hidden>
+                <span class="demo-tag">Portfolio Demo</span>
+                <h3>知识库</h3>
+                <p>知识对象可以按文件查询，也可以查看它的相关知识。</p>
+                <div class="row"><b>认知负荷理论_Sweller.pdf</b><span>已拆解 · 可看出处</span></div>
+              </div>
+              <div class="phone__tabs"><b>知识库</b><span>问小豆</span><span>文件库</span><i>搜索</i></div>
+            </div>
+          </div>
+        </div>
+
+        <div data-journey-panel="b" hidden>
+          <div class="journey">
+            <div class="jsteps">
+              <button class="is-on" type="button" data-jstep="b1">录音 <span class="pill" data-state="beta">Beta 1.2</span></button>
+              <button type="button" data-jstep="b2">实时转写 <span class="pill" data-state="beta">Beta 1.2</span></button>
+              <button type="button" data-jstep="b3">说话人分离 <span class="pill" data-state="beta">Beta 1.2</span></button>
+              <button type="button" data-jstep="b4">AI 总结 <span class="pill" data-state="beta">Beta 1.2</span></button>
+              <button type="button" data-jstep="b5">Knowledge <span class="pill" data-state="beta">Beta 1.2</span></button>
+            </div>
+            <div class="phone">
+              <div class="phone__bar"><span>10:32</span><span>知识库</span></div>
+              <div class="phone__screen" data-jscreen="b1">
+                <span class="demo-tag">Portfolio Demo · 尚未上线</span>
+                <h3>00:42</h3>
+                <p>正在录音。这一阶段只做实时转写。</p>
+              </div>
+              <div class="phone__screen" data-jscreen="b2" hidden>
+                <span class="demo-tag">Portfolio Demo · 尚未上线</span>
+                <h3>转写在录音中出现</h3>
+                <p>今天讲到专家权：把知识外化成可检索笔记后，影响力不依赖当场表现。</p>
+                <div class="row"><b>还没有说话人</b><span>分离要等录音结束。</span></div>
+              </div>
+              <div class="phone__screen" data-jscreen="b3" hidden>
+                <span class="demo-tag">Portfolio Demo · 尚未上线</span>
+                <h3>录音已结束</h3>
+                <p class="who"><b>说话人 A</b> 专家权比职位权更稳。</p>
+                <p class="who"><b>说话人 B</b> 建议把认知负荷写进第二大脑。</p>
+                <div class="row"><b>Speaker Diarization</b><span>只在录音结束后进行。</span></div>
+              </div>
+              <div class="phone__screen" data-jscreen="b4" hidden>
+                <span class="demo-tag">Portfolio Demo · 尚未上线</span>
+                <h3>这节课在说什么</h3>
+                <p>知识一旦外化，影响力就不必依赖当场表现。</p>
+              </div>
+              <div class="phone__screen" data-jscreen="b5" hidden>
+                <span class="demo-tag">Portfolio Demo · 尚未上线</span>
+                <h3>进入 Knowledge</h3>
+                <p>转写和分离完成后，才沿用与 PDF 相同的知识对象。这一步还没有实现。</p>
+              </div>
+              <div class="phone__tabs"><b>知识库</b><span>问小豆</span><span>文件库</span><i>搜索</i></div>
+            </div>
+          </div>
+        </div>
+
+        <div data-journey-panel="c" hidden>
+          <div class="journey">
+            <div class="jsteps">
+              <button class="is-on" type="button" data-jstep="c1">Knowledge <span class="pill" data-state="live">已实现</span></button>
+              <button type="button" data-jstep="c2">AI 发现关联 <span class="pill" data-state="beta">Beta 1.2</span></button>
+              <button type="button" data-jstep="c3">AI Brief <span class="pill" data-state="beta">Beta 1.2</span></button>
+              <button type="button" data-jstep="c4">回顾 <span class="pill" data-state="beta">Beta 1.2</span></button>
+              <button type="button" data-jstep="c5">问小豆 <span class="pill" data-state="beta">Beta 1.2</span></button>
+            </div>
+            <div class="phone">
+              <div class="phone__bar"><span>10:32</span><span>问小豆</span></div>
+              <div class="phone__screen" data-jscreen="c1">
+                <span class="demo-tag">Portfolio Demo</span>
+                <h3>已有的知识对象</h3>
+                <p>语义关联已经可以发生。简报和问答还没有接上。</p>
+                <div class="row"><b>Related Knowledge</b><span>已实现，理由来自 Agent。</span></div>
+              </div>
+              <div class="phone__screen" data-jscreen="c2" hidden>
+                <span class="demo-tag">Portfolio Demo · 尚未上线</span>
+                <h3>交叉关联</h3>
+                <p>新的课堂笔记，和上周的 Sweller 摘录在说同一件事。</p>
+                <div class="row"><b>形成主题</b><span>这一步属于 AI 简报，不是已上线的关系判断。</span></div>
+              </div>
+              <div class="phone__screen" data-jscreen="c3" hidden>
+                <span class="demo-tag">Portfolio Demo · 尚未上线</span>
+                <h3>今天的简报</h3>
+                <div class="row"><b>交叉关联</b><span>工作记忆 · 刚刚</span></div>
+                <div class="row"><b>遗忘提醒</b><span>专家权 · 7 天前</span></div>
+              </div>
+              <div class="phone__screen" data-jscreen="c4" hidden>
+                <span class="demo-tag">Portfolio Demo · 尚未上线</span>
+                <h3>回到原文</h3>
+                <p>提醒打开的是当时的知识，而不是另一段摘要。</p>
+              </div>
+              <div class="phone__screen" data-jscreen="c5" hidden>
+                <span class="demo-tag">Portfolio Demo · 尚未上线</span>
+                <h3>问小豆</h3>
+                <p>认知负荷和我的录音有什么关系？</p>
+                <div class="row"><b>演示回答</b><span>静态文案。没有请求模型，也没有查询知识库。</span></div>
+              </div>
+              <div class="phone__tabs"><span>知识库</span><b>问小豆</b><span>文件库</span><i>搜索</i></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="architecture">
+      <div class="wrap">
+        <div class="reveal">
+          <span class="index">10</span>
+          <h2>Beta 1.2 的信息架构</h2>
+          <p class="sub">底部导航是知识库、问小豆、文件库。搜索是最右侧的独立按钮，全局搜索属于下一版本。Graph 留在规划里，不作为这版底部入口。</p>
+        </div>
+        <div class="ia reveal">
+          <div class="tree" role="tree" aria-label="信息架构">
+            <button type="button" data-ia="root" data-depth="0" class="is-on">小豆</button>
+            <button type="button" data-ia="library" data-depth="1">知识库</button>
+            <button type="button" data-ia="docs" data-depth="2">文档</button>
+            <button type="button" data-ia="audio" data-depth="2">录音</button>
+            <button type="button" data-ia="notes" data-depth="2">随笔</button>
+            <button type="button" data-ia="ask" data-depth="1">问小豆</button>
+            <button type="button" data-ia="chat" data-depth="2">对话</button>
+            <button type="button" data-ia="cite" data-depth="2">知识引用</button>
+            <button type="button" data-ia="bring" data-depth="2">简报带入</button>
+            <button type="button" data-ia="files" data-depth="1">文件库</button>
+            <button type="button" data-ia="topics" data-depth="2">主题集合</button>
+            <button type="button" data-ia="search" data-depth="1">全局搜索</button>
+            <button type="button" data-ia="graph" data-depth="1">Graph</button>
+          </div>
+          <div class="panel">
+            <article data-ia-panel="root">
+              <h3>小豆</h3>
+              <p>个人知识理解层。导航只放日常会反复进入的三个地方。</p>
+            </article>
+            <article data-ia-panel="library" hidden>
+              <h3>知识库 <i class="pill" data-state="live">知识对象已实现</i></h3>
+              <p>后端可以列出知识、查看详情、按文件查看，并读取相关知识。前端知识库同时承载采集，录音和随笔仍是 Beta 1.2 的界面原型。</p>
+            </article>
+            <article data-ia-panel="docs" hidden>
+              <h3>文档 <i class="pill" data-state="live">已实现</i></h3>
+              <p>PDF 上传、处理、摘要、知识点和知识对象。详情里可以回到原文摘录。</p>
+            </article>
+            <article data-ia-panel="audio" hidden>
+              <h3>录音 <i class="pill" data-state="beta">Beta 1.2</i></h3>
+              <p>过程中实时转写，结束后做说话人分离，再进入知识。当前没有这条后端管道。</p>
+            </article>
+            <article data-ia-panel="notes" hidden>
+              <h3>随笔 <i class="pill" data-state="beta">Beta 1.2</i></h3>
+              <p>随手记下的句子进入知识库。前端演示可以本地保存，尚未被理解成 Knowledge。</p>
+            </article>
+            <article data-ia-panel="ask" hidden>
+              <h3>问小豆 <i class="pill" data-state="beta">Beta 1.2</i></h3>
+              <p>底部导航的第二个入口。目标是基于个人知识对话。现在的回答是写死的演示。</p>
+            </article>
+            <article data-ia-panel="chat" hidden>
+              <h3>对话 <i class="pill" data-state="beta">Beta 1.2</i></h3>
+              <p>空态建议和输入框已经出现在界面原型里。没有模型请求。</p>
+            </article>
+            <article data-ia-panel="cite" hidden>
+              <h3>知识引用 <i class="pill" data-state="beta">Beta 1.2</i></h3>
+              <p>问答中的引用还未实现。知识对象本身引用知识点和原文摘录，这一层已经实现。</p>
+            </article>
+            <article data-ia-panel="bring" hidden>
+              <h3>简报带入 <i class="pill" data-state="beta">Beta 1.2</i></h3>
+              <p>从 AI 简报把一条关联或一条提醒带进对话。简报本身也还没上线。</p>
+            </article>
+            <article data-ia-panel="files" hidden>
+              <h3>文件库 <i class="pill" data-state="beta">Beta 1.2</i></h3>
+              <p>导航入口已经留出。当前是冷启动页面：说明主题会如何形成，并可以添加录音、随笔或文件。还没有真实的主题集合。</p>
+            </article>
+            <article data-ia-panel="topics" hidden>
+              <h3>主题集合 <i class="pill" data-state="beta">Beta 1.2</i></h3>
+              <p>把交叉关联收成可以再次进入的主题。属于文件库，尚未实现。</p>
+            </article>
+            <article data-ia-panel="search" hidden>
+              <h3>全局搜索 <i class="pill" data-state="next">下一版本</i></h3>
+              <p>按钮放在底部导航最右侧，当前不可用。不要把它看成已经完成的搜索。</p>
+            </article>
+            <article data-ia-panel="graph" hidden>
+              <h3>Graph <i class="pill" data-state="next">规划中</i></h3>
+              <p>关系可以被看见，是后续的理解视图。Beta 1.2 不把它放进底部导航。前端保留过图谱页面，但不是这版的入口。</p>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="map">
+      <div class="wrap">
+        <div class="reveal">
+          <span class="index">11</span>
+          <h2>能力地图</h2>
+          <p class="sub">按状态筛选。已实现表示当前产品代码里已经存在；Beta 1.2 是这一版要做的；下一版本不在这版范围内。</p>
+          <div class="filters" role="group" aria-label="筛选能力">
+            <button type="button" data-filter="all" class="is-on" aria-pressed="true">全部</button>
+            <button type="button" data-filter="input" aria-pressed="false">内容输入</button>
+            <button type="button" data-filter="understand" aria-pressed="false">AI 理解</button>
+            <button type="button" data-filter="manage" aria-pressed="false">知识管理</button>
+            <button type="button" data-filter="relate" aria-pressed="false">知识关联</button>
+            <button type="button" data-filter="discover" aria-pressed="false">主动发现</button>
+            <button type="button" data-filter="qa" aria-pressed="false">知识问答</button>
+          </div>
+        </div>
+        <div class="caps">
+          <article class="cap" data-cap="input"><i class="pill" data-state="live">已实现</i><b>PDF</b><p>上传并进入处理任务。当前文件类型就是 PDF。</p></article>
+          <article class="cap" data-cap="input"><i class="pill" data-state="beta">Beta 1.2</i><b>Recording</b><p>录音中实时转写，结束后再做说话人分离。</p></article>
+          <article class="cap" data-cap="input"><i class="pill" data-state="beta">Beta 1.2</i><b>Notes</b><p>随笔进入知识库，而不是停在备忘录。</p></article>
+          <article class="cap" data-cap="understand"><i class="pill" data-state="live">已实现</i><b>Summary</b><p>摘要、要点和引用一起保存。</p></article>
+          <article class="cap" data-cap="understand"><i class="pill" data-state="live">已实现</i><b>Knowledge Point</b><p>独立知识单元，引用原文连续片段。</p></article>
+          <article class="cap" data-cap="understand"><i class="pill" data-state="live">已实现</i><b>Core Knowledge</b><p>从知识中识别高价值核心，不凑数。</p></article>
+          <article class="cap" data-cap="understand"><i class="pill" data-state="beta">Beta 1.2</i><b>Speaker Transcript</b><p>转写与说话人分离属于录音方案，尚未实现。</p></article>
+          <article class="cap" data-cap="manage"><i class="pill" data-state="live">已实现</i><b>Knowledge Library</b><p>知识列表、详情、按文件查询的 API 已存在。</p></article>
+          <article class="cap" data-cap="manage"><i class="pill" data-state="live">已实现</i><b>Source Traceability</b><p>知识点回到 chunk、页码和原文摘录。</p></article>
+          <article class="cap" data-cap="manage"><i class="pill" data-state="beta">Beta 1.2</i><b>Topic Collection</b><p>文件库已有冷启动界面。主题还不会自动生成。</p></article>
+          <article class="cap" data-cap="relate"><i class="pill" data-state="live">已实现</i><b>Semantic Retrieval</b><p>Embedding 之后在 Qdrant 中召回候选。</p></article>
+          <article class="cap" data-cap="relate"><i class="pill" data-state="live">已实现</i><b>Related Knowledge</b><p>Agent 判断关系类型、理由、强度和信息增量。</p></article>
+          <article class="cap" data-cap="relate"><i class="pill" data-state="beta">Beta 1.2</i><b>Cross Association</b><p>把新知识与历史知识主动收成主题。尚未上线。</p></article>
+          <article class="cap" data-cap="discover"><i class="pill" data-state="beta">Beta 1.2</i><b>AI Brief</b><p>交叉关联与遗忘提醒的主动表面。</p></article>
+          <article class="cap" data-cap="discover"><i class="pill" data-state="beta">Beta 1.2</i><b>Forgetting Curve</b><p>超时后提醒，并回到原始知识。</p></article>
+          <article class="cap" data-cap="qa"><i class="pill" data-state="beta">Beta 1.2</i><b>Ask Xiaodou</b><p>导航和对话界面已有原型，未接入知识库。</p></article>
+          <article class="cap" data-cap="qa"><i class="pill" data-state="beta">Beta 1.2</i><b>Knowledge Citation</b><p>问答中的引用。对象级溯源已经另算在知识管理里。</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="diff">
+      <div class="wrap">
+        <div class="reveal">
+          <span class="index">12</span>
+          <h2>差异在机制里</h2>
+        </div>
+        <div class="mechs reveal">
+          <article class="mech">
+            <h3>Knowledge First</h3>
+            <p>产品围绕 Knowledge，而不是围绕文件列表。文件是来源。用户以后反复使用的是知识对象、它的来源和它的关系。</p>
+          </article>
+          <article class="mech">
+            <h3>Active Discovery</h3>
+            <p>已实现的部分会在嵌入完成后判断关系，而不是只等关键词搜索。Beta 1.2 希望把这种发现主动送到简报里。搜索本身放到下一版本。</p>
+          </article>
+          <article class="mech">
+            <h3>Traceable AI</h3>
+            <p>知识点必须引用原文连续片段。知识引用知识点。核心知识引用知识。生成物可以回到当时的那一页，而不是停在一段无法核对的转述。</p>
+          </article>
+          <article class="mech">
+            <h3>Continuous Knowledge Loop</h3>
+            <div>
+              <p>输入之后并不结束。</p>
+              <ol class="loop">
+                <li>输入</li><li>理解</li><li>沉淀</li><li>关联</li><li>回顾</li><li>问答</li><li>再输入</li>
+              </ol>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="moat">
+      <div class="wrap">
+        <div class="reveal">
+          <span class="index">13</span>
+          <h2>长期价值来自持续积累</h2>
+          <p class="sub">产品希望通过长期知识积累，形成可持续增强的个人知识资产。这里没有用户规模，也不把尚未发生的积累说成已经形成的数据壁垒。</p>
+        </div>
+        <div class="moat reveal">
+          <ol>
+            <li><strong>用户持续输入</strong>每一次真的留下内容</li>
+            <li><strong>Personal Content</strong>文件、以及未来的录音和随笔</li>
+            <li><strong>Knowledge Corpus</strong>被理解之后的知识对象</li>
+            <li><strong>Knowledge Structure</strong>核心知识与来源关系</li>
+            <li><strong>Semantic Relationships</strong>为什么相关，而不只是相似</li>
+            <li><strong>User Behavior</strong>回顾、提问、再次使用。大多仍在 Beta 1.2</li>
+            <li><strong>Personal Knowledge System</strong>属于这个人的知识系统</li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="progress">
+      <div class="wrap" data-tabs>
+        <div class="reveal">
+          <span class="index">14</span>
+          <h2>现在做到哪里</h2>
+          <p class="sub">没有用户量、留存、收入或 GMV。这些数字目前没有可公开的事实。下面只列能力状态。</p>
+          <div class="tabs" role="tablist" aria-label="产品进展">
+            <button type="button" role="tab" id="tab-done" aria-controls="panel-done" aria-selected="true">已完成</button>
+            <button type="button" role="tab" id="tab-beta" aria-controls="panel-beta" aria-selected="false" tabindex="-1">Beta 1.2</button>
+            <button type="button" role="tab" id="tab-next" aria-controls="panel-next" aria-selected="false" tabindex="-1">下一版本</button>
+          </div>
+        </div>
+        <div class="panel tab-panel" role="tabpanel" id="panel-done" aria-labelledby="tab-done">
+          <ul class="prog-grid">
+            <li>PDF Upload</li>
+            <li>PDF Processing</li>
+            <li>Summary</li>
+            <li>Knowledge Point</li>
+            <li>Knowledge</li>
+            <li>Core Knowledge</li>
+            <li>Embedding</li>
+            <li>Qdrant</li>
+            <li>Related Knowledge</li>
+            <li>Knowledge API</li>
+            <li>Knowledge Base</li>
+          </ul>
+          <p class="sub">处理顺序是：抽取文本、保存正文、分块、生成摘要、生成并保存知识。嵌入完成后才会判断相关知识。知识 API 提供列表、详情、按文件查询和相关知识。</p>
+        </div>
+        <div class="panel tab-panel" role="tabpanel" id="panel-beta" aria-labelledby="tab-beta" hidden>
+          <ul class="prog-grid">
+            <li>文件库</li>
+            <li>AI Brief</li>
+            <li>遗忘提醒</li>
+            <li>交叉关联</li>
+            <li>主题集合</li>
+            <li>问小豆</li>
+            <li>录音</li>
+            <li>随笔</li>
+          </ul>
+          <p class="sub">前端已经有三个导航，以及禁用的搜索按钮。知识库原型里可以切换两条静态简报：交叉关联和遗忘提醒。文件库是冷启动说明，还没有主题。问小豆可以选择本地条目做引用，回答仍是写好的演示，没有请求模型。</p>
+        </div>
+        <div class="panel tab-panel" role="tabpanel" id="panel-next" aria-labelledby="tab-next" hidden>
+          <ul class="plain-list">
+            <li>全局搜索。按钮的位置已经留好，功能不属于 Beta 1.2。</li>
+            <li>Graph 保留在更后的产品规划中，不作为 Beta 1.2 的底部导航。</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="roadmap">
+      <div class="wrap">
+        <div class="reveal">
+          <span class="index">15</span>
+          <h2>路线没有编造日期</h2>
+          <p class="sub">每个阶段只写目标，以及代表这个阶段的能力。时间以实际交付为准。</p>
+        </div>
+        <div class="road">
+          <article class="reveal">
+            <h3>Foundation</h3>
+            <p>核心目标：让文件可以被接收，处理过程可以被追踪。</p>
+            <p>代表能力：健康检查、PDF 上传、任务状态。</p>
+          </article>
+          <article class="reveal">
+            <h3>PDF → Knowledge</h3>
+            <p>核心目标：一份文档变成可回溯的知识对象。</p>
+            <p>代表能力：Chunk、Summary、Knowledge Point、Knowledge、Core Knowledge。</p>
+          </article>
+          <article class="reveal">
+            <h3>Semantic Layer</h3>
+            <p>核心目标：知识能被召回，并且关系说得清理由。</p>
+            <p>代表能力：Embedding、Qdrant、Related Knowledge。</p>
+          </article>
+          <article class="reveal">
+            <h3>Beta 1.2</h3>
+            <p>核心目标：把理解层接到每天的使用里。</p>
+            <p>代表能力：文件库、录音、随笔、问小豆、AI 简报、主题集合。</p>
+          </article>
+          <article class="reveal">
+            <h3>Multi-source Knowledge</h3>
+            <p>核心目标：录音和随笔进入与 PDF 相同的知识管道。</p>
+            <p>代表能力：转写后的 Knowledge、结束后的说话人分离、跨来源关联。</p>
+          </article>
+          <article class="reveal">
+            <h3>Personal Knowledge System</h3>
+            <p>核心目标：个人知识形成可以回访的结构。</p>
+            <p>代表能力：遗忘提醒成为习惯、主题持续生长、Graph 作为理解视图。</p>
+          </article>
+          <article class="reveal">
+            <h3>Personal AI</h3>
+            <p>核心目标：小豆依据这个人的知识回答，而不是做一次无关的总结。</p>
+            <p>代表能力：带来源的问答、全局搜索。</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section vision" id="vision">
+      <div class="wrap reveal">
+        <span class="index">愿景</span>
+        <h2>今天，用户拥有大量信息。<br>未来，每一份信息都可以成为个人知识的一部分。</h2>
+        <p class="sub">小豆希望成为你的 Personal Knowledge Understanding Layer。</p>
+        <ol class="cascade">
+          <li>Information</li>
+          <li>Understanding</li>
+          <li>Knowledge</li>
+          <li>Connection</li>
+          <li>Memory</li>
+          <li>Intelligence</li>
+        </ol>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <div class="wrap">小豆产品作品集。页面自包含，不连接后端、数据库或模型。界面中的 Tina 与课堂内容都是静态演示。</div>
+  </footer>
+  <button class="to-top" type="button" aria-label="返回顶部">↑</button>
+  <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,28 @@
+# dependencies
+node_modules/
+
+# build output — keep these directories on disk; Git must not track them
+frontend/dist/
+backend/dist/
+
+# secrets
+backend/.env
+
+# runtime data
+backend/data/
+backend/uploads/
+backend/logs/
+
+# databases and sidecars
+*.db
+*.db-wal
+*.db-shm
+*.sqlite
+*.sqlite3
+*.sqlite-wal
+*.sqlite-shm
+
+# logs, coverage, temporary test output
+*.log
+coverage/
+**/.tmp/

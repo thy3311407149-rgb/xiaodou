@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=393, height=852" />
+  <title>相关知识 · 第二大脑</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="../css/common.css" />
+  <style>
+    .sheet-mask {
+      position: absolute; inset: 0; background: rgba(43,43,43,.4); z-index: 35;
+      display: flex; align-items: flex-end;
+    }
+    .related-panel {
+      width: 100%; background: var(--surface); border-radius: 18px 18px 0 0;
+      max-height: 88%; overflow-y: auto; padding: 16px 18px calc(18px + var(--safe-bottom));
+    }
+    .meta-tag {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 11px; font-weight: 700; color: var(--ai);
+      background: var(--purple-soft); padding: 4px 10px; border-radius: var(--pill); margin: 8px 0 14px;
+    }
+    .hl-bar {
+      box-shadow: inset 3px 0 0 #7C5CFA;
+      background: rgba(124,92,250,.06);
+      padding: 12px 12px 12px 14px; margin: 0 -6px 10px; border-radius: 0 10px 10px 0;
+    }
+    .behind { filter: blur(1px); opacity: .5; pointer-events: none; }
+  </style>
+</head>
+<body>
+  <div class="phone">
+    <div class="status-bar">
+      <span class="time-pill">9:41</span>
+      <div class="right">
+        <span class="signal"><i></i><i></i><i></i><i></i></span>
+        <span>5G</span>
+        <i class="fa-solid fa-battery-full"></i>
+      </div>
+    </div>
+
+    <div class="main with-tab behind">
+      <div class="back-row"><span><i class="fa-solid fa-chevron-left"></i> 详情</span></div>
+      <h1 class="article-title">认知负荷理论_Sweller.pdf</h1>
+    </div>
+
+    <div class="sheet-mask">
+      <div class="related-panel">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <b style="font-size:15px">相关知识</b>
+          <a href="detail.html" style="color:var(--ink-2);font-size:13px;font-weight:600;text-decoration:none">关闭</a>
+        </div>
+        <div class="meta-tag"><i class="fa-solid fa-circle-nodes"></i> 概念节点 · 相关度 96%</div>
+
+        <h2 style="font-size:20px;font-family:var(--serif);font-weight:600;margin-bottom:8px">认知负荷</h2>
+        <p style="font-size:13px;color:var(--ink-2);line-height:1.65;margin-bottom:14px">
+          本文的核心概念节点。后文的组块化、外部存储与样例学习，都是围绕如何管理这一负荷展开。
+        </p>
+
+        <div class="article-h" style="margin-top:8px">关联说明</div>
+        <div style="font-size:14px;line-height:1.75">
+          <p style="margin-bottom:10px">认知负荷描述学习者在工作记忆中处理信息时所承受的心理负担。容量有限时，任何多余干扰都会挤占真正用于理解与建构的资源。</p>
+          <p>在个人知识库场景中，把概念外化为可检索笔记，本质上是用外部结构分担工作记忆压力。</p>
+        </div>
+
+        <div class="article-h">同步点亮篇章</div>
+        <div class="hl-bar">
+          <div style="font-size:12px;font-weight:700;color:var(--ai)">p.2 · 三类负荷</div>
+          <div style="font-size:13px;margin-top:4px;color:var(--ink)">先分清负荷类型，再决定是改呈现方式还是拆分材料。</div>
+        </div>
+        <div class="hl-bar">
+          <div style="font-size:12px;font-weight:700;color:var(--ai)">p.14 · 外部存储</div>
+          <div style="font-size:13px;margin-top:4px;color:var(--ink)">把知识外化到笔记，作为扩展工作记忆的策略。</div>
+        </div>
+
+        <p style="font-size:11px;color:var(--ink-3);margin:12px 0 16px;line-height:1.5">
+          黄色高亮为与当前文档对应的关联片段；上方篇章也会同步点亮。
+        </p>
+
+        <div style="display:flex;gap:8px">
+          <a class="btn btn-ghost" href="pdf-preview.html" style="flex:1">看原文</a>
+          <a class="btn btn-primary" href="ask-chat.html" style="flex:1">问小豆</a>
+        </div>
+      </div>
+    </div>
+
+    <nav class="tabbar">
+      <a class="tab on" href="library.html"><span class="ico"><i class="fa-solid fa-book"></i></span><span>知识库</span></a>
+      <a class="tab" href="ask.html"><span class="ico"><i class="fa-solid fa-comments"></i></span><span>问小豆</span></a>
+      <a class="tab" href="graph.html"><span class="ico"><i class="fa-solid fa-share-nodes"></i></span><span>小豆图谱</span></a>
+    </nav>
+    <div class="home-indicator"></div>
+  </div>
+</body>
+</html>

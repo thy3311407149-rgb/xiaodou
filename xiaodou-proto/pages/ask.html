@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=393, height=852" />
+  <title>问小豆 · 第二大脑</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="../css/common.css" />
+  <style>
+    .ask-wrap { display: flex; flex-direction: column; height: 100%; }
+    .chat { flex: 1; overflow-y: auto; padding: 8px 20px 16px; }
+    .ask-greet { text-align: center; padding: 28px 12px 18px; }
+    .ask-greet img { width: 88px; height: 96px; margin: 0 auto 12px; display: block; }
+    .ask-greet h2 { font-size: 22px; font-weight: 600; letter-spacing: -.3px; }
+    .ask-greet p { margin-top: 8px; font-size: 13px; color: var(--ink-2); line-height: 1.55; }
+    .suggests { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
+    .suggests a {
+      display: block; text-align: left; padding: 12px 14px;
+      background: var(--surface); border: 1px solid var(--line); border-radius: 14px;
+      font-size: 13px; color: var(--ink); font-weight: 500; text-decoration: none; line-height: 1.45;
+    }
+    .composer {
+      position: absolute;
+      left: 0; right: 0;
+      bottom: calc(var(--tab-h) + var(--safe-bottom));
+      padding: 10px 16px;
+      background: rgba(245,242,237,.94); backdrop-filter: blur(12px);
+      border-top: 1px solid var(--line);
+      display: flex; gap: 8px; align-items: center;
+      z-index: 30;
+    }
+    .input-pill {
+      flex: 1; height: 44px; background: var(--surface); border: 1px solid var(--line);
+      border-radius: var(--pill); display: flex; align-items: center; gap: 6px; padding: 0 6px 0 10px;
+    }
+    .input-pill input {
+      flex: 1; border: 0; outline: none; background: transparent; font-size: 14px; font-family: inherit; color: var(--ink);
+    }
+    .input-pill input::placeholder { color: var(--ink-3); }
+    .cam-btn, .tool-btn {
+      width: 32px; height: 32px; border: 0; background: transparent; color: var(--ink-2);
+      display: grid; place-items: center; font-size: 16px;
+    }
+    .send-btn {
+      width: 44px; height: 44px; border-radius: 50%; border: 0;
+      background: var(--accent); color: #fff; display: grid; place-items: center; font-size: 15px;
+      text-decoration: none;
+    }
+    .chat { padding-bottom: 70px; }
+  </style>
+</head>
+<body>
+  <div class="phone">
+    <div class="status-bar">
+      <span class="time-pill">9:41</span>
+      <div class="right">
+        <span class="signal"><i></i><i></i><i></i><i></i></span>
+        <span>5G</span>
+        <i class="fa-solid fa-battery-full"></i>
+      </div>
+    </div>
+
+    <div style="padding:0 20px;display:flex;align-items:center;justify-content:space-between">
+      <a href="library.html" style="color:var(--ink);font-size:14px;font-weight:600;text-decoration:none">
+        <i class="fa-solid fa-chevron-left"></i>
+      </a>
+      <div style="font-size:15px;font-weight:700">问小豆</div>
+      <a href="settings.html" class="icon-btn" style="width:32px;height:32px"><i class="fa-solid fa-ellipsis"></i></a>
+    </div>
+
+    <div class="ask-wrap" style="flex:1;min-height:0;display:flex;flex-direction:column">
+      <div class="chat">
+        <div class="ask-greet">
+          <img src="../assets/xiaodou-wave.svg" alt="小豆" />
+          <h2>Hi, Tina</h2>
+          <p>我是小豆，聊天、写作、搜索都在行，助你灵感无限</p>
+        </div>
+        <div class="suggests">
+          <a href="ask-chat.html">认知负荷和我的录音有什么关系？</a>
+          <a href="ask-chat.html">帮我列小组作业要用的三点</a>
+          <a href="ask-chat.html">总结今天的课堂录音</a>
+        </div>
+      </div>
+      <div class="composer">
+        <div class="input-pill">
+          <button class="cam-btn" type="button"><i class="fa-solid fa-camera"></i></button>
+          <input type="text" placeholder="发消息或按住说话…" />
+          <button class="tool-btn" type="button"><i class="fa-solid fa-microphone"></i></button>
+        </div>
+        <a class="send-btn" href="ask-chat.html"><i class="fa-solid fa-paper-plane"></i></a>
+      </div>
+    </div>
+
+    <!-- 底部仍保留 Tab 以便平铺对照；问小豆全屏态用绝对定位叠在输入条上方 -->
+    <nav class="tabbar" style="display:flex">
+      <a class="tab" href="library.html"><span class="ico"><i class="fa-solid fa-book"></i></span><span>知识库</span></a>
+      <a class="tab on" href="ask.html"><span class="ico"><i class="fa-solid fa-comments"></i></span><span>问小豆</span></a>
+      <a class="tab" href="graph.html"><span class="ico"><i class="fa-solid fa-share-nodes"></i></span><span>小豆图谱</span></a>
+    </nav>
+    <div class="home-indicator"></div>
+  </div>
+</body>
+</html>

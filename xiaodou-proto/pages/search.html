@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=393, height=852" />
+  <title>搜索 · 第二大脑</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="../css/common.css" />
+  <style>
+    .search-bar {
+      display: flex; align-items: center; gap: 8px; height: 42px;
+      padding: 0 14px; background: var(--surface); border: 1px solid var(--line);
+      border-radius: var(--pill); margin-bottom: 14px;
+    }
+    .search-bar input {
+      flex: 1; border: 0; outline: none; background: transparent;
+      font-size: 14px; font-family: inherit; color: var(--ink);
+    }
+    .hit mark {
+      background: rgba(124,92,250,.18); color: var(--ai); border-radius: 3px; padding: 0 2px;
+    }
+  </style>
+</head>
+<body>
+  <div class="phone">
+    <div class="status-bar">
+      <span class="time-pill">9:41</span>
+      <div class="right">
+        <span class="signal"><i></i><i></i><i></i><i></i></span>
+        <span>5G</span>
+        <i class="fa-solid fa-battery-full"></i>
+      </div>
+    </div>
+
+    <div class="main with-tab">
+      <div class="back-row">
+        <a href="library.html"><i class="fa-solid fa-chevron-left"></i> 返回</a>
+        <span style="font-size:15px;font-weight:700;margin-left:4px">搜索</span>
+      </div>
+
+      <div class="search-bar">
+        <i class="fa-solid fa-magnifying-glass" style="color:var(--ink-3)"></i>
+        <input type="search" value="认知负荷" />
+        <i class="fa-solid fa-xmark" style="color:var(--ink-3)"></i>
+      </div>
+
+      <div class="filter-row">
+        <span class="chip on">全部</span>
+        <span class="chip">笔记</span>
+        <span class="chip">录音</span>
+        <span class="chip">文档要点</span>
+      </div>
+
+      <div class="section-label" style="margin-top:4px">录音 · 1</div>
+      <div class="card" style="padding:8px 16px">
+        <a class="item hit" href="detail-voice.html">
+          <div class="badge" style="color:#6B86B2"><i class="fa-solid fa-waveform-lines"></i></div>
+          <div>
+            <h4>组织行为学 · 第3讲</h4>
+            <p>建议把「<mark>认知负荷</mark>」和「组块」写进第二大脑…</p>
+          </div>
+        </a>
+      </div>
+
+      <div class="section-label">文档要点 · 2</div>
+      <div class="card" style="padding:8px 16px">
+        <a class="item hit" href="detail.html">
+          <div class="badge" style="padding:0">
+            <img src="https://images.unsplash.com/photo-1456513080800-b6bbe86bb991?w=120&h=120&fit=crop" alt="" />
+          </div>
+          <div>
+            <h4>认知负荷理论_Sweller.pdf</h4>
+            <p>p.2 · 三类负荷：内在、外在、相关 — <mark>认知负荷</mark>基本分类</p>
+          </div>
+        </a>
+        <a class="item hit" href="pdf-preview.html">
+          <div class="badge"><i class="fa-solid fa-bookmark"></i></div>
+          <div>
+            <h4>外部存储可降低内在负荷</h4>
+            <p>p.14 · 把概念外化为可检索笔记，相当于扩展工作记忆</p>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <nav class="tabbar">
+      <a class="tab on" href="library.html"><span class="ico"><i class="fa-solid fa-book"></i></span><span>知识库</span></a>
+      <a class="tab" href="ask.html"><span class="ico"><i class="fa-solid fa-comments"></i></span><span>问小豆</span></a>
+      <a class="tab" href="graph.html"><span class="ico"><i class="fa-solid fa-share-nodes"></i></span><span>小豆图谱</span></a>
+    </nav>
+    <div class="home-indicator"></div>
+  </div>
+</body>
+</html>

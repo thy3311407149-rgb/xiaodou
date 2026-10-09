@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=393, height=852" />
+  <title>原文预览 · 第二大脑</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="../css/common.css" />
+  <style>
+    .sheet-mask {
+      position: absolute; inset: 0; background: rgba(43,43,43,.4); z-index: 35;
+      display: flex; align-items: flex-end;
+    }
+    .pdf-panel {
+      width: 100%; background: var(--surface); border-radius: 18px 18px 0 0;
+      max-height: 86%; overflow-y: auto; padding-bottom: calc(14px + var(--safe-bottom));
+    }
+    .pdf-panel .ph {
+      position: sticky; top: 0; z-index: 2;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 14px 18px 12px; background: var(--surface); border-bottom: 1px solid var(--line);
+    }
+    .pdf-panel .ph b { font-size: 14px; }
+    .pdf-panel .ph a { color: var(--ink-2); font-size: 13px; font-weight: 600; text-decoration: none; }
+    .pdf-body { padding: 16px 18px; font-size: 14px; line-height: 1.85; color: var(--ink); }
+    .pdf-body .page-tag {
+      display: inline-block; font-size: 11px; font-weight: 700; color: var(--ai);
+      background: var(--purple-soft); padding: 2px 8px; border-radius: var(--pill); margin-bottom: 10px;
+    }
+    .pdf-body .hl {
+      background: rgba(255, 214, 10, 0.45);
+      border-radius: 3px;
+    }
+    .behind { filter: blur(1px); opacity: .55; pointer-events: none; }
+  </style>
+</head>
+<body>
+  <div class="phone">
+    <div class="status-bar">
+      <span class="time-pill">9:41</span>
+      <div class="right">
+        <span class="signal"><i></i><i></i><i></i><i></i></span>
+        <span>5G</span>
+        <i class="fa-solid fa-battery-full"></i>
+      </div>
+    </div>
+
+    <div class="main with-tab behind">
+      <div class="back-row"><span><i class="fa-solid fa-chevron-left"></i> 知识库</span></div>
+      <h1 class="article-title">认知负荷理论_Sweller.pdf</h1>
+      <div class="article-meta">PDF · 18 页 · 已拆解</div>
+    </div>
+
+    <div class="sheet-mask">
+      <div class="pdf-panel">
+        <div class="ph">
+          <b>原文预览</b>
+          <a href="detail.html">关闭</a>
+        </div>
+        <div class="pdf-body">
+          <div class="page-tag">p.14</div>
+          <p style="color:var(--ink-2);margin-bottom:12px">工作记忆容量有限，但外部环境可以承担部分存储与组织功能。笔记、图表与知识库都可充当这一角色。</p>
+          <p>当复杂概念被外化为可检索的结构化笔记时，<span class="hl">部分加工可转移到外部环境，使工作记忆专注于当下推理</span>。这也是个人知识库能够成为「第二大脑」的理论基础。</p>
+          <p style="color:var(--ink-2);margin-top:12px">实践上，建议在学习后立刻完成结构化摘录，并保留页码回跳入口，以便核验与复用。</p>
+
+          <div style="margin-top:20px;padding:12px;background:var(--surface-2);border-radius:12px;border:1px solid var(--line)">
+            <div style="font-size:12px;font-weight:700;color:var(--ai);margin-bottom:6px"><i class="fa-solid fa-lightbulb"></i> 小豆提炼</div>
+            <div style="font-size:13px;line-height:1.6;color:var(--ink-2)">把复杂概念写进可检索的外部结构，相当于扩展工作记忆；个人知识库正是这一策略的产品化形态。</div>
+          </div>
+
+          <div style="display:flex;gap:8px;margin-top:16px">
+            <a class="btn btn-ghost" href="detail.html" style="flex:1">返回大纲</a>
+            <a class="btn btn-primary" href="related.html" style="flex:1">查看相关知识</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <nav class="tabbar">
+      <a class="tab on" href="library.html"><span class="ico"><i class="fa-solid fa-book"></i></span><span>知识库</span></a>
+      <a class="tab" href="ask.html"><span class="ico"><i class="fa-solid fa-comments"></i></span><span>问小豆</span></a>
+      <a class="tab" href="graph.html"><span class="ico"><i class="fa-solid fa-share-nodes"></i></span><span>小豆图谱</span></a>
+    </nav>
+    <div class="home-indicator"></div>
+  </div>
+</body>
+</html>

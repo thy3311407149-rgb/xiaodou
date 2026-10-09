@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=393, height=852" />
+  <title>小豆图谱 · 第二大脑</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="../css/common.css" />
+  <style>
+    .stat-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 12px; }
+    .stat {
+      background: var(--surface); border: 1px solid var(--line); border-radius: 14px;
+      padding: 12px 8px; text-align: center;
+    }
+    .stat b { display: block; font-size: 20px; font-weight: 700; letter-spacing: -.4px; }
+    .stat span { font-size: 11px; color: var(--ink-2); font-weight: 500; }
+    .graph-canvas-wrap {
+      position: relative; height: 340px; border-radius: var(--radius-md);
+      border: 1px solid var(--line); background:
+        radial-gradient(circle at 50% 45%, rgba(124,92,250,.08), transparent 55%),
+        var(--surface);
+      overflow: hidden; margin-bottom: 8px;
+    }
+    .node {
+      position: absolute; border-radius: var(--pill); padding: 7px 12px;
+      font-size: 11px; font-weight: 700; color: #fff; white-space: nowrap;
+      box-shadow: 0 4px 14px rgba(43,43,43,.12); text-decoration: none;
+    }
+    .graph-legend {
+      position: absolute; left: 10px; bottom: 10px;
+      background: rgba(255,255,255,.92); border: 1px solid var(--line);
+      border-radius: 10px; padding: 8px 10px; font-size: 10px; color: var(--ink-2);
+      display: flex; flex-direction: column; gap: 4px;
+    }
+    .graph-legend div { display: flex; align-items: center; gap: 6px; }
+    .graph-legend i { width: 8px; height: 8px; border-radius: 50%; display: block; }
+    .graph-hint {
+      position: absolute; right: 10px; top: 10px; font-size: 10px; font-weight: 600;
+      color: var(--ink-3); background: rgba(255,255,255,.85); padding: 4px 8px; border-radius: var(--pill);
+    }
+    .edge {
+      position: absolute; height: 1.5px; background: rgba(58,53,48,.18);
+      transform-origin: left center;
+    }
+  </style>
+</head>
+<body>
+  <div class="phone">
+    <div class="status-bar">
+      <span class="time-pill">9:41</span>
+      <div class="right">
+        <span class="signal"><i></i><i></i><i></i><i></i></span>
+        <span>5G</span>
+        <i class="fa-solid fa-battery-full"></i>
+      </div>
+    </div>
+
+    <div class="main with-tab">
+      <header class="showcase">
+        <div class="showcase-top">
+          <div class="greet"><h1>小豆图谱</h1></div>
+          <a class="icon-btn" href="search.html"><i class="fa-solid fa-magnifying-glass"></i></a>
+        </div>
+        <div class="showcase-body">
+          <p class="ip-bubble"><b>小豆</b> 已为你串起库内概念与来源，点节点可跳转。</p>
+          <div class="ip-mascot"><img src="../assets/xiaodou-wave.svg" alt="小豆" /></div>
+        </div>
+      </header>
+
+      <div class="stat-grid">
+        <div class="stat"><b>24</b><span>知识节点</span></div>
+        <div class="stat"><b>37</b><span>关联链接</span></div>
+        <div class="stat"><b>4</b><span>主题领域</span></div>
+      </div>
+
+      <div class="graph-canvas-wrap">
+        <div class="edge" style="left:120px;top:118px;width:90px;transform:rotate(18deg)"></div>
+        <div class="edge" style="left:168px;top:160px;width:70px;transform:rotate(-32deg)"></div>
+        <div class="edge" style="left:90px;top:200px;width:100px;transform:rotate(8deg)"></div>
+        <div class="edge" style="left:200px;top:210px;width:80px;transform:rotate(40deg)"></div>
+        <div class="edge" style="left:140px;top:240px;width:95px;transform:rotate(-12deg)"></div>
+
+        <a class="node" href="related.html" style="left:138px;top:132px;background:#3A3530">认知负荷</a>
+        <a class="node" href="detail.html" style="left:48px;top:78px;background:#6B86B2">组块化</a>
+        <a class="node" href="detail.html" style="left:250px;top:88px;background:#6B86B2">样例学习</a>
+        <a class="node" href="detail-voice.html" style="left:36px;top:210px;background:#6B8F71">第3讲录音</a>
+        <a class="node" href="detail.html" style="left:230px;top:230px;background:#6B8F71">Sweller.pdf</a>
+        <a class="node" href="related.html" style="left:150px;top:280px;background:#C9956B">分裂注意</a>
+        <a class="node" href="related.html" style="left:260px;top:170px;background:#C9956B">工作记忆</a>
+
+        <div class="graph-legend">
+          <div><i style="background:#3A3530"></i>核心概念</div>
+          <div><i style="background:#6B86B2"></i>技术方法</div>
+          <div><i style="background:#C9956B"></i>问题/难点</div>
+          <div><i style="background:#6B8F71"></i>资料来源</div>
+        </div>
+        <div class="graph-hint">拖拽节点 · 点击查看</div>
+      </div>
+
+      <div class="section-label">主题领域</div>
+      <div class="chips">
+        <span class="chip on">全部</span>
+        <span class="chip">组织行为学</span>
+        <span class="chip">学习科学</span>
+        <span class="chip">课堂笔记</span>
+        <span class="chip">工作</span>
+      </div>
+    </div>
+
+    <a class="fab-ask" href="ask.html"><img src="../assets/xiaodou-fab.svg" alt="小豆" /></a>
+
+    <nav class="tabbar">
+      <a class="tab" href="library.html"><span class="ico"><i class="fa-solid fa-book"></i></span><span>知识库</span></a>
+      <a class="tab" href="ask.html"><span class="ico"><i class="fa-solid fa-comments"></i></span><span>问小豆</span></a>
+      <a class="tab on" href="graph.html"><span class="ico"><i class="fa-solid fa-share-nodes"></i></span><span>小豆图谱</span></a>
+    </nav>
+    <div class="home-indicator"></div>
+  </div>
+</body>
+</html>
