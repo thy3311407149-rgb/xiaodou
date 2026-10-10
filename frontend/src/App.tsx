@@ -1,6 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type { ReactNode } from 'react'
 import type { ChangeEvent } from 'react'
+import { uploadPdf } from './api/files.ts'
+import { fetchTask } from './api/tasks.ts'
+import { mapTaskView } from './upload/task-view.ts'
+import type { TaskSnapshot, UploadedPdf } from './upload/task.ts'
+import { createUploadSession } from './upload/upload-session.ts'
 import './App.css'
 
 type Tab = 'library' | 'ask' | 'files'
@@ -20,6 +25,14 @@ type LibraryItem = {
   duration?: number
   pages?: number
   fmt?: string
+  upload?: {
+    fileId: string
+    taskId: string
+    phase: 'processing' | 'succeeded' | 'failed'
+    label: string
+    detail: string | null
+    progress: number | null
+  }
 }
 
 const initialItems: LibraryItem[] = [
@@ -86,8 +99,46 @@ function coldKind(items: LibraryItem[]) {
   return 'no-link'
 }
 
+function libraryItemFromUpload(uploaded: UploadedPdf): LibraryItem {
+  const view = mapTaskView(uploaded.task)
+  return {
+    id: uploaded.fileId,
+    type: 'doc',
+    status: view.phase === 'succeeded' ? 'done' : 'inbox',
+    title: uploaded.fileName,
+    desc: view.detail ?? '',
+    time: '刚刚',
+    body: '',
+    tags: [],
+    ready: view.phase === 'succeeded',
+    fmt: 'PDF',
+    upload: {
+      fileId: uploaded.fileId,
+      taskId: uploaded.task.id,
+      phase: view.phase,
+      label: view.label,
+      detail: view.detail,
+      progress: view.progress,
+    },
+  }
+}
+
+function withTask(item: LibraryItem, task: TaskSnapshot): LibraryItem {
+  const view = mapTaskView(task)
+  return {
+    ...item,
+    status: view.phase === 'succeeded' ? 'done' : 'inbox',
+    ready: view.phase === 'succeeded',
+    desc: view.detail ?? '',
+    upload: item.upload
+      ? { ...item.upload, phase: view.phase, label: view.label, detail: view.detail, progress: view.progress }
+      : item.upload,
+  }
+}
+
 function App() {
   const fileRef = useRef<HTMLInputElement>(null)
+  const sessionRef = useRef<ReturnType<typeof createUploadSession> | null>(null)
   const [tab, setTab] = useState<Tab>('library')
   const [items, setItems] = useState(initialItems)
   const [recording, setRecording] = useState(false)
@@ -117,6 +168,38 @@ function App() {
     const timer = window.setTimeout(() => setToast(''), 1800)
     return () => window.clearTimeout(timer)
   }, [toast])
+
+  useEffect(() => {
+    const session = createUploadSession({
+      upload: uploadPdf,
+      getTask: fetchTask,
+      setTimer: (callback, delayMs) => window.setTimeout(callback, delayMs),
+      clearTimer: (id) => window.clearTimeout(id),
+      listener: {
+        onRejected: (message) => setToast(message),
+        onUploadFailed: (message) => setToast(message),
+        onAccepted: (uploaded) => {
+          setItems((current) => [libraryItemFromUpload(uploaded), ...current.filter((item) => item.id !== uploaded.fileId)])
+          setTab('library')
+          setAddOpen(false)
+        },
+        onTask: (task) => {
+          setItems((current) => current.map((item) => item.upload?.taskId === task.id ? withTask(item, task) : item))
+        },
+        onPollFailed: (message, taskId) => {
+          setToast(message)
+          setItems((current) => current.map((item) => item.upload?.taskId === taskId
+            ? { ...item, desc: message, upload: { ...item.upload, phase: 'failed', label: '失败', detail: message } }
+            : item))
+        },
+      },
+    })
+    sessionRef.current = session
+    return () => {
+      session.dispose()
+      sessionRef.current = null
+    }
+  }, [])
 
   const filteredItems = useMemo(() => items.filter((item) => filter === 'all' || item.type === filter), [filter, items])
   const brief = insightScenes[scene]
@@ -159,13 +242,9 @@ function App() {
 
   const addFile = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
-    if (!file) return
-    const isDoc = /pdf|doc/i.test(file.name)
-    setItems((current) => [{ id: `f-${Date.now()}`, type: isDoc ? 'doc' : 'voice', status: 'inbox', title: file.name, desc: '', time: '刚刚', body: '', tags: [], ready: isDoc ? false : undefined, pct: isDoc ? 20 : undefined, fmt: /\.pdf$/i.test(file.name) ? 'PDF' : 'Word' }, ...current])
-    setToast(isDoc ? '文件已加入，等待拆解' : '文件已加入收集箱')
-    setTab('library')
-    setAddOpen(false)
     event.target.value = ''
+    if (!file) return
+    void sessionRef.current?.submit(file)
   }
 
   const ask = (text: string) => {
@@ -276,7 +355,7 @@ function App() {
           </button>
         </div>
       </nav>
-      <input ref={fileRef} type="file" accept=".pdf,.doc,.docx,.png,.jpg,.mp3,.wav" hidden onChange={addFile} />
+      <input ref={fileRef} type="file" accept=".pdf,application/pdf" hidden onChange={addFile} />
       {noteOpen && <NoteSheet note={note} noteTag={noteTag} onChange={setNote} onTag={setNoteTag} onClose={() => setNoteOpen(false)} onSave={saveNote} />}
       {recordOpen && <RecordSheet recording={recording} seconds={recordSeconds} transcript={transcript} onTranscript={setTranscript} onStop={stopRecording} onSave={saveTranscript} onClose={() => { setRecording(false); setRecordOpen(false) }} />}
       {selected && <DetailSheet item={selected} onClose={() => setSelected(null)} onToast={setToast} />}
@@ -295,19 +374,27 @@ function TabButton({ active, label, onClick, children }: { active: boolean; labe
 }
 
 function ItemRow({ item, onSelect }: { item: LibraryItem; onSelect: (item: LibraryItem) => void }) {
-  const processing = item.type === 'doc' && item.ready === false
+  const upload = item.upload
+  const processing = upload ? upload.phase === 'processing' : item.type === 'doc' && item.ready === false
+  const progress = upload ? upload.progress : item.pct ?? 40
   return (
     <button className="item" type="button" onClick={() => onSelect(item)}>
       <span className="item-type-ico" aria-hidden="true">{item.type === 'voice' ? <MicIcon /> : item.type === 'note' ? <PenIcon /> : <DocIcon />}</span>
       <span className="item-copy">
         <h4>
           {item.title}
-          {processing && <span className="micro-tag run">解析中</span>}
-          {item.type === 'doc' && item.ready !== false && <span className="micro-tag ok">已拆解</span>}
-          {item.type !== 'doc' && item.status === 'inbox' && <span className="micro-tag">待处理</span>}
+          {upload && <span className={`micro-tag ${upload.phase === 'succeeded' ? 'ok' : upload.phase === 'failed' ? 'bad' : 'run'}`}>{upload.label}</span>}
+          {!upload && processing && <span className="micro-tag run">解析中</span>}
+          {!upload && item.type === 'doc' && item.ready !== false && <span className="micro-tag ok">已拆解</span>}
+          {!upload && item.type !== 'doc' && item.status === 'inbox' && <span className="micro-tag">待处理</span>}
         </h4>
         <p className="point">{itemMeta(item)}</p>
-        {processing && <span className="progress"><span style={{ width: `${item.pct ?? 40}%` }} /></span>}
+        {upload?.detail && <span className="upload-detail">{upload.detail}</span>}
+        {processing && progress != null && (
+          <span className="progress" role="progressbar" aria-valuenow={progress} aria-valuemin={0} aria-valuemax={100}>
+            <span style={{ width: `${progress}%` }} />
+          </span>
+        )}
       </span>
     </button>
   )
@@ -458,9 +545,15 @@ function DetailSheet({ item, onClose, onToast }: { item: LibraryItem; onClose: (
           <h2>{item.title}</h2>
           <p className="meta">{itemMeta(item)}{item.tags.length ? ` · ${item.tags.join(' / ')}` : ''}</p>
           {item.body && <div className="detail-body">{item.body}</div>}
+          {item.upload && (
+            <div className="detail-body">
+              <p>{item.upload.label}</p>
+              {item.upload.detail && <p>{item.upload.detail}</p>}
+            </div>
+          )}
           {item.status === 'inbox' && item.type !== 'doc' && <button className="btn btn-primary btn-block" type="button" onClick={() => { onToast('已整理'); onClose() }}>标为已整理</button>}
         </div>
-        {item.type === 'doc' && item.ready && (
+        {item.type === 'doc' && item.ready && !item.upload && (
           <div style={{ marginTop: 12 }}>
             <div className="outline-row"><b>p.2</b><span>三类负荷：内在、外在、相关</span></div>
             <div className="outline-row"><b>p.6</b><span>降低外在负荷，给工作记忆留空</span></div>
