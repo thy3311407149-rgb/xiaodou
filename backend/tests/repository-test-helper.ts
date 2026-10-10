@@ -6,6 +6,7 @@ import { closeDatabaseConnection, createDatabaseConnection } from '../app/db/con
 import { runMigration } from '../app/db/migration-runner.js'
 
 export async function openRepositoryTestDatabase(): Promise<{ database: Database.Database; directory: string }> {
+  closeDatabaseConnection()
   const directory = await mkdtemp(join(tmpdir(), 'xiaodou-repository-'))
   const database = createDatabaseConnection(join(directory, 'repository.db'))
   runMigration(database)

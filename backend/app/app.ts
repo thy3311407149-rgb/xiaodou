@@ -4,6 +4,7 @@ import { errorHandler } from './core/errors/error-handler.js'
 import { requestIdMiddleware } from './core/request-id-middleware.js'
 import { requestLoggingMiddleware } from './core/request-logging-middleware.js'
 import { fileRouter } from './api/files.js'
+import { taskRouter } from './api/tasks.js'
 
 export function createApp() {
   const app = express()
@@ -12,6 +13,7 @@ export function createApp() {
   app.use(requestLoggingMiddleware)
   app.use(healthRouter)
   app.use(fileRouter)
+  app.use(taskRouter)
   app.use(errorHandler)
   return app
 }

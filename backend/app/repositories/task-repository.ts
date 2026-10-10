@@ -27,5 +27,43 @@ export class TaskRepository {
     return this.findById(id)
   }
 
+  findLatestByFileId(fileId: string): Task | null {
+    const row = this.database.prepare(
+      'SELECT * FROM tasks WHERE file_id = ? ORDER BY created_at DESC LIMIT 1',
+    ).get(fileId) as TaskRow | undefined
+    return row ? this.toModel(row) : null
+  }
+
+  listIdsByStatus(status: Task['status'], limit: number): string[] {
+    const rows = this.database.prepare(
+      'SELECT id FROM tasks WHERE status = ? ORDER BY created_at ASC LIMIT ?',
+    ).all(status, limit) as { id: string }[]
+    return rows.map((row) => row.id)
+  }
+
+  claimQueued(id: string): number {
+    const now = new Date().toISOString()
+    const result = this.database.prepare(`
+      UPDATE tasks
+      SET status = 'RUNNING', started_at = @startedAt, updated_at = @updatedAt
+      WHERE id = @id AND status = 'QUEUED'
+    `).run({ id, startedAt: now, updatedAt: now })
+    return result.changes
+  }
+
+  markFailed(id: string, expectedStatus: 'RUNNING', errorCode: string, errorMessage: string): number {
+    const now = new Date().toISOString()
+    const result = this.database.prepare(`
+      UPDATE tasks
+      SET status = 'FAILED',
+          error_code = @errorCode,
+          error_message = @errorMessage,
+          finished_at = @finishedAt,
+          updated_at = @updatedAt
+      WHERE id = @id AND status = @expectedStatus
+    `).run({ id, expectedStatus, errorCode, errorMessage, finishedAt: now, updatedAt: now })
+    return result.changes
+  }
+
   private toModel(row: TaskRow): Task { return { id: row.id, fileId: row.file_id, taskType: row.task_type, status: row.status, currentStep: row.current_step, progress: row.progress, retryCount: row.retry_count, requestId: row.request_id, idempotencyKey: row.idempotency_key, errorCode: row.error_code, errorMessage: row.error_message, startedAt: row.started_at, finishedAt: row.finished_at, createdAt: row.created_at, updatedAt: row.updated_at } }
 }

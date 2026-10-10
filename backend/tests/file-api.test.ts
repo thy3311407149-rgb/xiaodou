@@ -76,7 +76,15 @@ describe('File API', () => {
     const detailResponse = await request(context.app).get(`/api/files/${fileId}`)
     expect(detailResponse.status).toBe(200)
     expect(detailResponse.body.data.file.id).toBe(fileId)
-    expect(detailResponse.body.data.task).toBeNull()
+    expect(detailResponse.body.data.summary).toBeNull()
+    expect(detailResponse.body.data.task).toMatchObject({
+      id: uploadResponse.body.data.task.id,
+      fileId,
+      taskType: 'PROCESS_PDF',
+      status: 'QUEUED',
+      currentStep: 'EXTRACT_TEXT',
+      progress: 0,
+    })
 
     const deleteResponse = await request(context.app).delete(`/api/files/${fileId}`).set('X-Request-Id', 'req_file_delete_001')
     expect(deleteResponse.status).toBe(200)

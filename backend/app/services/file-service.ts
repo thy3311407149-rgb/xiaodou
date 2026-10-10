@@ -5,17 +5,33 @@ import { getDatabaseConnection } from '../db/connection.js'
 import { ApplicationError } from '../core/errors/application-error.js'
 import { logger } from '../core/logger.js'
 import type { File, FileStatus } from '../models/file.js'
+import type { Task } from '../models/task.js'
 import { FileRepository } from '../repositories/file-repository.js'
+import { TaskRepository } from '../repositories/task-repository.js'
 import { OperationLogger } from './operation-logger.js'
+
+function isActiveTaskConflict(error: unknown): boolean {
+  if (typeof error !== 'object' || error === null || !('code' in error)) return false
+  const code = String((error as { code: unknown }).code)
+  if (code !== 'SQLITE_CONSTRAINT_UNIQUE' && code !== 'SQLITE_CONSTRAINT') return false
+  const message = error instanceof Error ? error.message : ''
+  return message.includes('ux_tasks_one_active_per_file') || message.includes('tasks.file_id')
+}
 
 const DEMO_USER_ID = 'demo-user'
 const deletableStatuses: FileStatus[] = ['UPLOADED', 'UPLOAD_FAILED', 'EXTRACTION_FAILED', 'SUMMARY_FAILED', 'COMPLETED']
 
 export type FileServiceDependencies = {
   fileRepository?: FileRepository
+  taskRepository?: TaskRepository
   operationLogger?: OperationLogger
   database?: ReturnType<typeof getDatabaseConnection>
   uploadDir?: string
+}
+
+export type UploadedFileResult = {
+  file: File
+  task: Task
 }
 
 export type UploadedFileInput = {
@@ -29,19 +45,22 @@ export type UploadedFileInput = {
 
 export class FileService {
   private readonly fileRepository: FileRepository
+  private readonly taskRepository: TaskRepository
   private readonly operationLogger: OperationLogger
   private readonly database: ReturnType<typeof getDatabaseConnection>
   private readonly uploadDir: string
 
   constructor(dependencies: FileServiceDependencies = {}) {
-    this.fileRepository = dependencies.fileRepository ?? new FileRepository()
-    this.operationLogger = dependencies.operationLogger ?? new OperationLogger()
     this.database = dependencies.database ?? getDatabaseConnection()
+    this.fileRepository = dependencies.fileRepository ?? new FileRepository(this.database)
+    this.taskRepository = dependencies.taskRepository ?? new TaskRepository(this.database)
+    this.operationLogger = dependencies.operationLogger ?? new OperationLogger()
     this.uploadDir = resolve(dependencies.uploadDir ?? './uploads')
   }
 
-  async upload(input: UploadedFileInput): Promise<File> {
+  async upload(input: UploadedFileInput): Promise<UploadedFileResult> {
     const fileId = input.id ?? randomUUID()
+    const taskId = randomUUID()
     const finalName = `${fileId}.pdf`
     const finalPath = resolve(this.uploadDir, finalName)
     const storagePath = relative(resolve(process.cwd()), finalPath).replaceAll('\\', '/')
@@ -52,21 +71,51 @@ export class FileService {
     try {
       await mkdir(dirname(finalPath), { recursive: true })
       await rename(input.temporaryPath, finalPath)
-      const file = this.fileRepository.create({
-        id: fileId,
-        userId: DEMO_USER_ID,
-        fileName: input.originalName,
-        fileType: 'application/pdf',
-        fileSize: input.size,
-        storagePath,
-        status: 'UPLOADED',
-      })
+      const saved = this.database.transaction(() => {
+        const file = this.fileRepository.create({
+          id: fileId,
+          userId: DEMO_USER_ID,
+          fileName: input.originalName,
+          fileType: 'application/pdf',
+          fileSize: input.size,
+          storagePath,
+          status: 'UPLOADED',
+        })
+        const task = this.taskRepository.create({
+          id: taskId,
+          fileId,
+          taskType: 'PROCESS_PDF',
+          status: 'QUEUED',
+          currentStep: 'EXTRACT_TEXT',
+          progress: 0,
+          retryCount: 0,
+          requestId: input.requestId,
+        })
+        this.operationLogger.log({
+          requestId: input.requestId,
+          fileId,
+          taskId,
+          operation: 'TASK_CREATED',
+          status: 'SUCCEEDED',
+        })
+        return { file, task }
+      })()
       this.operationLogger.log({ requestId: input.requestId, fileId, operation: 'FILE_UPLOAD_COMPLETED', status: 'SUCCEEDED' })
-      return file
+      logger.info('TASK_CREATED', {
+        requestId: input.requestId,
+        fileId,
+        taskId: saved.task.id,
+        operation: 'TASK_CREATED',
+        status: 'SUCCEEDED',
+      })
+      return saved
     } catch (error: unknown) {
       await this.removeFileAfterFailure(finalPath, input.temporaryPath, input.requestId, fileId)
       this.operationLogger.log({ requestId: input.requestId, operation: 'FILE_UPLOAD_FAILED', status: 'FAILED', errorMessage: 'File upload failed' })
       if (error instanceof ApplicationError) throw error
+      if (isActiveTaskConflict(error)) {
+        throw new ApplicationError('TASK_ALREADY_RUNNING', { fileId, cause: error })
+      }
       throw new ApplicationError('FILE_SAVE_FAILED', { fileId, cause: error })
     }
   }
@@ -81,6 +130,11 @@ export class FileService {
       throw new ApplicationError('FILE_NOT_FOUND', { fileId })
     }
     return file
+  }
+
+  getDetail(fileId: string): { file: File; task: Task | null } {
+    const file = this.getById(fileId)
+    return { file, task: this.taskRepository.findLatestByFileId(fileId) }
   }
 
   async delete(fileId: string, requestId: string): Promise<File> {

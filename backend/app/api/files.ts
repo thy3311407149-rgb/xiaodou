@@ -5,6 +5,7 @@ import { mkdirSync, unlink } from 'node:fs'
 import { join } from 'node:path'
 import { config } from '../core/config.js'
 import { ApplicationError } from '../core/errors/application-error.js'
+import { toPublicTask } from './task-response.js'
 import { FileService } from '../services/file-service.js'
 
 type FileRouterOptions = {
@@ -55,9 +56,13 @@ function uploadMiddleware(uploadDirectory: string, maxFileSizeBytes: number): Re
 
 export function createFileRouter(options: FileRouterOptions = {}): Router {
   const router = Router()
-  const service = options.fileService ?? new FileService()
+  let service = options.fileService
   const uploadDirectory = options.uploadDir ?? config.uploadDir
   const maxFileSizeBytes = options.maxFileSizeBytes ?? config.maxFileSizeBytes
+  const getService = (): FileService => {
+    service ??= new FileService()
+    return service
+  }
 
   router.post('/api/files', uploadMiddleware(uploadDirectory, maxFileSizeBytes), async (request, response, next) => {
     try {
@@ -69,7 +74,7 @@ export function createFileRouter(options: FileRouterOptions = {}): Router {
         throw new ApplicationError('INVALID_REQUEST', { message: '文件不能为空' })
       }
 
-      const file = await service.upload({
+      const uploaded = await getService().upload({
         temporaryPath: request.file.path,
         originalName: request.file.originalname,
         mimeType: request.file.mimetype,
@@ -77,7 +82,10 @@ export function createFileRouter(options: FileRouterOptions = {}): Router {
         requestId: request.requestId,
       })
 
-      response.status(201).json({ requestId: request.requestId, data: { file } })
+      response.status(201).json({
+        requestId: request.requestId,
+        data: { file: uploaded.file, task: toPublicTask(uploaded.task) },
+      })
     } catch (error: unknown) {
       next(error)
     }
@@ -86,14 +94,21 @@ export function createFileRouter(options: FileRouterOptions = {}): Router {
   router.get('/api/files', (request, response) => {
     const page = Math.max(Number(request.query.page ?? 1), 1)
     const pageSize = Math.min(Math.max(Number(request.query.pageSize ?? 20), 1), 100)
-    const items = service.list('demo-user', pageSize, (page - 1) * pageSize)
+    const items = getService().list('demo-user', pageSize, (page - 1) * pageSize)
     response.json({ requestId: request.requestId, data: { items, page, pageSize, total: items.length } })
   })
 
   router.get('/api/files/:fileId', (request, response, next) => {
     try {
-      const file = service.getById(request.params.fileId)
-      response.json({ requestId: request.requestId, data: { file, task: null, summary: null } })
+      const detail = getService().getDetail(request.params.fileId)
+      response.json({
+        requestId: request.requestId,
+        data: {
+          file: detail.file,
+          task: detail.task ? toPublicTask(detail.task) : null,
+          summary: null,
+        },
+      })
     } catch (error: unknown) {
       next(error)
     }
@@ -101,7 +116,7 @@ export function createFileRouter(options: FileRouterOptions = {}): Router {
 
   router.delete('/api/files/:fileId', async (request, response, next) => {
     try {
-      const file = await service.delete(request.params.fileId, request.requestId)
+      const file = await getService().delete(request.params.fileId, request.requestId)
       response.json({ requestId: request.requestId, data: { fileId: file.id, status: file.status } })
     } catch (error: unknown) {
       next(error)
