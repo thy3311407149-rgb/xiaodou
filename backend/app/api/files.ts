@@ -5,6 +5,7 @@ import { mkdirSync, unlink } from 'node:fs'
 import { join } from 'node:path'
 import { config } from '../core/config.js'
 import { ApplicationError } from '../core/errors/application-error.js'
+import { toPublicSummary } from './summary-response.js'
 import { toPublicTask } from './task-response.js'
 import { FileService } from '../services/file-service.js'
 
@@ -106,7 +107,7 @@ export function createFileRouter(options: FileRouterOptions = {}): Router {
         data: {
           file: detail.file,
           task: detail.task ? toPublicTask(detail.task) : null,
-          summary: null,
+          summary: detail.summary ? toPublicSummary(detail.summary) : null,
         },
       })
     } catch (error: unknown) {

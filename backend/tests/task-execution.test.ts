@@ -186,7 +186,7 @@ describe('Phase 8.1 task execution', () => {
     expect(context.taskRepository.findById('task_claim')?.startedAt).toEqual(expect.any(String))
   })
 
-  it('fails the placeholder processor without writing parse results', async () => {
+  it('fails summary generation for an empty PDF and does not write a summary', async () => {
     const context = await createTestContext()
     const uploadResponse = await request(context.app)
       .post('/api/files')
@@ -195,24 +195,23 @@ describe('Phase 8.1 task execution', () => {
     const fileId = uploadResponse.body.data.file.id as string
     const taskId = uploadResponse.body.data.task.id as string
 
-    executor?.processAvailableTasks()
-    executor?.processAvailableTasks()
+    await executor?.processAvailableTasks()
+    await executor?.processAvailableTasks()
 
     const task = context.taskRepository.findById(taskId)
     expect(task).toMatchObject({
       status: 'FAILED',
-      errorCode: 'TASK_EXECUTION_FAILED',
-      errorMessage: 'PDF 解析尚未接入',
-      currentStep: 'EXTRACT_TEXT',
-      progress: 0,
+      currentStep: 'GENERATE_SUMMARY',
+      progress: 70,
+      errorCode: 'SUMMARY_GENERATION_FAILED',
+      errorMessage: '没有可摘要的文本',
       retryCount: 0,
     })
-    expect(task?.status).not.toBe('SUCCEEDED')
     expect(task?.startedAt).toEqual(expect.any(String))
     expect(task?.finishedAt).toEqual(expect.any(String))
-    expect(context.fileRepository.findById(fileId)?.status).toBe('UPLOADED')
+    expect(task?.errorMessage).not.toContain('at ')
+    expect(context.fileRepository.findById(fileId)?.status).toBe('SUMMARY_FAILED')
     expect(tableCount(context.database, 'summaries')).toBe(0)
-    expect(tableCount(context.database, 'document_texts')).toBe(0)
     expect(tableCount(context.database, 'text_chunks')).toBe(0)
 
     const taskResponse = await request(context.app).get(`/api/tasks/${taskId}`)
@@ -220,20 +219,16 @@ describe('Phase 8.1 task execution', () => {
     expect(taskResponse.body.data.task).toMatchObject({
       id: taskId,
       status: 'FAILED',
-      errorCode: 'TASK_EXECUTION_FAILED',
-      errorMessage: 'PDF 解析尚未接入',
-      currentStep: 'EXTRACT_TEXT',
-      progress: 0,
+      currentStep: 'GENERATE_SUMMARY',
+      errorCode: 'SUMMARY_GENERATION_FAILED',
+      errorMessage: '没有可摘要的文本',
     })
     const detailResponse = await request(context.app).get(`/api/files/${fileId}`)
     expect(detailResponse.body.data.summary).toBeNull()
-    expect(detailResponse.body.data.task.errorMessage).toBe('PDF 解析尚未接入')
 
     const logs = context.operationLogRepository.listByTaskId(taskId)
     expect(logs.map((log) => log.operation)).toEqual(expect.arrayContaining(['TASK_CREATED', 'TASK_FAILED']))
-    expect(logs.filter((log) => log.operation === 'TASK_FAILED')).toEqual([
-      expect.objectContaining({ status: 'FAILED', errorMessage: 'PDF 解析尚未接入', fileId, taskId }),
-    ])
+    expect(logs.some((log) => log.operation === 'TASK_COMPLETED')).toBe(false)
   })
 
   it('marks an interrupted RUNNING task as failed and then claims a leftover QUEUED task', async () => {
@@ -261,14 +256,14 @@ describe('Phase 8.1 task execution', () => {
     expect(context.taskRepository.listByFileId('file_running')).toHaveLength(1)
     expect(context.taskRepository.findById('task_queued')?.status).toBe('QUEUED')
 
-    executor?.processAvailableTasks()
+    await executor?.processAvailableTasks()
 
     expect(context.taskRepository.findById('task_running')?.errorMessage).toBe('任务在进程重启时中断')
     expect(context.taskRepository.findById('task_queued')).toMatchObject({
       id: 'task_queued',
       status: 'FAILED',
-      errorCode: 'TASK_EXECUTION_FAILED',
-      errorMessage: 'PDF 解析尚未接入',
+      errorCode: 'PDF_EXTRACTION_FAILED',
+      errorMessage: 'PDF 文本提取失败',
       retryCount: 0,
     })
     expect(context.operationLogRepository.listByTaskId('task_running')).toEqual([
@@ -320,7 +315,8 @@ describe('Phase 8.1 task execution', () => {
 
     expect(context.taskRepository.findById('task_poll')).toMatchObject({
       status: 'FAILED',
-      errorMessage: 'PDF 解析尚未接入',
+      errorCode: 'PDF_EXTRACTION_FAILED',
+      errorMessage: 'PDF 文本提取失败',
     })
     executor?.stop()
   })

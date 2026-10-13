@@ -5,8 +5,10 @@ import { getDatabaseConnection } from '../db/connection.js'
 import { ApplicationError } from '../core/errors/application-error.js'
 import { logger } from '../core/logger.js'
 import type { File, FileStatus } from '../models/file.js'
+import type { Summary } from '../models/summary.js'
 import type { Task } from '../models/task.js'
 import { FileRepository } from '../repositories/file-repository.js'
+import { SummaryRepository } from '../repositories/summary-repository.js'
 import { TaskRepository } from '../repositories/task-repository.js'
 import { OperationLogger } from './operation-logger.js'
 
@@ -24,6 +26,7 @@ const deletableStatuses: FileStatus[] = ['UPLOADED', 'UPLOAD_FAILED', 'EXTRACTIO
 export type FileServiceDependencies = {
   fileRepository?: FileRepository
   taskRepository?: TaskRepository
+  summaryRepository?: SummaryRepository
   operationLogger?: OperationLogger
   database?: ReturnType<typeof getDatabaseConnection>
   uploadDir?: string
@@ -46,6 +49,7 @@ export type UploadedFileInput = {
 export class FileService {
   private readonly fileRepository: FileRepository
   private readonly taskRepository: TaskRepository
+  private readonly summaryRepository: SummaryRepository
   private readonly operationLogger: OperationLogger
   private readonly database: ReturnType<typeof getDatabaseConnection>
   private readonly uploadDir: string
@@ -54,6 +58,7 @@ export class FileService {
     this.database = dependencies.database ?? getDatabaseConnection()
     this.fileRepository = dependencies.fileRepository ?? new FileRepository(this.database)
     this.taskRepository = dependencies.taskRepository ?? new TaskRepository(this.database)
+    this.summaryRepository = dependencies.summaryRepository ?? new SummaryRepository(this.database)
     this.operationLogger = dependencies.operationLogger ?? new OperationLogger()
     this.uploadDir = resolve(dependencies.uploadDir ?? './uploads')
   }
@@ -132,9 +137,13 @@ export class FileService {
     return file
   }
 
-  getDetail(fileId: string): { file: File; task: Task | null } {
+  getDetail(fileId: string): { file: File; task: Task | null; summary: Summary | null } {
     const file = this.getById(fileId)
-    return { file, task: this.taskRepository.findLatestByFileId(fileId) }
+    return {
+      file,
+      task: this.taskRepository.findLatestByFileId(fileId),
+      summary: this.summaryRepository.findLatestByFileId(fileId),
+    }
   }
 
   async delete(fileId: string, requestId: string): Promise<File> {

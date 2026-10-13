@@ -11,6 +11,15 @@ export class TextChunkRepository {
   createMany(inputs: CreateTextChunkInput[]): TextChunk[] { const insert = this.database.prepare('INSERT INTO text_chunks (id, file_id, page_number, chunk_index, content, token_count, embedding_status) VALUES (@id, @fileId, @pageNumber, @chunkIndex, @content, @tokenCount, @embeddingStatus)'); const insertMany = this.database.transaction((rows: CreateTextChunkInput[]) => { for (const input of rows) insert.run({ id: input.id, fileId: input.fileId, pageNumber: input.pageNumber ?? null, chunkIndex: input.chunkIndex, content: input.content, tokenCount: input.tokenCount ?? 0, embeddingStatus: input.embeddingStatus ?? 'NOT_READY' }) }); insertMany(inputs); return inputs.map((input) => this.findById(input.id) as TextChunk) }
   findByFileId(fileId: string): TextChunk[] { return (this.database.prepare('SELECT * FROM text_chunks WHERE file_id = ? ORDER BY chunk_index ASC').all(fileId) as TextChunkRow[]).map((row) => this.toModel(row)) }
   deleteByFileId(fileId: string): number { return this.database.prepare('DELETE FROM text_chunks WHERE file_id = ?').run(fileId).changes }
+
+  createChunks(fileId: string, inputs: CreateTextChunkInput[]): TextChunk[] {
+    const replace = this.database.transaction(() => {
+      this.deleteByFileId(fileId)
+      if (inputs.length === 0) return []
+      return this.createMany(inputs)
+    })
+    return replace()
+  }
   private findById(id: string): TextChunk | null { const row = this.database.prepare('SELECT * FROM text_chunks WHERE id = ?').get(id) as TextChunkRow | undefined; return row ? this.toModel(row) : null }
   private toModel(row: TextChunkRow): TextChunk { return { id: row.id, fileId: row.file_id, pageNumber: row.page_number, chunkIndex: row.chunk_index, content: row.content, tokenCount: row.token_count, embeddingStatus: row.embedding_status, createdAt: row.created_at } }
 }
