@@ -35,15 +35,30 @@ function errorCodeFromBody(body: unknown): string | null {
   return typeof code === 'string' && code ? code : null
 }
 
-export function createHttp(fetchImpl: typeof fetch = fetch): { request: HttpRequest } {
+function withRequestId(init: RequestInit = {}) {
+  const headers = new Headers(init.headers)
+  if (!headers.has('X-Request-Id')) headers.set('X-Request-Id', crypto.randomUUID())
+  return { ...init, headers }
+}
+
+async function readError(response: Response) {
+  const text = await response.text()
+  if (!text) throw new ApiError(REQUEST_FAILED_MESSAGE, response.status)
+  try {
+    const body = JSON.parse(text) as unknown
+    throw new ApiError(errorMessageFromBody(body) ?? REQUEST_FAILED_MESSAGE, response.status, errorCodeFromBody(body))
+  } catch (error: unknown) {
+    if (error instanceof ApiError) throw error
+    throw new ApiError(REQUEST_FAILED_MESSAGE, response.status)
+  }
+}
+
+export function createHttp(fetchImpl: typeof fetch = fetch): { request: HttpRequest; requestBlob: (path: string, init?: RequestInit) => Promise<Blob> } {
   return {
     async request(path, init = {}) {
-      const headers = new Headers(init.headers)
-      if (!headers.has('X-Request-Id')) headers.set('X-Request-Id', crypto.randomUUID())
-
       let response: Response
       try {
-        response = await fetchImpl(path, { ...init, headers })
+        response = await fetchImpl(path, withRequestId(init))
       } catch {
         throw new ApiError(REQUEST_FAILED_MESSAGE, 0)
       }
@@ -66,6 +81,17 @@ export function createHttp(fetchImpl: typeof fetch = fetch): { request: HttpRequ
       }
 
       return { status: response.status, body }
+    },
+    async requestBlob(path, init = {}) {
+      let response: Response
+      try {
+        response = await fetchImpl(path, withRequestId(init))
+      } catch {
+        throw new ApiError(REQUEST_FAILED_MESSAGE, 0)
+      }
+      if (!response.ok) await readError(response)
+      const blob = await response.blob()
+      return blob.type === 'application/pdf' ? blob : new Blob([blob], { type: 'application/pdf' })
     },
   }
 }

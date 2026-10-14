@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
 import { createHttp } from './http.ts'
-import { uploadPdf } from './files.ts'
+import { fetchFileDetail, uploadPdf } from './files.ts'
 import { fetchTask } from './tasks.ts'
 
 const taskBody = {
@@ -61,5 +61,32 @@ describe('file and task client', () => {
     })
     const client = createHttp(fetchImpl as typeof fetch)
     await expect(fetchTask('task_1', client.request)).resolves.toMatchObject({ id: 'task_1', status: 'QUEUED', progress: 0 })
+  })
+
+  it('loads GET /api/files/:fileId with file, task, and summary', async () => {
+    const fetchImpl = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+      expect(String(input)).toBe('/api/files/file_1')
+      expect(new Headers(init?.headers).get('X-Request-Id')).toBeTruthy()
+      return new Response(JSON.stringify({
+        requestId: 'req_detail',
+        data: {
+          file: { id: 'file_1', fileName: 'paper.pdf', status: 'COMPLETED' },
+          task: { ...taskBody, status: 'SUCCEEDED', currentStep: 'COMPLETED', progress: 100 },
+          summary: {
+            id: 'summary_1',
+            fileId: 'file_1',
+            taskId: 'task_1',
+            content: '工作记忆容量有限。',
+            keyPoints: [{ content: '外在负荷可以降低', sourceChunkIndexes: [0] }],
+            citations: [{ chunkId: 'chunk_1', pageNumber: 1, quote: '留空' }],
+          },
+        },
+      }), { status: 200 })
+    })
+    const client = createHttp(fetchImpl as typeof fetch)
+    await expect(fetchFileDetail('file_1', client.request)).resolves.toMatchObject({
+      file: { fileName: 'paper.pdf' },
+      summary: { content: '工作记忆容量有限。', keyPoints: ['外在负荷可以降低'] },
+    })
   })
 })
