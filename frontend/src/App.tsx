@@ -3,6 +3,9 @@ import type { ReactNode } from 'react'
 import type { ChangeEvent } from 'react'
 import { uploadPdf } from './api/files.ts'
 import { fetchTask } from './api/tasks.ts'
+import { DocumentTextViewer } from './components/DocumentTextViewer.tsx'
+import { PdfViewer } from './components/PdfViewer.tsx'
+import { FileSummary } from './components/SummaryCard.tsx'
 import { mapTaskView } from './upload/task-view.ts'
 import type { TaskSnapshot, UploadedPdf } from './upload/task.ts'
 import { createUploadSession } from './upload/upload-session.ts'
@@ -536,32 +539,38 @@ function RecordSheet({ recording, seconds, transcript, onTranscript, onStop, onS
   )
 }
 
+function isPdfItem(item: LibraryItem) {
+  return item.fmt === 'PDF' || /\.pdf$/i.test(item.title) || Boolean(item.upload)
+}
+
 function DetailSheet({ item, onClose, onToast }: { item: LibraryItem; onClose: () => void; onToast: (message: string) => void }) {
+  const pdf = isPdfItem(item)
+  const fileId = item.upload?.fileId ?? null
+  const [panel, setPanel] = useState<'pdf' | 'text' | null>(null)
   return (
-    <div className="overlay" onClick={onClose}>
-      <div className="sheet" onClick={(event) => event.stopPropagation()}>
-        <button className="back-row" type="button" onClick={onClose}>‹ 知识库</button>
-        <div className="detail-card">
-          <h2>{item.title}</h2>
-          <p className="meta">{itemMeta(item)}{item.tags.length ? ` · ${item.tags.join(' / ')}` : ''}</p>
-          {item.body && <div className="detail-body">{item.body}</div>}
-          {item.upload && (
-            <div className="detail-body">
-              <p>{item.upload.label}</p>
-              {item.upload.detail && <p>{item.upload.detail}</p>}
+    <>
+      <div className="overlay" onClick={onClose}>
+        <div className="sheet" onClick={(event) => event.stopPropagation()}>
+          <button className="back-row" type="button" onClick={onClose}>‹ 知识库</button>
+          <div className="detail-card">
+            <h2>{item.title}</h2>
+            <p className="meta">{itemMeta(item)}{item.tags.length ? ` · ${item.tags.join(' / ')}` : ''}</p>
+            {item.body && <div className="detail-body">{item.body}</div>}
+            {item.upload && <p className="detail-body">{[item.upload.label, item.upload.detail].filter(Boolean).join(' · ')}</p>}
+            {item.status === 'inbox' && item.type !== 'doc' && <button className="btn btn-primary btn-block" type="button" onClick={() => { onToast('已整理'); onClose() }}>标为已整理</button>}
+          </div>
+          {pdf && <FileSummary fileId={fileId} fileName={item.title} />}
+          {pdf && (
+            <div className="detail-actions">
+              <button className="btn btn-primary" type="button" onClick={() => setPanel('pdf')}>打开PDF</button>
+              <button className="btn btn-ghost" type="button" onClick={() => setPanel('text')}>打开完整解析</button>
             </div>
           )}
-          {item.status === 'inbox' && item.type !== 'doc' && <button className="btn btn-primary btn-block" type="button" onClick={() => { onToast('已整理'); onClose() }}>标为已整理</button>}
         </div>
-        {item.type === 'doc' && item.ready && !item.upload && (
-          <div style={{ marginTop: 12 }}>
-            <div className="outline-row"><b>p.2</b><span>三类负荷：内在、外在、相关</span></div>
-            <div className="outline-row"><b>p.6</b><span>降低外在负荷，给工作记忆留空</span></div>
-            <button className="quote" type="button" onClick={() => onToast('已查看原文出处')}>查看原文摘录 · p.6</button>
-          </div>
-        )}
       </div>
-    </div>
+      {panel === 'pdf' && <PdfViewer fileId={fileId} onClose={() => setPanel(null)} />}
+      {panel === 'text' && <DocumentTextViewer fileId={fileId} onClose={() => setPanel(null)} />}
+    </>
   )
 }
 
