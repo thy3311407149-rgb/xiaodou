@@ -28,17 +28,21 @@ describe('document and pdf viewers', () => {
     expect(await screen.findByRole('alert')).toHaveProperty('textContent', '请求失败')
   })
 
-  it('shows the pdf in an iframe and revokes the object url on close', async () => {
-    const createObjectURL = vi.spyOn(URL, 'createObjectURL').mockReturnValue('blob:pdf')
-    const revokeObjectURL = vi.spyOn(URL, 'revokeObjectURL').mockImplementation(() => undefined)
+  it('paints pdf pages on a white sheet instead of a plugin frame', async () => {
+    const paint = vi.fn(async (_blob: Blob, host: HTMLElement) => {
+      const canvas = document.createElement('canvas')
+      canvas.className = 'pdf-page'
+      host.appendChild(canvas)
+      return 1
+    })
     const load = vi.fn(async () => new Blob(['%PDF'], { type: 'application/pdf' }))
-    const { unmount } = render(<PdfViewer fileId="file_1" onClose={() => undefined} load={load} />)
-    const frame = await screen.findByTitle('PDF原文')
-    expect(frame.getAttribute('src')).toBe('blob:pdf')
+    const { unmount } = render(<PdfViewer fileId="file_1" onClose={() => undefined} load={load} paint={paint} />)
+    expect(await screen.findByRole('dialog', { name: 'PDF原文' })).toBeTruthy()
+    expect(document.querySelector('.pdf-page')).toBeTruthy()
+    expect(document.querySelector('iframe')).toBeNull()
     expect(load).toHaveBeenCalledWith('file_1')
     unmount()
-    expect(revokeObjectURL).toHaveBeenCalledWith('blob:pdf')
-    createObjectURL.mockRestore()
+    expect(document.querySelector('.pdf-page')).toBeNull()
   })
 
   it('keeps an empty or unreadable pdf on the sheet instead of an iframe', async () => {

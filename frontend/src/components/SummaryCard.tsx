@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react'
+import Markdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 import { fetchFileDetail, type FileDetail } from '../api/files.ts'
 import { summaryDisplayState, type FileSummary, type SummaryDisplayState, type SummaryResultState } from '../api/summaries.ts'
 
@@ -24,7 +26,11 @@ export function SummaryCard({
       {state === 'loading' && <p className="knowledge-placeholder">正在读取摘要</p>}
       {state === 'empty' && <p className="knowledge-placeholder">AI正在理解文档...</p>}
       {state === 'error' && <p className="knowledge-placeholder" role="alert">文档理解失败，请重试</p>}
-      {state === 'success' && summary && <p className="summary-card">{summary.content}</p>}
+      {state === 'success' && summary && (
+        <div className="summary-card">
+          <Markdown remarkPlugins={[remarkGfm]}>{summary.content}</Markdown>
+        </div>
+      )}
       {points.length > 0 && (
         <div>
           <h3>核心知识点</h3>
