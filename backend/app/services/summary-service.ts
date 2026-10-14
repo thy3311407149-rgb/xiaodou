@@ -7,6 +7,16 @@ import { selectSummaryContext } from './summary/context-selector.js'
 import type { LlmClient } from './llm/llm-client.js'
 import { OperationLogger } from './operation-logger.js'
 
+export function preserveSummaryContent(content: string): string {
+  const unwrapped = unwrapOuterFence(content.trim())
+  return unwrapped.replace(/\n{3,}/g, '\n\n').trim()
+}
+
+function unwrapOuterFence(content: string): string {
+  const fenced = content.match(/^```(?:markdown|md)?[^\n]*\n([\s\S]*?)\n?```$/i)
+  return fenced?.[1] ?? content
+}
+
 export type SummaryServiceDependencies = {
   agent?: SummaryAgent
   llmClient?: LlmClient
@@ -84,7 +94,7 @@ export class SummaryService {
         id: randomUUID(),
         fileId: task.fileId,
         taskId: task.id,
-        content: draft.summary,
+        content: preserveSummaryContent(draft.summary),
         keyPoints: draft.keyPoints,
         citations: draft.citations,
         modelName: draft.modelName,

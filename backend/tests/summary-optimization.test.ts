@@ -4,7 +4,7 @@ import { OperationLogRepository } from '../app/repositories/operation-log-reposi
 import { SummaryRepository } from '../app/repositories/summary-repository.js'
 import type { LlmClient } from '../app/services/llm/llm-client.js'
 import { OperationLogger } from '../app/services/operation-logger.js'
-import { SummaryService } from '../app/services/summary-service.js'
+import { preserveSummaryContent, SummaryService } from '../app/services/summary-service.js'
 import { MAX_SUMMARY_CHUNKS, selectSummaryContext } from '../app/services/summary/context-selector.js'
 import type { SummaryChunkInput } from '../app/services/agent/summary-agent.js'
 import { closeRepositoryTestDatabase, insertTestTask, openRepositoryTestDatabase } from './repository-test-helper.js'
@@ -106,5 +106,43 @@ describe('summary optimization', () => {
     expect(saved.keyPoints).toEqual([])
     expect(saved.citations).toEqual([])
     expect(repository.findByTaskId('task_long')?.content).toBe('预算说明')
+  })
+
+  it('saves Markdown headings and lists without changing key points or citations', async () => {
+    const context = await openRepositoryTestDatabase()
+    directory = context.directory
+    context.database.prepare(`
+      INSERT INTO files (id, file_name, file_type, file_size, storage_path, status)
+      VALUES ('file_long', 'long.pdf', 'application/pdf', 10, 'uploads/file_long.pdf', 'SUMMARIZING')
+    `).run()
+    insertTestTask(context.database, 'task_long', 'file_long', 'req_long')
+    const repository = new SummaryRepository(context.database)
+    const service = new SummaryService({
+      llmClient: { async complete() { throw new Error('unused') } },
+      summaryRepository: repository,
+      operationLogger: new OperationLogger(new OperationLogRepository(context.database)),
+    })
+    const markdown = '# 文档概览\n\n\n## 核心功能\n\n- 文件上传'
+    const keyPoints = [{ content: 'alpha', sourceChunkIndexes: [0] }]
+    const citations = [{ chunkId: 'chunk_1', pageNumber: 1, quote: 'alpha' }]
+
+    const saved = service.save(task, {
+      title: '文档概览',
+      summary: markdown,
+      keyPoints,
+      citations,
+      modelName: 'test-model',
+      promptVersion: 'summary-v4',
+      inputTokens: 5,
+      outputTokens: 4,
+    })
+
+    expect(saved.content).toBe('# 文档概览\n\n## 核心功能\n\n- 文件上传')
+    expect(saved.content).toContain('#')
+    expect(saved.content).toContain('##')
+    expect(saved.content).toContain('-')
+    expect(saved.keyPoints).toEqual(keyPoints)
+    expect(saved.citations).toEqual(citations)
+    expect(preserveSummaryContent('核心功能：文件上传。')).toBe('核心功能：文件上传。')
   })
 })

@@ -2,7 +2,7 @@ import { ApplicationError } from '../../core/errors/application-error.js'
 import type { Citation, SummaryKeyPoint } from '../../models/summary.js'
 import type { LlmClient, LlmMessage } from '../llm/llm-client.js'
 
-export const SUMMARY_PROMPT_VERSION = 'summary-v3'
+export const SUMMARY_PROMPT_VERSION = 'summary-v4'
 
 export type SummaryChunkInput = {
   chunkId: string
@@ -25,11 +25,22 @@ export type SummaryDraft = {
 const SYSTEM_PROMPT = [
   '你是文档摘要助手。只根据用户给出的 text chunks 写摘要。',
   '不要补充原文没有的事实，不要输出主观评价。',
-  '只返回一个 JSON 对象，不要使用 Markdown。',
+  '只返回一个 JSON 对象，不要把整个结果放进代码块，不要在 JSON 前后添加解释。',
   'JSON 字段：title, summary, keyPoints, citations。',
   'title 是文档标题，只能依据原文概括，不要编造文档中不存在的名称。',
-  'summary 概括全文核心内容。',
-  'keyPoints 只收录原文中的核心知识点，每一项包含 content 和 sourceChunkIndexes。',
+  'summary 的值必须是 Markdown 正文，不要输出 HTML。',
+  'Markdown 标题必须有语义：用 # 表示文档主要章节，用 ## 表示功能模块或主要观点，用 ### 表示细分内容。',
+  '列表使用 - 或 1. ，不要使用“一、”“二、”“1、”这类纯文本编号。',
+  '保持段落结构，不要使用大量连续空行。',
+  'summary 示例：',
+  '## 核心功能',
+  '',
+  '系统包含：',
+  '',
+  '- 文件上传',
+  '- AI解析',
+  '- 知识管理',
+  'keyPoints 只收录原文中的核心知识点，每一项包含 content 和 sourceChunkIndexes。知识点不要写成 Markdown 文档。',
   '知识点只从以下类型中选取，没有依据的类型不要写：核心结论或观点、关键事实数据、定义与概念、逻辑关系、重要清单或步骤、核心论据。',
   '不要输出原文不存在的信息，不要为了凑数量生成知识点或引用。',
   '长文档优先总结高价值内容。没有依据时 keyPoints 和 citations 可以是空数组。',
