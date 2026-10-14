@@ -8,6 +8,8 @@ const options = {
   model: 'test-model',
   timeoutMs: 1000,
   maxRetries: 1,
+  maxTokens: 1200,
+  temperature: 0.2,
 }
 
 function jsonResponse(body: unknown, status = 200): Response {
@@ -28,6 +30,9 @@ describe('HttpLlmClient', () => {
     const completion = await client.complete([{ role: 'user', content: 'hello' }])
 
     expect(fetchImpl).toHaveBeenCalledTimes(2)
+    const requestBody = JSON.parse(String(fetchImpl.mock.calls[1]?.[1]?.body)) as { max_tokens?: number; temperature?: number }
+    expect(requestBody.max_tokens).toBe(1200)
+    expect(requestBody.temperature).toBe(0.2)
     expect(completion).toEqual({
       content: '{"ok":true}',
       modelName: 'test-model',

@@ -1,7 +1,7 @@
 import type { LlmClient, LlmMessage } from '../app/services/llm/llm-client.js'
 
 type PromptChunk = {
-  id: string
+  chunkId: string
   chunkIndex: number
   pageNumber: number | null
   content: string
@@ -22,7 +22,7 @@ export function createTracingLlmClient(): LlmClient {
           title: '文档摘要',
           summary: quote,
           keyPoints: [{ content: quote, sourceChunkIndexes: [chunk.chunkIndex] }],
-          citations: [{ chunkId: chunk.id, pageNumber: chunk.pageNumber, quote }],
+          citations: [{ chunkId: chunk.chunkId, pageNumber: chunk.pageNumber, quote }],
         }),
         modelName: 'test-model',
         inputTokens: 12,

@@ -14,6 +14,7 @@ import type { SummaryChunkInput } from './agent/summary-agent.js'
 import { chunkDocumentTexts, type ChunkSourcePage } from './chunk/text-chunker.js'
 import { HttpLlmClient, type LlmClient } from './llm/llm-client.js'
 import { OperationLogger } from './operation-logger.js'
+import { cleanPdfText } from './pdf/pdf-text-cleaner.js'
 import { extractPdfPages } from './pdf/pdf-text-extractor.js'
 import { SummaryService } from './summary-service.js'
 
@@ -68,6 +69,8 @@ export class TaskExecutor {
         model: config.llmModel,
         timeoutMs: config.llmTimeoutMs,
         maxRetries: config.llmMaxRetries,
+        maxTokens: config.llmMaxOutputTokens,
+        temperature: config.llmTemperature,
       }),
       summaryRepository: dependencies.summaryRepository ?? new SummaryRepository(),
       operationLogger: this.operationLogger,
@@ -152,7 +155,10 @@ export class TaskExecutor {
     try {
       this.markFile(task.fileId, 'EXTRACTING')
       if (this.taskRepository.updateRunning(task.id, 'EXTRACT_TEXT', EXTRACT_TEXT_PROGRESS) !== 1) return
-      const pages = await this.extractText(task)
+      const pages = (await this.extractText(task)).map((page) => ({
+        pageNumber: page.pageNumber,
+        content: cleanPdfText(page.content),
+      }))
       if (this.taskRepository.updateRunning(task.id, 'SAVE_DOCUMENT_TEXT', SAVE_DOCUMENT_TEXT_PROGRESS) !== 1) return
       this.saveDocumentTexts(task, pages)
       this.markFile(task.fileId, 'EXTRACTED')
@@ -277,7 +283,7 @@ export class TaskExecutor {
 
   private toSummaryChunks(chunks: ReturnType<TextChunkRepository['findByFileId']>): SummaryChunkInput[] {
     return chunks.map((chunk) => ({
-      id: chunk.id,
+      chunkId: chunk.id,
       chunkIndex: chunk.chunkIndex,
       pageNumber: chunk.pageNumber,
       content: chunk.content,

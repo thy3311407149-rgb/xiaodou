@@ -12,6 +12,8 @@ export type AppConfig = {
   llmModel: string
   llmTimeoutMs: number
   llmMaxRetries: number
+  llmMaxOutputTokens: number
+  llmTemperature: number
 }
 
 export const config: AppConfig = {
@@ -24,6 +26,8 @@ export const config: AppConfig = {
   llmBaseUrl: process.env.LLM_BASE_URL ?? 'https://api.openai.com/v1',
   llmApiKey: process.env.LLM_API_KEY ?? '',
   llmModel: process.env.LLM_MODEL ?? 'gpt-4o-mini',
-  llmTimeoutMs: Number(process.env.LLM_TIMEOUT_MS ?? 30_000),
+  llmTimeoutMs: Number(process.env.LLM_TIMEOUT_MS ?? 90_000),
   llmMaxRetries: Number(process.env.LLM_MAX_RETRIES ?? 2),
+  llmMaxOutputTokens: Number(process.env.LLM_MAX_OUTPUT_TOKENS ?? 1200),
+  llmTemperature: Number(process.env.LLM_TEMPERATURE ?? 0.2),
 }

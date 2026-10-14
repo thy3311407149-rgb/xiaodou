@@ -1,12 +1,13 @@
 import { randomUUID } from 'node:crypto'
-import { mkdir, rename, unlink } from 'node:fs/promises'
-import { dirname, relative, resolve } from 'node:path'
+import { mkdir, rename, stat, unlink } from 'node:fs/promises'
+import { dirname, isAbsolute, relative, resolve } from 'node:path'
 import { getDatabaseConnection } from '../db/connection.js'
 import { ApplicationError } from '../core/errors/application-error.js'
 import { logger } from '../core/logger.js'
 import type { File, FileStatus } from '../models/file.js'
 import type { Summary } from '../models/summary.js'
 import type { Task } from '../models/task.js'
+import { DocumentTextRepository } from '../repositories/document-text-repository.js'
 import { FileRepository } from '../repositories/file-repository.js'
 import { SummaryRepository } from '../repositories/summary-repository.js'
 import { TaskRepository } from '../repositories/task-repository.js'
@@ -27,6 +28,7 @@ export type FileServiceDependencies = {
   fileRepository?: FileRepository
   taskRepository?: TaskRepository
   summaryRepository?: SummaryRepository
+  documentTextRepository?: DocumentTextRepository
   operationLogger?: OperationLogger
   database?: ReturnType<typeof getDatabaseConnection>
   uploadDir?: string
@@ -50,6 +52,7 @@ export class FileService {
   private readonly fileRepository: FileRepository
   private readonly taskRepository: TaskRepository
   private readonly summaryRepository: SummaryRepository
+  private readonly documentTextRepository: DocumentTextRepository
   private readonly operationLogger: OperationLogger
   private readonly database: ReturnType<typeof getDatabaseConnection>
   private readonly uploadDir: string
@@ -59,6 +62,7 @@ export class FileService {
     this.fileRepository = dependencies.fileRepository ?? new FileRepository(this.database)
     this.taskRepository = dependencies.taskRepository ?? new TaskRepository(this.database)
     this.summaryRepository = dependencies.summaryRepository ?? new SummaryRepository(this.database)
+    this.documentTextRepository = dependencies.documentTextRepository ?? new DocumentTextRepository(this.database)
     this.operationLogger = dependencies.operationLogger ?? new OperationLogger()
     this.uploadDir = resolve(dependencies.uploadDir ?? './uploads')
   }
@@ -137,6 +141,27 @@ export class FileService {
     return file
   }
 
+  getDocumentText(fileId: string): Array<{ pageNumber: number; content: string }> {
+    this.getById(fileId)
+    return this.documentTextRepository.findByFileId(fileId).map((page) => ({
+      pageNumber: page.pageNumber,
+      content: page.content,
+    }))
+  }
+
+  async openPdf(fileId: string): Promise<string> {
+    const file = this.getById(fileId)
+    const absolutePath = this.resolveStoredPdf(file.storagePath)
+    try {
+      const info = await stat(absolutePath)
+      if (!info.isFile()) throw new ApplicationError('FILE_NOT_FOUND', { fileId })
+    } catch (error: unknown) {
+      if (error instanceof ApplicationError) throw error
+      throw new ApplicationError('FILE_NOT_FOUND', { fileId })
+    }
+    return absolutePath
+  }
+
   getDetail(fileId: string): { file: File; task: Task | null; summary: Summary | null } {
     const file = this.getById(fileId)
     return {
@@ -169,6 +194,16 @@ export class FileService {
     }
 
     return deletedFile
+  }
+
+  private resolveStoredPdf(storagePath: string): string {
+    const uploadRoot = resolve(this.uploadDir)
+    const absolutePath = resolve(process.cwd(), storagePath)
+    const relativePath = relative(uploadRoot, absolutePath)
+    if (relativePath.startsWith('..') || isAbsolute(relativePath)) {
+      throw new ApplicationError('FILE_NOT_FOUND')
+    }
+    return absolutePath
   }
 
   private async removeFileAfterFailure(finalPath: string, temporaryPath: string, requestId: string, fileId: string): Promise<void> {

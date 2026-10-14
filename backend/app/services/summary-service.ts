@@ -3,6 +3,7 @@ import { ApplicationError } from '../core/errors/application-error.js'
 import type { Task } from '../models/task.js'
 import { SummaryRepository } from '../repositories/summary-repository.js'
 import { SummaryAgent, type SummaryChunkInput, type SummaryDraft } from './agent/summary-agent.js'
+import { selectSummaryContext } from './summary/context-selector.js'
 import type { LlmClient } from './llm/llm-client.js'
 import { OperationLogger } from './operation-logger.js'
 
@@ -35,7 +36,8 @@ export class SummaryService {
       operation: 'SUMMARY_STARTED',
       status: 'STARTED',
     })
-    if (chunks.length === 0) {
+    const selectedChunks = selectSummaryContext(chunks)
+    if (selectedChunks.length === 0) {
       throw new ApplicationError('SUMMARY_GENERATION_FAILED', {
         message: '没有可摘要的文本',
         fileId: task.fileId,
@@ -51,7 +53,7 @@ export class SummaryService {
       status: 'STARTED',
     })
     try {
-      const draft = await this.agent.summarize(chunks)
+      const draft = await this.agent.summarize(selectedChunks)
       this.operationLogger.log({
         requestId: task.requestId,
         fileId: task.fileId,

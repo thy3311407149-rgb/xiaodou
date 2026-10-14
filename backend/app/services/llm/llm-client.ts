@@ -21,6 +21,8 @@ export type LlmClientOptions = {
   model: string
   timeoutMs: number
   maxRetries: number
+  maxTokens?: number
+  temperature?: number
 }
 
 type ChatResponse = {
@@ -67,7 +69,8 @@ export class HttpLlmClient implements LlmClient {
         },
         body: JSON.stringify({
           model: this.options.model,
-          temperature: 0,
+          temperature: this.options.temperature ?? 0.2,
+          max_tokens: this.options.maxTokens ?? 1200,
           messages,
         }),
         signal: AbortSignal.timeout(this.options.timeoutMs),

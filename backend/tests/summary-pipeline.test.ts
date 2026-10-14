@@ -59,7 +59,15 @@ async function createSummaryContext(llmClient: LlmClient = createTracingLlmClien
 
 describe('summary pipeline', () => {
   it('summarizes text-3pages.pdf with traceable citations and one summary row', async () => {
-    const context = await createSummaryContext()
+    let modelPayload: { title?: string; summary?: string; keyPoints?: unknown; citations?: unknown } | undefined
+    const tracingClient = createTracingLlmClient()
+    const context = await createSummaryContext({
+      async complete(messages) {
+        const completion = await tracingClient.complete(messages)
+        modelPayload = JSON.parse(completion.content) as { title?: string; summary?: string; keyPoints?: unknown; citations?: unknown }
+        return completion
+      },
+    })
     const fileId = 'file_summary_pdf'
     const pdf = createTextPdf(['alpha page one', 'beta page two', 'gamma page three'])
     const absolutePath = join(uploadDirectory, 'text-3pages.pdf')
@@ -91,12 +99,16 @@ describe('summary pipeline', () => {
     const summaries = context.summaryRepository.listByFileId(fileId)
     expect(summaries).toHaveLength(1)
     const summary = summaries[0]
+    expect(modelPayload?.title).toBe('文档摘要')
+    expect(modelPayload?.summary).toEqual(expect.any(String))
+    expect(modelPayload?.keyPoints).toEqual(expect.any(Array))
+    expect(modelPayload?.citations).toEqual(expect.any(Array))
     expect(summary?.content.length).toBeGreaterThan(0)
     expect(summary?.keyPoints.length).toBeGreaterThan(0)
     expect(summary?.keyPoints[0]?.sourceChunkIndexes.length).toBeGreaterThan(0)
     expect(summary?.citations.length).toBeGreaterThan(0)
     expect(summary?.modelName).toBe('test-model')
-    expect(summary?.promptVersion).toBe('summary-v1')
+    expect(summary?.promptVersion).toBe('summary-v3')
     expect(summary?.inputTokens).toBe(12)
     expect(summary?.outputTokens).toBe(8)
 
