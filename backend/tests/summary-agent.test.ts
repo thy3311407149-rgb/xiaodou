@@ -66,7 +66,9 @@ describe('SummaryAgent', () => {
     expect(draft.summary).toBe('alpha')
     expect(draft.keyPoints).toEqual([{ content: 'alpha', sourceChunkIndexes: [0] }])
     expect(draft.citations[0]).toEqual({ chunkId: 'chunk_1', pageNumber: 1, quote: 'alpha' })
-    expect(draft.promptVersion).toBe('summary-v3')
+    expect(draft.promptVersion).toBe('summary-v4')
+    expect(systemPrompt).toContain('summary 的值必须是 Markdown 正文')
+    expect(systemPrompt).toContain('不要使用“一、”“二、”“1、”')
     expect(systemPrompt).toContain('核心结论或观点')
     expect(systemPrompt).toContain('关键事实数据')
     expect(systemPrompt).toContain('定义与概念')
@@ -144,5 +146,61 @@ describe('SummaryAgent', () => {
     const draft = await new SummaryAgent(llmClient).summarize(chunks)
     expect(draft.keyPoints).toEqual([])
     expect(draft.citations).toEqual([{ chunkId: 'chunk_1', pageNumber: 1, quote: 'alpha' }])
+  })
+
+  it('keeps Markdown headings and lists in the summary without changing key points', async () => {
+    const markdown = [
+      '# 文档概览',
+      '',
+      '## 核心功能',
+      '',
+      '系统包含：',
+      '',
+      '- 文件上传',
+      '- AI解析',
+    ].join('\n')
+    const llmClient: LlmClient = {
+      async complete() {
+        return {
+          content: JSON.stringify({
+            title: '文档概览',
+            summary: markdown,
+            keyPoints: [{ content: 'alpha', sourceChunkIndexes: [0] }],
+            citations: [{ chunkId: 'chunk_1', pageNumber: 1, quote: 'alpha' }],
+          }),
+          modelName: 'test-model',
+          inputTokens: 5,
+          outputTokens: 4,
+        }
+      },
+    }
+
+    const draft = await new SummaryAgent(llmClient).summarize(chunks)
+    expect(draft.summary).toContain('# 文档概览')
+    expect(draft.summary).toContain('## 核心功能')
+    expect(draft.summary).toContain('- 文件上传')
+    expect(draft.keyPoints).toEqual([{ content: 'alpha', sourceChunkIndexes: [0] }])
+    expect(draft.citations).toEqual([{ chunkId: 'chunk_1', pageNumber: 1, quote: 'alpha' }])
+  })
+
+  it('keeps a plain-text summary unchanged', async () => {
+    const llmClient: LlmClient = {
+      async complete() {
+        return {
+          content: JSON.stringify({
+            title: '标题',
+            summary: '核心功能：文件上传与解析。',
+            keyPoints: [],
+            citations: [],
+          }),
+          modelName: 'test-model',
+          inputTokens: 2,
+          outputTokens: 2,
+        }
+      },
+    }
+
+    const draft = await new SummaryAgent(llmClient).summarize(chunks)
+    expect(draft.summary).toBe('核心功能：文件上传与解析。')
   })
 })
