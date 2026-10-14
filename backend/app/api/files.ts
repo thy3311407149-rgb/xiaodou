@@ -1,10 +1,11 @@
 import { Router, type RequestHandler } from 'express'
 import multer from 'multer'
 import { randomUUID } from 'node:crypto'
-import { mkdirSync, unlink } from 'node:fs'
+import { createReadStream, mkdirSync, unlink } from 'node:fs'
 import { join } from 'node:path'
 import { config } from '../core/config.js'
 import { ApplicationError } from '../core/errors/application-error.js'
+import { toPublicSummary } from './summary-response.js'
 import { toPublicTask } from './task-response.js'
 import { FileService } from '../services/file-service.js'
 
@@ -98,6 +99,30 @@ export function createFileRouter(options: FileRouterOptions = {}): Router {
     response.json({ requestId: request.requestId, data: { items, page, pageSize, total: items.length } })
   })
 
+  router.get('/api/files/:fileId/document-text', (request, response, next) => {
+    try {
+      const pages = getService().getDocumentText(request.params.fileId)
+      response.json({ requestId: request.requestId, data: { pages } })
+    } catch (error: unknown) {
+      next(error)
+    }
+  })
+
+  router.get('/api/files/:fileId/content', async (request, response, next) => {
+    try {
+      const absolutePath = await getService().openPdf(request.params.fileId)
+      response.type('application/pdf')
+      const stream = createReadStream(absolutePath)
+      stream.on('error', (error: unknown) => {
+        if (!response.headersSent) next(error)
+        else response.destroy()
+      })
+      stream.pipe(response)
+    } catch (error: unknown) {
+      next(error)
+    }
+  })
+
   router.get('/api/files/:fileId', (request, response, next) => {
     try {
       const detail = getService().getDetail(request.params.fileId)
@@ -106,7 +131,7 @@ export function createFileRouter(options: FileRouterOptions = {}): Router {
         data: {
           file: detail.file,
           task: detail.task ? toPublicTask(detail.task) : null,
-          summary: null,
+          summary: detail.summary ? toPublicSummary(detail.summary) : null,
         },
       })
     } catch (error: unknown) {

@@ -1,6 +1,6 @@
 import type Database from 'better-sqlite3'
 import { getDatabaseConnection } from '../db/connection.js'
-import type { Citation, CreateSummaryInput, Summary } from '../models/summary.js'
+import type { Citation, CreateSummaryInput, Summary, SummaryKeyPoint } from '../models/summary.js'
 
 type SummaryRow = { id: string; file_id: string; task_id: string; content: string; key_points: string; citations: string; model_name: string; prompt_version: string; input_tokens: number; output_tokens: number; created_at: string; updated_at: string }
 
@@ -13,6 +13,14 @@ export class SummaryRepository {
   findLatestByFileId(fileId: string): Summary | null { const row = this.database.prepare('SELECT * FROM summaries WHERE file_id = ? ORDER BY created_at DESC LIMIT 1').get(fileId) as SummaryRow | undefined; return row ? this.toModel(row) : null }
   listByFileId(fileId: string): Summary[] { return (this.database.prepare('SELECT * FROM summaries WHERE file_id = ? ORDER BY created_at DESC').all(fileId) as SummaryRow[]).map((row) => this.toModel(row)) }
 
-  private toModel(row: SummaryRow): Summary { return { id: row.id, fileId: row.file_id, taskId: row.task_id, content: row.content, keyPoints: this.parseJson<string[]>(row.key_points, 'key_points', row.id), citations: this.parseJson<Citation[]>(row.citations, 'citations', row.id), modelName: row.model_name, promptVersion: row.prompt_version, inputTokens: row.input_tokens, outputTokens: row.output_tokens, createdAt: row.created_at, updatedAt: row.updated_at } }
+  replaceForTask(input: CreateSummaryInput): Summary {
+    const replace = this.database.transaction(() => {
+      this.database.prepare('DELETE FROM summaries WHERE task_id = ?').run(input.taskId)
+      return this.create(input)
+    })
+    return replace()
+  }
+
+  private toModel(row: SummaryRow): Summary { return { id: row.id, fileId: row.file_id, taskId: row.task_id, content: row.content, keyPoints: this.parseJson<SummaryKeyPoint[]>(row.key_points, 'key_points', row.id), citations: this.parseJson<Citation[]>(row.citations, 'citations', row.id), modelName: row.model_name, promptVersion: row.prompt_version, inputTokens: row.input_tokens, outputTokens: row.output_tokens, createdAt: row.created_at, updatedAt: row.updated_at } }
   private parseJson<T>(value: string, field: string, summaryId: string): T { try { return JSON.parse(value) as T } catch (error: unknown) { throw new Error(`Invalid JSON in summaries.${field} for summary ${summaryId}`, { cause: error }) } }
 }

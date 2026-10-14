@@ -4,12 +4,17 @@ export type Citation = {
   quote: string
 }
 
+export type SummaryKeyPoint = {
+  content: string
+  sourceChunkIndexes: number[]
+}
+
 export type Summary = {
   id: string
   fileId: string
   taskId: string
   content: string
-  keyPoints: string[]
+  keyPoints: SummaryKeyPoint[]
   citations: Citation[]
   modelName: string
   promptVersion: string
@@ -24,7 +29,7 @@ export type CreateSummaryInput = {
   fileId: string
   taskId: string
   content: string
-  keyPoints: string[]
+  keyPoints: SummaryKeyPoint[]
   citations: Citation[]
   modelName: string
   promptVersion: string

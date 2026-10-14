@@ -51,6 +51,32 @@ export class TaskRepository {
     return result.changes
   }
 
+  updateRunning(id: string, currentStep: Task['currentStep'], progress: number): number {
+    const now = new Date().toISOString()
+    const result = this.database.prepare(`
+      UPDATE tasks
+      SET current_step = @currentStep, progress = @progress, updated_at = @updatedAt
+      WHERE id = @id AND status = 'RUNNING'
+    `).run({ id, currentStep, progress, updatedAt: now })
+    return result.changes
+  }
+
+  markSucceeded(id: string, currentStep: Task['currentStep'], progress: number): number {
+    const now = new Date().toISOString()
+    const result = this.database.prepare(`
+      UPDATE tasks
+      SET status = 'SUCCEEDED',
+          current_step = @currentStep,
+          progress = @progress,
+          error_code = NULL,
+          error_message = NULL,
+          finished_at = @finishedAt,
+          updated_at = @updatedAt
+      WHERE id = @id AND status = 'RUNNING'
+    `).run({ id, currentStep, progress, finishedAt: now, updatedAt: now })
+    return result.changes
+  }
+
   markFailed(id: string, expectedStatus: 'RUNNING', errorCode: string, errorMessage: string): number {
     const now = new Date().toISOString()
     const result = this.database.prepare(`
