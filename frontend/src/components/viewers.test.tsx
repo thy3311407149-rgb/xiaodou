@@ -40,6 +40,15 @@ describe('document and pdf viewers', () => {
     expect(screen.queryByRole('heading', { name: '不是标题' })).toBeNull()
     structured.unmount()
 
+    const flat = render(<DocumentTextViewer fileId="file_1" onClose={() => undefined} load={async () => [{
+      pageNumber: 4,
+      content: '手册3第一章 概述1.1. 系统简介依据调查制度开发建设，具有自动采集功能。',
+    }]} />)
+    expect(await screen.findByRole('heading', { level: 4, name: '第一章 概述' })).toBeTruthy()
+    expect(screen.getByText('1.1. 系统简介依据调查制度开发建设，具有自动采集功能。').tagName).toBe('P')
+    expect(screen.getByText('手册3').tagName).toBe('P')
+    flat.unmount()
+
     render(<DocumentTextViewer fileId="file_1" onClose={() => undefined} load={async () => []} />)
     expect(await screen.findByText('暂无解析文本')).toBeTruthy()
     cleanup()

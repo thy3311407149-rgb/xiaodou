@@ -642,12 +642,12 @@ textarea.note {
 .document-page h3 { font-size: 13px; color: var(--accent); margin-bottom: 6px; }
 .document-body { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
 .doc-heading { color: var(--ink); letter-spacing: -0.02em; line-height: 1.4; overflow-wrap: anywhere; }
-.doc-heading-1 { font-size: 17px; font-weight: 700; margin-top: 6px; }
-.doc-heading-2 { font-size: 15px; font-weight: 600; }
-.doc-heading-3 { font-size: 14px; font-weight: 600; }
-.document-page p { font-size: 14px; line-height: 1.7; color: var(--ink-2); white-space: pre-wrap; overflow-wrap: anywhere; }
-.doc-list { list-style: none; display: flex; flex-direction: column; gap: 6px; margin: 0; padding: 0 0 0 12px; min-width: 0; }
-.doc-list li { font-size: 14px; line-height: 1.7; color: var(--ink-2); overflow-wrap: anywhere; }
+.doc-heading-1 { font-size: 18px; font-weight: 700; margin-top: 12px; }
+.doc-heading-2 { font-size: 16px; font-weight: 600; margin-top: 8px; }
+.doc-heading-3 { font-size: 15px; font-weight: 600; }
+.document-page p { font-size: 14px; line-height: 1.75; color: var(--ink-2); white-space: pre-wrap; overflow-wrap: anywhere; }
+.doc-list { list-style: none; display: flex; flex-direction: column; gap: 8px; margin: 0; padding: 0; min-width: 0; }
+.doc-list li { font-size: 14px; line-height: 1.75; color: var(--ink-2); overflow-wrap: anywhere; padding-left: 1.15em; text-indent: -1.15em; }
 .btn {
   height: 38px;
   padding: 0 18px;

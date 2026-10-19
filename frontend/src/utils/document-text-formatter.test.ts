@@ -20,7 +20,7 @@ describe('formatDocumentText', () => {
     expect(blocks).toEqual([
       { type: 'heading', level: 1, text: '第一章 认知负荷' },
       { type: 'heading', level: 2, text: '第一节 工作记忆' },
-      { type: 'heading', level: 3, text: '1.1 容量限制' },
+      { type: 'heading', level: 2, text: '1.1 容量限制' },
     ])
   })
 
@@ -114,5 +114,37 @@ describe('formatDocumentText', () => {
   it('does not treat a chain of enumerators or a decimal quantity as a heading', () => {
     expect(formatDocumentText('一、二、三组同时进行')).toEqual([{ type: 'paragraph', text: '一、二、三组同时进行' }])
     expect(formatDocumentText('1.1万名被试完成了前测。')).toEqual([{ type: 'paragraph', text: '1.1万名被试完成了前测。' }])
+  })
+
+  it('splits a bounded chapter out of text that has no line breaks', () => {
+    const content = '平台手册3第一章 概述1.1. 系统简介依据调查制度开发建设，具有自动采集功能。1.2. 编写目的辅助用户完成填报。'
+    const blocks = formatDocumentText(content)
+    expect(blocks[0]).toEqual({ type: 'paragraph', text: '平台手册3' })
+    expect(blocks[1]).toEqual({ type: 'heading', level: 1, text: '第一章 概述' })
+    expect(blocks.slice(2).every((block) => block.type === 'paragraph')).toBe(true)
+    expect(blocks.flatMap((block) => block.type === 'list' ? block.items : [block.text]).join('')).toBe(content)
+  })
+
+  it('keeps dates, decimals, and version numbers inside an unbroken paragraph', () => {
+    const content = '发布于2026年1月，版本1.2.3，样本比例约 1.1，详见第3章。'
+    expect(formatDocumentText(content)).toEqual([{ type: 'paragraph', text: content }])
+  })
+
+  it('keeps an inline table series in the paragraph and lists complete numbered steps', () => {
+    const series = '只显示基表 1、基表 2，不显示基表 3、基表 4。说明（或基表 4）继续。'
+    expect(formatDocumentText(series)).toEqual([{ type: 'paragraph', text: series }])
+    const steps = '说明如下。2.上报：完成上报。3.打印：打印出来。'
+    expect(formatDocumentText(steps)).toEqual([
+      { type: 'paragraph', text: '说明如下。' },
+      { type: 'list', items: ['2.上报：完成上报。', '3.打印：打印出来。'] },
+    ])
+  })
+
+  it('renders numbered lines and bullet lines as lists when the page has line breaks', () => {
+    const blocks = formatDocumentText('1、打开登录页并输入账号。\n2、修改初始密码。\n\n• 组块\n• 图式')
+    expect(blocks).toEqual([
+      { type: 'list', items: ['1、打开登录页并输入账号。', '2、修改初始密码。'] },
+      { type: 'list', items: ['• 组块', '• 图式'] },
+    ])
   })
 })
