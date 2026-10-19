@@ -17,8 +17,28 @@ describe('document and pdf viewers', () => {
     ])
     const { unmount } = render(<DocumentTextViewer fileId="file_1" onClose={() => undefined} load={load} />)
     expect(await screen.findByText('第一页正文')).toBeTruthy()
+    expect(screen.getByText('第一页正文').tagName).toBe('P')
     expect(screen.getByText('第2页')).toBeTruthy()
     unmount()
+
+    const structured = render(<DocumentTextViewer fileId="file_1" onClose={() => undefined} load={async () => [{
+      pageNumber: 3,
+      content: [
+        '第一章 认知负荷',
+        '一、基本概念',
+        '正文里出现一、和 1.1，不应成为标题。',
+        '• 组块',
+        '# 不是标题',
+      ].join('\n'),
+    }]} />)
+    expect(await screen.findByRole('heading', { level: 4, name: '第一章 认知负荷' })).toBeTruthy()
+    expect(screen.getByRole('heading', { level: 5, name: '一、基本概念' })).toBeTruthy()
+    expect(screen.getByText('第3页').tagName).toBe('H3')
+    expect(screen.getByText('正文里出现一、和 1.1，不应成为标题。').tagName).toBe('P')
+    expect(screen.getByText('• 组块').closest('li')).toBeTruthy()
+    expect(screen.getByText('# 不是标题').tagName).toBe('P')
+    expect(screen.queryByRole('heading', { name: '不是标题' })).toBeNull()
+    structured.unmount()
 
     render(<DocumentTextViewer fileId="file_1" onClose={() => undefined} load={async () => []} />)
     expect(await screen.findByText('暂无解析文本')).toBeTruthy()

@@ -1,8 +1,37 @@
 import { useEffect, useState } from 'react'
 import { getDocumentText, type DocumentPage } from '../api/document-text.ts'
 import { ApiError, REQUEST_FAILED_MESSAGE } from '../api/http.ts'
+import { formatDocumentText, type DocumentBlock, type DocumentHeadingLevel } from '../utils/document-text-formatter.ts'
 
 type TextState = 'loading' | 'success' | 'empty' | 'error'
+
+const headingTag: Record<DocumentHeadingLevel, 'h4' | 'h5' | 'h6'> = {
+  1: 'h4',
+  2: 'h5',
+  3: 'h6',
+}
+
+function DocumentBlocks({ blocks }: { blocks: DocumentBlock[] }) {
+  if (blocks.length === 0) return null
+  return (
+    <div className="document-body">
+      {blocks.map((block, index) => {
+        if (block.type === 'heading') {
+          const Tag = headingTag[block.level]
+          return <Tag key={index} className={`doc-heading doc-heading-${block.level}`}>{block.text}</Tag>
+        }
+        if (block.type === 'list') {
+          return (
+            <ul key={index} className="doc-list">
+              {block.items.map((item, itemIndex) => <li key={itemIndex}>{item}</li>)}
+            </ul>
+          )
+        }
+        return <p key={index}>{block.text}</p>
+      })}
+    </div>
+  )
+}
 
 export function DocumentTextViewer({
   fileId,
@@ -48,7 +77,7 @@ export function DocumentTextViewer({
         {state === 'success' && pages.map((page) => (
           <section key={page.pageNumber} className="document-page">
             <h3>第{page.pageNumber}页</h3>
-            <p>{page.content}</p>
+            <DocumentBlocks blocks={formatDocumentText(page.content)} />
           </section>
         ))}
       </div>
