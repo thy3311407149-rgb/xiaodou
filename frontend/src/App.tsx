@@ -6,8 +6,7 @@ import { fetchTask } from './api/tasks.ts'
 import { DocumentTextViewer } from './components/DocumentTextViewer.tsx'
 import { PdfViewer } from './components/PdfViewer.tsx'
 import { FileSummary } from './components/SummaryCard.tsx'
-import { mapTaskView } from './upload/task-view.ts'
-import type { TaskSnapshot, UploadedPdf } from './upload/task.ts'
+import { libraryItemFromUpload, withTask } from './upload/library-item.ts'
 import { createUploadSession } from './upload/upload-session.ts'
 import './App.css'
 
@@ -100,43 +99,6 @@ function coldKind(items: LibraryItem[]) {
   if (ready === 0) return 'empty'
   if (ready < 2) return 'sparse'
   return 'no-link'
-}
-
-function libraryItemFromUpload(uploaded: UploadedPdf): LibraryItem {
-  const view = mapTaskView(uploaded.task)
-  return {
-    id: uploaded.fileId,
-    type: 'doc',
-    status: view.phase === 'succeeded' ? 'done' : 'inbox',
-    title: uploaded.fileName,
-    desc: view.detail ?? '',
-    time: '刚刚',
-    body: '',
-    tags: [],
-    ready: view.phase === 'succeeded',
-    fmt: 'PDF',
-    upload: {
-      fileId: uploaded.fileId,
-      taskId: uploaded.task.id,
-      phase: view.phase,
-      label: view.label,
-      detail: view.detail,
-      progress: view.progress,
-    },
-  }
-}
-
-function withTask(item: LibraryItem, task: TaskSnapshot): LibraryItem {
-  const view = mapTaskView(task)
-  return {
-    ...item,
-    status: view.phase === 'succeeded' ? 'done' : 'inbox',
-    ready: view.phase === 'succeeded',
-    desc: view.detail ?? '',
-    upload: item.upload
-      ? { ...item.upload, phase: view.phase, label: view.label, detail: view.detail, progress: view.progress }
-      : item.upload,
-  }
 }
 
 function App() {

@@ -34,6 +34,21 @@ describe('file and task client', () => {
     expect(uploaded).toMatchObject({ fileId: 'file_1', fileName: 'paper.pdf', task: { id: 'task_1', status: 'QUEUED' } })
   })
 
+  it('keeps a Chinese fileName from the upload response without decoding it', async () => {
+    const fileName = '全国公共机构节约能源资源综合信息平台用户使用手册.pdf'
+    const fetchImpl = vi.fn(async (_input: RequestInfo | URL, init?: RequestInit) => {
+      const form = init?.body as FormData
+      expect((form.get('file') as File).name).toBe(fileName)
+      return new Response(JSON.stringify({
+        requestId: 'req_upload',
+        data: { file: { id: 'file_1', fileName, status: 'UPLOADED' }, task: taskBody },
+      }), { status: 201 })
+    })
+    const client = createHttp(fetchImpl as typeof fetch)
+    const uploaded = await uploadPdf(new File([new Uint8Array([1])], fileName, { type: 'application/pdf' }), client.request)
+    expect(uploaded.fileName).toBe(fileName)
+  })
+
   it('does not treat a 201 without a task as success', async () => {
     const fetchImpl = vi.fn(async () => new Response(JSON.stringify({
       requestId: 'req_upload',
