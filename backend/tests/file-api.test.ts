@@ -94,6 +94,41 @@ describe('File API', () => {
     await expect(request(context.app).get(`/api/files/${fileId}`)).resolves.toMatchObject({ status: 404 })
   })
 
+  it('stores and returns a Chinese file name without changing the storage path', async () => {
+    const context = await createTestContext()
+    const fileName = 'beta1.2需求文档.pdf'
+    const boundary = '----ChineseFileName'
+    const body = Buffer.concat([
+      Buffer.from(
+        `--${boundary}\r\nContent-Disposition: form-data; name="file"; filename="${fileName}"\r\nContent-Type: application/pdf\r\n\r\n`,
+        'utf8',
+      ),
+      await readFile(fixturePath),
+      Buffer.from(`\r\n--${boundary}--\r\n`, 'utf8'),
+    ])
+
+    const uploadResponse = await request(context.app)
+      .post('/api/files')
+      .set('Content-Type', `multipart/form-data; boundary=${boundary}`)
+      .send(body)
+
+    expect(uploadResponse.status).toBe(201)
+    const file = uploadResponse.body.data.file as { id: string; fileName: string; storagePath: string }
+    expect(file.fileName).toBe(fileName)
+    expect(file.storagePath.endsWith(`${file.id}.pdf`)).toBe(true)
+    expect(file.storagePath).not.toContain('需求')
+    expect(context.fileRepository.findById(file.id)?.fileName).toBe(fileName)
+
+    const detailResponse = await request(context.app).get(`/api/files/${file.id}`)
+    expect(detailResponse.status).toBe(200)
+    expect(detailResponse.body.data.file.fileName).toBe(fileName)
+
+    const listResponse = await request(context.app).get('/api/files')
+    expect(listResponse.body.data.items).toEqual(expect.arrayContaining([
+      expect.objectContaining({ id: file.id, fileName }),
+    ]))
+  })
+
   it('rejects invalid type, wrong extension, empty file, and oversized file', async () => {
     const context = await createTestContext()
     const invalidType = await request(context.app).post('/api/files').attach('file', fixturePath, { filename: 'file.txt', contentType: 'text/plain' })

@@ -17,6 +17,9 @@ type FileRouterOptions = {
 
 function uploadMiddleware(uploadDirectory: string, maxFileSizeBytes: number): RequestHandler {
   const upload = multer({
+    // Browsers send UTF-8 bytes in the multipart filename parameter.
+    // Busboy otherwise decodes that parameter as Latin-1 and stores mojibake.
+    defParamCharset: 'utf8',
     storage: multer.diskStorage({
       destination: (_request, _file, callback) => {
         const temporaryDirectory = join(uploadDirectory, '.tmp')
