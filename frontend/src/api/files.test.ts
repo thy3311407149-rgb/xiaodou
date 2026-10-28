@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
 import { createHttp } from './http.ts'
-import { fetchFileDetail, uploadPdf } from './files.ts'
+import { fetchFileDetail, fetchStoredFiles, uploadPdf } from './files.ts'
 import { fetchTask } from './tasks.ts'
 
 const taskBody = {
@@ -76,6 +76,25 @@ describe('file and task client', () => {
     })
     const client = createHttp(fetchImpl as typeof fetch)
     await expect(fetchTask('task_1', client.request)).resolves.toMatchObject({ id: 'task_1', status: 'QUEUED', progress: 0 })
+  })
+
+  it('loads every saved file page from GET /api/files', async () => {
+    const pages = [
+      [{ id: 'file_1', fileName: '讲义.pdf', status: 'COMPLETED', errorMessage: null, createdAt: '2026-10-20T01:20:00.000Z' }],
+      Array.from({ length: 100 }, (_, index) => ({ id: `file_${index}`, fileName: `资料${index}.pdf`, status: 'COMPLETED', errorMessage: null, createdAt: '2026-10-19T01:00:00.000Z' })),
+    ]
+    const fetchImpl = vi.fn(async (input: RequestInfo | URL) => {
+      const page = new URL(String(input), 'http://localhost').searchParams.get('page')
+      const items = page === '1' ? pages[1] : pages[0]
+      return new Response(JSON.stringify({ requestId: 'req_list', data: { items, page: Number(page), pageSize: 100, total: items.length } }), { status: 200 })
+    })
+    const client = createHttp(fetchImpl as typeof fetch)
+    const files = await fetchStoredFiles(client.request)
+    expect(String(fetchImpl.mock.calls[0]?.[0])).toBe('/api/files?page=1&pageSize=100')
+    expect(String(fetchImpl.mock.calls[1]?.[0])).toBe('/api/files?page=2&pageSize=100')
+    expect(files[0]?.fileName).toBe('资料0.pdf')
+    expect(files.at(-1)?.fileName).toBe('讲义.pdf')
+    expect(files).toHaveLength(101)
   })
 
   it('loads GET /api/files/:fileId with file, task, and summary', async () => {

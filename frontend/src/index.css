@@ -7,7 +7,7 @@
   -webkit-font-smoothing: antialiased;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
-html, body, #root { min-height: 100%; }
+html, body, #root { height: 100%; }
 body { margin: 0; }
 button, input, textarea { font: inherit; }
 button { cursor: pointer; }

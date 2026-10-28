@@ -1,12 +1,13 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type { ReactNode } from 'react'
 import type { ChangeEvent } from 'react'
-import { uploadPdf } from './api/files.ts'
+import { ApiError, REQUEST_FAILED_MESSAGE } from './api/http.ts'
+import { fetchStoredFiles, uploadPdf } from './api/files.ts'
 import { fetchTask } from './api/tasks.ts'
 import { DocumentTextViewer } from './components/DocumentTextViewer.tsx'
 import { PdfViewer } from './components/PdfViewer.tsx'
 import { FileSummary } from './components/SummaryCard.tsx'
-import { libraryItemFromUpload, withTask } from './upload/library-item.ts'
+import { libraryItemFromStoredFile, libraryItemFromUpload, mergeStoredFiles, withTask } from './upload/library-item.ts'
 import { createUploadSession } from './upload/upload-session.ts'
 import './App.css'
 
@@ -29,7 +30,7 @@ type LibraryItem = {
   fmt?: string
   upload?: {
     fileId: string
-    taskId: string
+    taskId: string | null
     phase: 'processing' | 'succeeded' | 'failed'
     label: string
     detail: string | null
@@ -123,6 +124,23 @@ function App() {
   const [cited, setCited] = useState<LibraryItem | null>(null)
 
   useEffect(() => {
+    let active = true
+    void fetchStoredFiles().then(
+      (files) => {
+        if (!active) return
+        setItems((current) => mergeStoredFiles(current, files.map((file) => libraryItemFromStoredFile(file))))
+      },
+      (error: unknown) => {
+        if (!active) return
+        setToast(error instanceof ApiError ? error.message : REQUEST_FAILED_MESSAGE)
+      },
+    )
+    return () => {
+      active = false
+    }
+  }, [])
+
+  useEffect(() => {
     if (!recording) return
     const timer = window.setInterval(() => setRecordSeconds((seconds) => seconds + 1), 1000)
     return () => window.clearInterval(timer)
@@ -206,10 +224,16 @@ function App() {
   }
 
   const addFile = (event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0]
-    event.target.value = ''
-    if (!file) return
-    void sessionRef.current?.submit(file)
+    const selected = event.target.files?.[0]
+    if (!selected) return
+    const name = selected.name
+    const type = selected.type
+    const lastModified = selected.lastModified
+    void selected.arrayBuffer().then((bytes) => {
+      event.target.value = ''
+      const file = new File([bytes], name, { type, lastModified })
+      return sessionRef.current?.submit(file)
+    })
   }
 
   const ask = (text: string) => {
@@ -511,7 +535,7 @@ function DetailSheet({ item, onClose, onToast }: { item: LibraryItem; onClose: (
   const [panel, setPanel] = useState<'pdf' | 'text' | null>(null)
   return (
     <>
-      <div className="overlay" onClick={onClose}>
+      <div className="overlay detail-overlay" onClick={onClose}>
         <div className="sheet" onClick={(event) => event.stopPropagation()}>
           <button className="back-row" type="button" onClick={onClose}>‹ 知识库</button>
           <div className="detail-card">
@@ -521,11 +545,15 @@ function DetailSheet({ item, onClose, onToast }: { item: LibraryItem; onClose: (
             {item.upload && <p className="detail-body">{[item.upload.label, item.upload.detail].filter(Boolean).join(' · ')}</p>}
             {item.status === 'inbox' && item.type !== 'doc' && <button className="btn btn-primary btn-block" type="button" onClick={() => { onToast('已整理'); onClose() }}>标为已整理</button>}
           </div>
-          {pdf && <FileSummary fileId={fileId} fileName={item.title} />}
           {pdf && (
             <div className="detail-actions">
               <button className="btn btn-primary" type="button" onClick={() => setPanel('pdf')}>打开PDF</button>
               <button className="btn btn-ghost" type="button" onClick={() => setPanel('text')}>打开完整解析</button>
+            </div>
+          )}
+          {pdf && (
+            <div className="detail-scroll">
+              <FileSummary fileId={fileId} fileName={item.title} />
             </div>
           )}
         </div>

@@ -25,6 +25,43 @@ export function parseFileDetail(body: unknown): FileDetail | null {
   }
 }
 
+export type StoredFile = {
+  id: string
+  fileName: string
+  status: string
+  errorMessage: string | null
+  createdAt: string
+}
+
+export function parseFileList(body: unknown): StoredFile[] | null {
+  if (!isRecord(body) || !isRecord(body.data) || !Array.isArray(body.data.items)) return null
+  const items: StoredFile[] = []
+  for (const item of body.data.items) {
+    if (!isRecord(item) || typeof item.id !== 'string' || !item.id || typeof item.fileName !== 'string') return null
+    items.push({
+      id: item.id,
+      fileName: item.fileName,
+      status: typeof item.status === 'string' ? item.status : '',
+      errorMessage: typeof item.errorMessage === 'string' ? item.errorMessage : null,
+      createdAt: typeof item.createdAt === 'string' ? item.createdAt : '',
+    })
+  }
+  return items
+}
+
+export async function fetchStoredFiles(request: HttpRequest = http.request): Promise<StoredFile[]> {
+  const files: StoredFile[] = []
+  const pageSize = 100
+  for (let page = 1; page <= 10; page += 1) {
+    const response = await request(`/api/files?page=${page}&pageSize=${pageSize}`)
+    const items = parseFileList(response.body)
+    if (!items) throw new ApiError(REQUEST_FAILED_MESSAGE, response.status)
+    files.push(...items)
+    if (items.length < pageSize) return files
+  }
+  return files
+}
+
 export async function fetchFileDetail(fileId: string, request: HttpRequest = http.request): Promise<FileDetail> {
   const response = await request(`/api/files/${encodeURIComponent(fileId)}`)
   const detail = parseFileDetail(response.body)
