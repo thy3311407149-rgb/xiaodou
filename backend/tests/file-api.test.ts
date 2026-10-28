@@ -1,5 +1,5 @@
 import express from 'express'
-import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
+import { mkdtemp, readFile, rm, stat, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join, resolve } from 'node:path'
 import request from 'supertest'
@@ -170,6 +170,30 @@ describe('File API', () => {
     expect(context.fileRepository.findById(fileId)?.status).toBe('DELETED')
     const logs = new OperationLogRepository(context.database).findByRequestId('req_delete_failed_001')
     expect(logs.at(-1)).toMatchObject({ operation: 'FILE_DELETE_FAILED', status: 'FAILED', fileId })
+  })
+
+  it('stores the temporary upload and the final PDF under the configured UPLOAD_DIR', async () => {
+    const databaseContext = await openRepositoryTestDatabase()
+    databaseDirectory = databaseContext.directory
+    uploadDirectory = await mkdtemp(join(tmpdir(), 'xiaodou-volume-'))
+    const app = express()
+    app.use(express.json())
+    app.use(requestIdMiddleware)
+    app.use(createFileRouter({ uploadDir: uploadDirectory }))
+    app.use(errorHandler)
+
+    const response = await request(app)
+      .post('/api/files')
+      .attach('file', fixturePath, { filename: 'volume.pdf', contentType: 'application/pdf' })
+
+    expect(response.status).toBe(201)
+    const fileId = response.body.data.file.id as string
+    const storagePath = response.body.data.file.storagePath as string
+    const savedPath = resolve(process.cwd(), storagePath)
+    expect(savedPath).toBe(resolve(uploadDirectory, `${fileId}.pdf`))
+    expect(await readFile(savedPath)).toEqual(await readFile(fixturePath))
+    expect((await stat(join(uploadDirectory, '.tmp'))).isDirectory()).toBe(true)
+    await expect(stat(resolve('uploads', `${fileId}.pdf`))).rejects.toMatchObject({ code: 'ENOENT' })
   })
 
   it('cleans up the saved file when database creation fails', async () => {

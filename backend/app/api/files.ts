@@ -64,7 +64,7 @@ export function createFileRouter(options: FileRouterOptions = {}): Router {
   const uploadDirectory = options.uploadDir ?? config.uploadDir
   const maxFileSizeBytes = options.maxFileSizeBytes ?? config.maxFileSizeBytes
   const getService = (): FileService => {
-    service ??= new FileService()
+    service ??= new FileService({ uploadDir: uploadDirectory })
     return service
   }
 
