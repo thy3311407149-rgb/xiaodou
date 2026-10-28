@@ -158,6 +158,12 @@ frontend/    React 界面、上传、轮询和知识库详情
 docs/        当前架构、开发和路线图
 ```
 
+## 许可
+
+项目代码采用 [MIT License](LICENSE)。版权行使用项目名「小豆」，因为仓库里没有单独的法律主体名称。
+
+MIT 不包含产品名、产品图标和专有品牌素材。`frontend/public/favicon.svg` 与 `portfolio/assets/mark.svg` 保留权利，见 [NOTICE.md](NOTICE.md)。第三方依赖仍受各自许可证约束。
+
 ## 当前状态
 
 PDF 上传、解析、摘要、知识库回读和原文定位可以本地跑通。录音、随心记和统一知识模型尚未开始实现。公网部署前还需要决定访问控制，当前接口没有认证。
