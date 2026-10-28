@@ -1,0 +1,46 @@
+# dependencies
+node_modules/
+
+# build output — keep these directories on disk; Git must not track them
+frontend/dist/
+backend/dist/
+
+# secrets and local env files; keep checked-in examples
+.env
+.env.*
+!.env.example
+backend/.env
+
+# runtime data
+backend/data/
+backend/uploads/
+backend/logs/
+
+# local samples and debug captures; test fixtures under backend/tests stay tracked
+response-body.txt
+/*.pdf
+
+# private product materials; kept on disk, not part of the public tree
+/需求文档/
+/原型图/
+/流程图/
+/xiaodou-proto/
+/docs/phase-8.1-backend-task.md
+/docs/phase-8.1-frontend-task.md
+/docs/api-contract-phase-8.1.md
+
+# databases and sidecars
+*.db
+*.db-wal
+*.db-shm
+*.sqlite
+*.sqlite3
+*.sqlite-wal
+*.sqlite-shm
+
+# logs, coverage, temporary test output, and build caches
+*.log
+coverage/
+.vite/
+dist/
+**/.tmp/

@@ -1,0 +1,37 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "Xiaodou MVP backend foundation",
+  "main": "dist/app/server.js",
+  "scripts": {
+    "dev": "tsx watch app/server.ts",
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/app/server.js",
+    "test": "vitest run --no-file-parallelism ./tests/health.test.ts ./tests/error-handler.test.ts ./tests/request-logging.test.ts ./tests/operation-logger.test.ts ./tests/file-api.test.ts ./tests/file-detail-api.test.ts ./tests/task-execution.test.ts ./tests/text-chunker.test.ts ./tests/text-chunk-pipeline.test.ts ./tests/summary-agent.test.ts ./tests/summary-pipeline.test.ts ./tests/llm-client.test.ts ./tests/knowledge-search.test.ts ./tests/knowledge-ask.test.ts ./tests/pdf-text-cleaner.test.ts ./tests/pdf-text-extractor.test.ts ./tests/summary-optimization.test.ts ./tests/database-connection.test.ts ./tests/schema.test.ts ./tests/repositories/file-repository.test.ts ./tests/repositories/task-repository.test.ts ./tests/repositories/document-text-repository.test.ts ./tests/repositories/text-chunk-repository.test.ts ./tests/repositories/summary-repository.test.ts ./tests/repositories/operation-log-repository.test.ts ./tests/config.test.ts ./tests/cors.test.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "better-sqlite3": "^13.0.3",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "multer": "^2.3.0",
+    "pdfjs-dist": "4.10.38"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^9.6.0",
+    "@types/express": "^5.0.6",
+    "@types/multer": "^2.2.0",
+    "@types/node": "^26.4.1",
+    "@types/supertest": "^7.2.1",
+    "supertest": "^7.2.2",
+    "tsx": "^4.23.13",
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.0"
+  }
+}
