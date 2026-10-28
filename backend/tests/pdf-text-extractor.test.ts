@@ -1,19 +1,14 @@
-import { existsSync } from 'node:fs'
 import { mkdtemp, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join, resolve } from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
 import { cleanPdfText } from '../app/services/pdf/pdf-text-cleaner.js'
 import { extractPdfPages } from '../app/services/pdf/pdf-text-extractor.js'
-import { createLayoutPdf } from './pdf-fixture.js'
+import { createLayoutPdf, createTextPdf } from './pdf-fixture.js'
 
 const chinesePdf = resolve('tests/fixtures/pdf/chinese.pdf')
 const corruptPdf = resolve('tests/fixtures/pdf/corrupt.pdf')
 const noTextPdf = resolve('tests/fixtures/pdf/no-text.pdf')
-const realPdfCandidates = [
-  resolve('tests/fixtures/pdf/beta1.2需求文档.pdf'),
-]
-const realPdf = realPdfCandidates.find((path) => existsSync(path))
 
 let directory = ''
 
@@ -74,20 +69,18 @@ describe('PDF text extraction', () => {
     expect(pages.every((page) => page.content.trim() === '')).toBe(true)
   })
 
-  it.skipIf(!realPdf)('preserves line structure in the downloaded requirements PDF', async () => {
-    const pages = await extractPdfPages(realPdf as string)
-    const firstPage = cleanPdfText(pages[0]?.content ?? '')
-    const secondPage = cleanPdfText(pages[1]?.content ?? '')
+  it('keeps generated pages separate and does not mix their text', async () => {
+    directory = await mkdtemp(join(tmpdir(), 'xiaodou-pdf-pages-'))
+    const pdfPath = join(directory, 'pages.pdf')
+    const pageTexts = ['Overview 2026', 'Second page item']
+    await writeFile(pdfPath, createTextPdf(pageTexts))
 
-    expect(firstPage).toContain('\n')
-    expect(firstPage).toMatch(/一、功能说明\n+1、\s*知识库首页/)
-    expect(firstPage).not.toContain('功能说明1、')
-    expect(firstPage).toContain('原型图：知识')
-    expect(firstPage).toContain('库首页')
-    expect(firstPage.indexOf('一、功能说明')).toBeLessThan(firstPage.indexOf('知识库首页'))
-    expect(secondPage).toMatch(/• .+\n• /)
-    expect(secondPage).toContain('7')
-    expect(secondPage).toContain('MVP')
-    expect(`${firstPage}\n${secondPage}`).toContain('，')
+    const pages = await extractPdfPages(pdfPath)
+    const cleaned = pages.map((page) => cleanPdfText(page.content))
+
+    expect(pages.map((page) => page.pageNumber)).toEqual([1, 2])
+    expect(cleaned).toEqual(pageTexts)
+    expect(cleaned[0]).not.toContain('Second page')
+    expect(cleaned[1]).not.toContain('Overview')
   })
 })

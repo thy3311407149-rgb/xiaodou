@@ -96,7 +96,7 @@ describe('File API', () => {
 
   it('stores and returns a Chinese file name without changing the storage path', async () => {
     const context = await createTestContext()
-    const fileName = 'beta1.2需求文档.pdf'
+    const fileName = '课堂笔记.pdf'
     const boundary = '----ChineseFileName'
     const body = Buffer.concat([
       Buffer.from(
@@ -116,7 +116,7 @@ describe('File API', () => {
     const file = uploadResponse.body.data.file as { id: string; fileName: string; storagePath: string }
     expect(file.fileName).toBe(fileName)
     expect(file.storagePath.endsWith(`${file.id}.pdf`)).toBe(true)
-    expect(file.storagePath).not.toContain('需求')
+    expect(file.storagePath).not.toContain('笔记')
     expect(context.fileRepository.findById(file.id)?.fileName).toBe(fileName)
 
     const detailResponse = await request(context.app).get(`/api/files/${file.id}`)
