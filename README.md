@@ -160,7 +160,7 @@ docs/        当前架构、开发和路线图
 
 ## 许可
 
-项目代码采用 [MIT License](LICENSE)。版权行使用项目名「小豆」，因为仓库里没有单独的法律主体名称。
+项目代码采用 [MIT License](LICENSE)。版权持有人是创建者 Tina。产品名「小豆」不在这项授权内。
 
 MIT 不包含产品名、产品图标和专有品牌素材。`frontend/public/favicon.svg` 与 `portfolio/assets/mark.svg` 保留权利，见 [NOTICE.md](NOTICE.md)。第三方依赖仍受各自许可证约束。
 
