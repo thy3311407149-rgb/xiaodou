@@ -2,7 +2,7 @@ import { ApplicationError } from '../../core/errors/application-error.js'
 import type { Citation, SummaryKeyPoint } from '../../models/summary.js'
 import type { LlmClient, LlmMessage } from '../llm/llm-client.js'
 
-export const SUMMARY_PROMPT_VERSION = 'summary-v4'
+export const SUMMARY_PROMPT_VERSION = 'summary-v5'
 
 export type SummaryChunkInput = {
   chunkId: string
@@ -77,12 +77,107 @@ export class SummaryAgent {
 }
 
 function parseSummaryPayload(content: string): unknown {
-  const jsonText = content.trim().replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '')
+  const jsonText = extractJsonObject(content)
   try {
     return JSON.parse(jsonText) as unknown
   } catch {
+    const repaired = repairTruncatedJson(jsonText)
+    if (repaired) return repaired
     throw new ApplicationError('LLM_INVALID_RESPONSE')
   }
+}
+
+function extractJsonObject(content: string): string {
+  const trimmed = content.trim().replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '')
+  const start = trimmed.indexOf('{')
+  if (start < 0) return trimmed
+  const end = findContainerEnd(trimmed, start, '{', '}')
+  return end === null ? trimmed.slice(start) : trimmed.slice(start, end)
+}
+
+function repairTruncatedJson(jsonText: string): Record<string, unknown> | null {
+  const title = readJsonStringField(jsonText, 'title')
+  const summary = readJsonStringField(jsonText, 'summary')
+  if (title === null || summary === null || title.length === 0 || summary.length === 0) return null
+  return {
+    title,
+    summary,
+    keyPoints: readCompleteObjects(jsonText, 'keyPoints'),
+    citations: readCompleteObjects(jsonText, 'citations'),
+  }
+}
+
+function readJsonStringField(jsonText: string, field: string): string | null {
+  const match = new RegExp(`"${field}"\\s*:\\s*"`).exec(jsonText)
+  if (!match) return null
+  const start = match.index + match[0].length
+  let index = start
+  while (index < jsonText.length) {
+    if (jsonText[index] === '\\') {
+      index += 2
+      continue
+    }
+    if (jsonText[index] === '"') {
+      try {
+        const value = JSON.parse(`"${jsonText.slice(start, index)}"`) as unknown
+        return typeof value === 'string' ? value : null
+      } catch {
+        return null
+      }
+    }
+    index += 1
+  }
+  return null
+}
+
+function readCompleteObjects(jsonText: string, field: string): unknown[] {
+  const match = new RegExp(`"${field}"\\s*:\\s*\\[`).exec(jsonText)
+  if (!match) return []
+  let index = match.index + match[0].length
+  const objects: unknown[] = []
+  while (index < jsonText.length) {
+    const char = jsonText[index] ?? ''
+    if (char === ' ' || char === '\n' || char === '\r' || char === '\t' || char === ',') {
+      index += 1
+      continue
+    }
+    if (char === ']' || char !== '{') break
+    const end = findContainerEnd(jsonText, index, '{', '}')
+    if (end === null) break
+    try {
+      objects.push(JSON.parse(jsonText.slice(index, end)) as unknown)
+    } catch {
+      break
+    }
+    index = end
+  }
+  return objects
+}
+
+function findContainerEnd(text: string, start: number, open: string, close: string): number | null {
+  let depth = 0
+  let inString = false
+  for (let index = start; index < text.length; index += 1) {
+    const char = text[index]
+    if (inString) {
+      if (char === '\\') {
+        index += 1
+        continue
+      }
+      if (char === '"') inString = false
+      continue
+    }
+    if (char === '"') {
+      inString = true
+      continue
+    }
+    if (char === open) depth += 1
+    if (char === close) {
+      depth -= 1
+      if (depth === 0) return index + 1
+    }
+  }
+  return null
 }
 
 function validateSummaryPayload(payload: unknown, chunks: readonly SummaryChunkInput[]): {

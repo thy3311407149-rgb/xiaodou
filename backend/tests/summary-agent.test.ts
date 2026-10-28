@@ -28,6 +28,50 @@ describe('SummaryAgent', () => {
     expect(draft.citations).toEqual([])
   })
 
+  it('keeps a complete summary when the model JSON is cut off', async () => {
+    const llmClient: LlmClient = {
+      async complete() {
+        return {
+          content: `{
+            "title": "知识库说明",
+            "summary": "文档说明了知识库首页和简报。",
+            "keyPoints": [
+              { "content": "每日执行一次关联分析", "sourceChunkIndexes": [0] },
+              { "content": "这条被截断", "sourceChunkIndexes": [0
+            ],
+            "citations": [
+              { "chunkId": "chunk_1", "pageNumber": 1, "quote": "alpha`,
+          modelName: 'test-model',
+          inputTokens: 10,
+          outputTokens: 2048,
+        }
+      },
+    }
+
+    const draft = await new SummaryAgent(llmClient).summarize(chunks)
+    expect(draft.title).toBe('知识库说明')
+    expect(draft.summary).toBe('文档说明了知识库首页和简报。')
+    expect(draft.keyPoints).toEqual([{ content: '每日执行一次关联分析', sourceChunkIndexes: [0] }])
+    expect(draft.citations).toEqual([])
+  })
+
+  it('reads a JSON object wrapped in markdown', async () => {
+    const llmClient: LlmClient = {
+      async complete() {
+        return {
+          content: '结果如下：\n```json\n{"title":"标题","summary":"alpha","keyPoints":[],"citations":[]}\n```',
+          modelName: 'test-model',
+          inputTokens: 1,
+          outputTokens: 1,
+        }
+      },
+    }
+
+    const draft = await new SummaryAgent(llmClient).summarize(chunks)
+    expect(draft.title).toBe('标题')
+    expect(draft.summary).toBe('alpha')
+  })
+
   it('fails when the model response is not JSON', async () => {
     const llmClient: LlmClient = {
       async complete() {
@@ -66,7 +110,11 @@ describe('SummaryAgent', () => {
     expect(draft.summary).toBe('alpha')
     expect(draft.keyPoints).toEqual([{ content: 'alpha', sourceChunkIndexes: [0] }])
     expect(draft.citations[0]).toEqual({ chunkId: 'chunk_1', pageNumber: 1, quote: 'alpha' })
-    expect(draft.promptVersion).toBe('summary-v4')
+    expect(draft.promptVersion).toBe('summary-v5')
+    expect(systemPrompt).not.toContain('不超过 300 字')
+    expect(systemPrompt).not.toContain('最多 5 条')
+    expect(systemPrompt).not.toContain('不超过 80 字')
+    expect(systemPrompt).not.toContain('不超过 40 个字符')
     expect(systemPrompt).toContain('summary 的值必须是 Markdown 正文')
     expect(systemPrompt).toContain('不要使用“一、”“二、”“1、”')
     expect(systemPrompt).toContain('核心结论或观点')

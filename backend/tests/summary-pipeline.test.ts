@@ -108,7 +108,7 @@ describe('summary pipeline', () => {
     expect(summary?.keyPoints[0]?.sourceChunkIndexes.length).toBeGreaterThan(0)
     expect(summary?.citations.length).toBeGreaterThan(0)
     expect(summary?.modelName).toBe('test-model')
-    expect(summary?.promptVersion).toBe('summary-v4')
+    expect(summary?.promptVersion).toBe('summary-v5')
     expect(summary?.inputTokens).toBe(12)
     expect(summary?.outputTokens).toBe(8)
 
