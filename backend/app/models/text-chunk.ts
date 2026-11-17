@@ -8,6 +8,10 @@ export type TextChunk = {
   content: string
   tokenCount: number
   embeddingStatus: EmbeddingStatus
+  startTime: number | null
+  endTime: number | null
+  speakerId: string | null
+  noteId: string | null
   createdAt: string
 }
 

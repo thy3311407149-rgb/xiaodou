@@ -1,16 +1,32 @@
 export type TaskStatus = 'QUEUED' | 'RUNNING' | 'SUCCEEDED' | 'FAILED'
-export type TaskType = 'PROCESS_PDF'
-export type TaskStep =
+export type TaskType = 'PROCESS_PDF' | 'PROCESS_RECORDING' | 'PROCESS_NOTE'
+export type PdfTaskStep =
   | 'EXTRACT_TEXT'
   | 'SAVE_DOCUMENT_TEXT'
   | 'CREATE_CHUNKS'
   | 'GENERATE_SUMMARY'
   | 'SAVE_SUMMARY'
   | 'COMPLETED'
+export type RecordingTaskStep =
+  | 'PERSIST_AUDIO'
+  | 'TRANSCRIBE_AUDIO'
+  | 'SAVE_TRANSCRIPT'
+  | 'GENERATE_SUMMARY'
+  | 'SAVE_SUMMARY'
+  | 'EXTRACT_KNOWLEDGE'
+  | 'COMPLETED'
+export type NoteTaskStep =
+  | 'GENERATE_SUMMARY'
+  | 'SAVE_SUMMARY'
+  | 'EXTRACT_KNOWLEDGE'
+  | 'COMPLETED'
+export type TaskStep = PdfTaskStep | RecordingTaskStep | NoteTaskStep
 
 export type Task = {
   id: string
-  fileId: string
+  fileId: string | null
+  recordingId: string | null
+  noteId: string | null
   taskType: TaskType
   status: TaskStatus
   currentStep: TaskStep
@@ -28,7 +44,9 @@ export type Task = {
 
 export type CreateTaskInput = {
   id: string
-  fileId: string
+  fileId?: string | null
+  recordingId?: string | null
+  noteId?: string | null
   taskType?: TaskType
   status?: TaskStatus
   currentStep?: TaskStep

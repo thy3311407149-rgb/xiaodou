@@ -11,7 +11,8 @@ export type SummaryKeyPoint = {
 
 export type Summary = {
   id: string
-  fileId: string
+  fileId: string | null
+  recordingId: string | null
   taskId: string
   content: string
   keyPoints: SummaryKeyPoint[]
@@ -26,7 +27,8 @@ export type Summary = {
 
 export type CreateSummaryInput = {
   id: string
-  fileId: string
+  fileId?: string | null
+  recordingId?: string | null
   taskId: string
   content: string
   keyPoints: SummaryKeyPoint[]

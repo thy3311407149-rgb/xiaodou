@@ -1,7 +1,8 @@
-import { getDatabaseConnection } from './connection.js'
-import { runMigration } from './migration-runner.js'
+import { config } from '../core/config.js'
+import { createDatabaseConnection } from './connection.js'
+import { migrateDatabase } from './migration-runner.js'
 
-export function initializeDatabase(): void {
-  const database = getDatabaseConnection()
-  runMigration(database)
+export function initializeDatabase(databasePath = config.databasePath): void {
+  migrateDatabase(databasePath)
+  createDatabaseConnection(databasePath)
 }

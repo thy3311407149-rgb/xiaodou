@@ -1,4 +1,8 @@
-import 'dotenv/config'
+import { config as loadEnv } from 'dotenv'
+import { dirname, resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
+
+loadEnv({ path: resolve(dirname(fileURLToPath(import.meta.url)), '../../.env') })
 
 export type AppConfig = {
   appEnv: string
@@ -15,6 +19,11 @@ export type AppConfig = {
   llmMaxOutputTokens: number
   llmTemperature: number
   corsAllowedOrigins: string[]
+  asrApiKey: string
+  asrModel: string
+  asrWsUrl: string
+  asrSampleRate: number
+  recordingDir: string
 }
 
 export function readAllowedOrigins(value: string | undefined): string[] {
@@ -44,6 +53,11 @@ export function createConfig(env: NodeJS.ProcessEnv): AppConfig {
     llmMaxOutputTokens: Number(env.LLM_MAX_OUTPUT_TOKENS ?? 8192),
     llmTemperature: Number(env.LLM_TEMPERATURE ?? 0.2),
     corsAllowedOrigins: readAllowedOrigins(env.CORS_ALLOWED_ORIGINS),
+    asrApiKey: env.ASR_API_KEY ?? '',
+    asrModel: env.ASR_MODEL ?? 'paraformer-realtime-v2',
+    asrWsUrl: env.ASR_WS_URL ?? 'wss://dashscope.aliyuncs.com/api-ws/v1/inference',
+    asrSampleRate: Number(env.ASR_SAMPLE_RATE ?? 16000),
+    recordingDir: env.RECORDING_DIR ?? `${env.UPLOAD_DIR ?? './uploads'}/recordings`,
   }
 }
 

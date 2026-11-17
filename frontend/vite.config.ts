@@ -1,5 +1,23 @@
+import fs from 'node:fs'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vitest/config'
+
+const certDirectory = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../certs')
+
+function developmentHttps(): { key: Buffer; cert: Buffer } | undefined {
+  if (process.env.VITE_DEV_HTTPS !== '1') return undefined
+  const keyPath = path.join(certDirectory, 'dev-key.pem')
+  const certPath = path.join(certDirectory, 'dev-cert.pem')
+  if (!fs.existsSync(keyPath) || !fs.existsSync(certPath)) {
+    throw new Error('缺少 HTTPS 开发证书。请在仓库根目录用 mkcert 生成 certs/dev-cert.pem 和 certs/dev-key.pem。')
+  }
+  return {
+    key: fs.readFileSync(keyPath),
+    cert: fs.readFileSync(certPath),
+  }
+}
 
 function isDevBrowserOrigin(origin: string): boolean {
   let url: URL
@@ -21,9 +39,12 @@ function isDevBrowserOrigin(origin: string): boolean {
   return first === 172 && second >= 16 && second <= 31
 }
 
+const https = developmentHttps()
+
 export default defineConfig({
   plugins: [react()],
   server: {
+    ...(https ? { host: '0.0.0.0', port: 5173, https } : {}),
     cors: {
       origin(origin, callback) {
         // cors reports success with a null error. Vite types that argument as Error.
@@ -35,6 +56,7 @@ export default defineConfig({
       '/api': {
         target: 'http://127.0.0.1:3000',
         changeOrigin: true,
+        ws: true,
       },
     },
   },

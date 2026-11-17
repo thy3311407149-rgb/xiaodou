@@ -20,14 +20,17 @@ function getRequestId(request: Request): string {
 export const errorHandler: ErrorRequestHandler = (error, request, response, _next) => {
   const requestId = getRequestId(request)
   response.setHeader('X-Request-Id', requestId)
-  const isApplicationError = error instanceof ApplicationError
+  const normalized = isJsonParseError(error)
+    ? new ApplicationError('INVALID_REQUEST', { message: '请求体不是有效的 JSON' })
+    : error
+  const isApplicationError = normalized instanceof ApplicationError
 
   if (!isApplicationError) {
     console.error(`[${requestId}] Unhandled backend error`, error)
   }
 
   const applicationError = isApplicationError
-    ? error
+    ? normalized
     : new ApplicationError('INTERNAL_ERROR', { cause: error })
 
   const body: ErrorResponse = {
@@ -43,4 +46,10 @@ export const errorHandler: ErrorRequestHandler = (error, request, response, _nex
   if (applicationError.details !== undefined) body.error.details = applicationError.details
 
   response.status(applicationError.httpStatus).json(body)
+}
+
+function isJsonParseError(error: unknown): boolean {
+  if (!(error instanceof SyntaxError)) return false
+  const parsed = error as SyntaxError & { status?: number; type?: string }
+  return parsed.status === 400 && parsed.type === 'entity.parse.failed'
 }

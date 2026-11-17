@@ -137,7 +137,7 @@ async function readError(response: Response) {
 export function createHttp(
   fetchImpl: typeof fetch = fetch,
   target: ApiTarget = readApiTarget(),
-): { request: HttpRequest; requestBlob: (path: string, init?: RequestInit) => Promise<Blob> } {
+): { request: HttpRequest; requestBlob: (path: string, init?: RequestInit) => Promise<Blob>; requestMedia: (path: string, init?: RequestInit) => Promise<Blob> } {
   return {
     async request(path, init = {}) {
       const url = resolveRequestUrl(path, target)
@@ -178,6 +178,19 @@ export function createHttp(
       if (!response.ok) await readError(response)
       const blob = await response.blob()
       return blob.type === 'application/pdf' ? blob : new Blob([blob], { type: 'application/pdf' })
+    },
+    async requestMedia(path, init = {}) {
+      const url = resolveRequestUrl(path, target)
+      let response: Response
+      try {
+        response = await fetchImpl(url, withRequestId(init))
+      } catch {
+        throw new ApiError(REQUEST_FAILED_MESSAGE, 0)
+      }
+      if (!response.ok) await readError(response)
+      const blob = await response.blob()
+      const type = response.headers.get('Content-Type') || blob.type || 'application/octet-stream'
+      return blob.type === type ? blob : new Blob([blob], { type })
     },
   }
 }

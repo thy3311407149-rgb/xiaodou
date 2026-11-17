@@ -7,11 +7,17 @@ import { requestIdMiddleware } from './core/request-id-middleware.js'
 import { requestLoggingMiddleware } from './core/request-logging-middleware.js'
 import { fileRouter } from './api/files.js'
 import { knowledgeRouter } from './api/knowledge.js'
+import { createNoteRouter } from './api/notes.js'
+import { createRecordingRouter } from './api/recordings.js'
 import { taskRouter } from './api/tasks.js'
+import type { NoteService } from './services/note-service.js'
+import type { RecordingService } from './services/recording-service.js'
 
 type CreateAppOptions = {
   allowedOrigins?: readonly string[]
   allowPrivateNetworkOrigins?: boolean
+  recordingService?: RecordingService
+  noteService?: NoteService
 }
 
 export function createApp(options: CreateAppOptions = {}) {
@@ -23,6 +29,8 @@ export function createApp(options: CreateAppOptions = {}) {
   app.use(requestLoggingMiddleware)
   app.use(healthRouter)
   app.use(fileRouter)
+  app.use(createRecordingRouter({ recordingService: options.recordingService }))
+  app.use(createNoteRouter({ noteService: options.noteService }))
   app.use(taskRouter)
   app.use(knowledgeRouter)
   app.use(errorHandler)

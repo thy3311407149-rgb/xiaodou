@@ -7,6 +7,14 @@ import { selectSummaryContext } from './summary/context-selector.js'
 import type { LlmClient } from './llm/llm-client.js'
 import { OperationLogger } from './operation-logger.js'
 
+function requirePdfFileId(task: Task): string {
+  const fileId = task.fileId
+  if (!fileId) {
+    throw new ApplicationError('TASK_EXECUTION_FAILED', { message: 'PDF 任务缺少文件', taskId: task.id })
+  }
+  return fileId
+}
+
 export function preserveSummaryContent(content: string): string {
   const unwrapped = unwrapOuterFence(content.trim())
   return unwrapped.replace(/\n{3,}/g, '\n\n').trim()
@@ -38,23 +46,15 @@ export class SummaryService {
     this.operationLogger = dependencies.operationLogger ?? new OperationLogger()
   }
 
-  async generate(task: Task, chunks: readonly SummaryChunkInput[]): Promise<SummaryDraft> {
-    this.operationLogger.log({
-      requestId: task.requestId,
-      fileId: task.fileId,
-      taskId: task.id,
-      operation: 'SUMMARY_STARTED',
-      status: 'STARTED',
-    })
+  async summarizeChunks(task: Task, chunks: readonly SummaryChunkInput[]): Promise<SummaryDraft> {
     const selectedChunks = selectSummaryContext(chunks)
     if (selectedChunks.length === 0) {
       throw new ApplicationError('SUMMARY_GENERATION_FAILED', {
         message: '没有可摘要的文本',
-        fileId: task.fileId,
+        fileId: task.fileId ?? undefined,
         taskId: task.id,
       })
     }
-
     this.operationLogger.log({
       requestId: task.requestId,
       fileId: task.fileId,
@@ -75,10 +75,60 @@ export class SummaryService {
     } catch (error: unknown) {
       const applicationError = error instanceof ApplicationError
         ? error
-        : new ApplicationError('SUMMARY_GENERATION_FAILED', { fileId: task.fileId, taskId: task.id, cause: error })
+        : new ApplicationError('SUMMARY_GENERATION_FAILED', { fileId: task.fileId ?? undefined, taskId: task.id, cause: error })
       this.operationLogger.log({
         requestId: task.requestId,
         fileId: task.fileId,
+        taskId: task.id,
+        operation: 'LLM_REQUEST_FAILED',
+        status: 'FAILED',
+        errorMessage: applicationError.message,
+      })
+      throw applicationError
+    }
+  }
+
+  async generate(task: Task, chunks: readonly SummaryChunkInput[]): Promise<SummaryDraft> {
+    this.operationLogger.log({
+      requestId: task.requestId,
+      fileId: requirePdfFileId(task),
+      taskId: task.id,
+      operation: 'SUMMARY_STARTED',
+      status: 'STARTED',
+    })
+    const selectedChunks = selectSummaryContext(chunks)
+    if (selectedChunks.length === 0) {
+      throw new ApplicationError('SUMMARY_GENERATION_FAILED', {
+        message: '没有可摘要的文本',
+        fileId: requirePdfFileId(task),
+        taskId: task.id,
+      })
+    }
+
+    this.operationLogger.log({
+      requestId: task.requestId,
+      fileId: requirePdfFileId(task),
+      taskId: task.id,
+      operation: 'LLM_REQUEST_STARTED',
+      status: 'STARTED',
+    })
+    try {
+      const draft = await this.agent.summarize(selectedChunks)
+      this.operationLogger.log({
+        requestId: task.requestId,
+        fileId: requirePdfFileId(task),
+        taskId: task.id,
+        operation: 'LLM_REQUEST_COMPLETED',
+        status: 'SUCCEEDED',
+      })
+      return draft
+    } catch (error: unknown) {
+      const applicationError = error instanceof ApplicationError
+        ? error
+        : new ApplicationError('SUMMARY_GENERATION_FAILED', { fileId: requirePdfFileId(task), taskId: task.id, cause: error })
+      this.operationLogger.log({
+        requestId: task.requestId,
+        fileId: requirePdfFileId(task),
         taskId: task.id,
         operation: 'LLM_REQUEST_FAILED',
         status: 'FAILED',
@@ -92,7 +142,7 @@ export class SummaryService {
     try {
       const summary = this.summaryRepository.replaceForTask({
         id: randomUUID(),
-        fileId: task.fileId,
+        fileId: requirePdfFileId(task),
         taskId: task.id,
         content: preserveSummaryContent(draft.summary),
         keyPoints: draft.keyPoints,
@@ -104,7 +154,7 @@ export class SummaryService {
       })
       this.operationLogger.log({
         requestId: task.requestId,
-        fileId: task.fileId,
+        fileId: requirePdfFileId(task),
         taskId: task.id,
         operation: 'SUMMARY_SAVED',
         status: 'SUCCEEDED',
@@ -114,7 +164,7 @@ export class SummaryService {
       if (error instanceof ApplicationError) throw error
       throw new ApplicationError('TASK_EXECUTION_FAILED', {
         message: '摘要保存失败',
-        fileId: task.fileId,
+        fileId: requirePdfFileId(task),
         taskId: task.id,
         cause: error,
       })

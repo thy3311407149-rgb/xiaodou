@@ -18,6 +18,13 @@ export type ErrorCode =
   | 'LLM_INVALID_RESPONSE'
   | 'DATABASE_ERROR'
   | 'INTERNAL_ERROR'
+  | 'RECORDING_NOT_FOUND'
+  | 'INVALID_RECORDING_STATE'
+  | 'NOTE_NOT_FOUND'
+  | 'INVALID_NOTE_STATE'
+  | 'NOTE_IDEMPOTENCY_CONFLICT'
+  | 'ASR_FAILED'
+  | 'ASR_UNAVAILABLE'
 
 export const errorHttpStatus: Record<ErrorCode, number> = {
   INVALID_REQUEST: 400,
@@ -39,6 +46,13 @@ export const errorHttpStatus: Record<ErrorCode, number> = {
   LLM_INVALID_RESPONSE: 500,
   DATABASE_ERROR: 500,
   INTERNAL_ERROR: 500,
+  RECORDING_NOT_FOUND: 404,
+  INVALID_RECORDING_STATE: 400,
+  NOTE_NOT_FOUND: 404,
+  INVALID_NOTE_STATE: 400,
+  NOTE_IDEMPOTENCY_CONFLICT: 409,
+  ASR_FAILED: 500,
+  ASR_UNAVAILABLE: 500,
 }
 
 export const defaultErrorMessage: Record<ErrorCode, string> = {
@@ -61,4 +75,11 @@ export const defaultErrorMessage: Record<ErrorCode, string> = {
   LLM_INVALID_RESPONSE: 'AI 服务返回结果无效',
   DATABASE_ERROR: '数据库操作失败',
   INTERNAL_ERROR: '服务器内部错误',
+  RECORDING_NOT_FOUND: '录音不存在',
+  INVALID_RECORDING_STATE: '录音当前状态不允许执行此操作',
+  NOTE_NOT_FOUND: '随笔不存在',
+  INVALID_NOTE_STATE: '随笔当前状态不允许执行此操作',
+  NOTE_IDEMPOTENCY_CONFLICT: '相同幂等键对应了不同的创建请求',
+  ASR_FAILED: '语音识别失败',
+  ASR_UNAVAILABLE: '语音识别服务未配置',
 }

@@ -1,15 +1,19 @@
+import { attachRecordingStreams } from './api/recording-stream.js'
 import { createApp } from './app.js'
 import { config } from './core/config.js'
 import { prepareDirectories } from './core/prepare-directories.js'
 import { initializeDatabase } from './db/initialize-database.js'
+import { RecordingService } from './services/recording-service.js'
 import { TaskExecutor } from './services/task-executor.js'
 
 async function startServer(): Promise<void> {
   await prepareDirectories(config)
   initializeDatabase()
+  const recordings = new RecordingService()
+  recordings.markInterrupted()
   const executor = new TaskExecutor()
   executor.recoverInterruptedTasks()
-  const app = createApp()
+  const app = createApp({ recordingService: recordings })
   const server = app.listen(config.port, config.host, () => {
     try {
       executor.start()
@@ -23,6 +27,7 @@ async function startServer(): Promise<void> {
       process.exitCode = 1
     }
   })
+  attachRecordingStreams(server, recordings)
   server.on('error', (error: unknown) => {
     console.error('Backend failed to start', error)
     process.exitCode = 1

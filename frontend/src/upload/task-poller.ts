@@ -12,10 +12,15 @@ export type TaskClock = {
   clearTimer: (id: TimerId) => void
 }
 
-export type PollOptions = TaskClock & {
-  getTask: (taskId: string) => Promise<TaskSnapshot>
+export type PollableTask = {
+  id: string
+  status: string
+}
+
+export type PollOptions<T extends PollableTask = TaskSnapshot> = TaskClock & {
+  getTask: (taskId: string) => Promise<T>
   isCurrent: () => boolean
-  onTask: (task: TaskSnapshot) => void
+  onTask: (task: T) => void
   onGiveUp: (message: string) => void
   intervalMs?: number
   maxFailures?: number
@@ -27,7 +32,7 @@ export function stopAllTaskPolling() {
   for (const stop of [...activePolls.values()]) stop()
 }
 
-export function beginTaskPolling(taskId: string, options: PollOptions): { stop: () => void } {
+export function beginTaskPolling<T extends PollableTask = TaskSnapshot>(taskId: string, options: PollOptions<T>): { stop: () => void } {
   activePolls.get(taskId)?.()
 
   let timer: TimerId | null = null

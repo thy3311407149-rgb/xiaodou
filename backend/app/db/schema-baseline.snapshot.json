@@ -1,0 +1,1945 @@
+{
+  "tables": {
+    "document_texts": {
+      "columns": [
+        {
+          "cid": 0,
+          "name": "id",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 1
+        },
+        {
+          "cid": 1,
+          "name": "file_id",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 2,
+          "name": "page_number",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 3,
+          "name": "content",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": "''",
+          "pk": 0
+        },
+        {
+          "cid": 4,
+          "name": "created_at",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": "strftime('%Y-%m-%dT%H:%M:%fZ', 'now')",
+          "pk": 0
+        }
+      ],
+      "foreignKeys": [
+        {
+          "id": 0,
+          "seq": 0,
+          "table": "files",
+          "from": "file_id",
+          "to": "id",
+          "on_update": "NO ACTION",
+          "on_delete": "CASCADE"
+        }
+      ],
+      "sql": "CREATE TABLE document_texts ( id TEXT NOT NULL PRIMARY KEY , file_id TEXT NOT NULL , page_number INTEGER NOT NULL CHECK ( page_number >= 1 ) , content TEXT NOT NULL DEFAULT '' , created_at TEXT NOT NULL DEFAULT ( strftime ( '%Y-%m-%dT%H:%M:%fZ' , 'now' ) ) , CONSTRAINT uq_document_texts_file_page UNIQUE ( file_id , page_number ) , CONSTRAINT fk_document_texts_file FOREIGN KEY ( file_id ) REFERENCES files ( id ) ON DELETE CASCADE )",
+      "indexes": [
+        {
+          "name": "sqlite_autoindex_document_texts_1",
+          "unique": 1,
+          "origin": "pk",
+          "partial": 0,
+          "columns": [
+            {
+              "seqno": 0,
+              "name": "id",
+              "desc": 0
+            }
+          ],
+          "sql": null
+        },
+        {
+          "name": "sqlite_autoindex_document_texts_2",
+          "unique": 1,
+          "origin": "u",
+          "partial": 0,
+          "columns": [
+            {
+              "seqno": 0,
+              "name": "file_id",
+              "desc": 0
+            },
+            {
+              "seqno": 1,
+              "name": "page_number",
+              "desc": 0
+            }
+          ],
+          "sql": null
+        }
+      ],
+      "triggers": []
+    },
+    "files": {
+      "columns": [
+        {
+          "cid": 0,
+          "name": "id",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 1
+        },
+        {
+          "cid": 1,
+          "name": "user_id",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": "'demo-user'",
+          "pk": 0
+        },
+        {
+          "cid": 2,
+          "name": "file_name",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 3,
+          "name": "file_type",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 4,
+          "name": "file_size",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 5,
+          "name": "storage_path",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 6,
+          "name": "status",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": "'CREATED'",
+          "pk": 0
+        },
+        {
+          "cid": 7,
+          "name": "error_code",
+          "type": "TEXT",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 8,
+          "name": "error_message",
+          "type": "TEXT",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 9,
+          "name": "idempotency_key",
+          "type": "TEXT",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 10,
+          "name": "created_at",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": "strftime('%Y-%m-%dT%H:%M:%fZ', 'now')",
+          "pk": 0
+        },
+        {
+          "cid": 11,
+          "name": "updated_at",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": "strftime('%Y-%m-%dT%H:%M:%fZ', 'now')",
+          "pk": 0
+        }
+      ],
+      "foreignKeys": [],
+      "sql": "CREATE TABLE files ( id TEXT NOT NULL PRIMARY KEY , user_id TEXT NOT NULL DEFAULT 'demo-user' , file_name TEXT NOT NULL CHECK ( length ( trim ( file_name ) ) > 0 ) , file_type TEXT NOT NULL CHECK ( file_type = 'application/pdf' ) , file_size INTEGER NOT NULL CHECK ( file_size > 0 ) , storage_path TEXT NOT NULL UNIQUE , status TEXT NOT NULL DEFAULT 'CREATED' CHECK ( status IN ( 'CREATED' , 'UPLOADING' , 'UPLOADED' , 'UPLOAD_FAILED' , 'QUEUED' , 'EXTRACTING' , 'EXTRACTED' , 'EXTRACTION_FAILED' , 'SUMMARIZING' , 'COMPLETED' , 'SUMMARY_FAILED' , 'DELETED' ) ) , error_code TEXT NULL , error_message TEXT NULL , idempotency_key TEXT NULL , created_at TEXT NOT NULL DEFAULT ( strftime ( '%Y-%m-%dT%H:%M:%fZ' , 'now' ) ) , updated_at TEXT NOT NULL DEFAULT ( strftime ( '%Y-%m-%dT%H:%M:%fZ' , 'now' ) ) )",
+      "indexes": [
+        {
+          "name": "ix_files_status",
+          "unique": 0,
+          "origin": "c",
+          "partial": 0,
+          "columns": [
+            {
+              "seqno": 0,
+              "name": "status",
+              "desc": 0
+            }
+          ],
+          "sql": "CREATE INDEX ix_files_status ON files ( status )"
+        },
+        {
+          "name": "ix_files_user_created",
+          "unique": 0,
+          "origin": "c",
+          "partial": 0,
+          "columns": [
+            {
+              "seqno": 0,
+              "name": "user_id",
+              "desc": 0
+            },
+            {
+              "seqno": 1,
+              "name": "created_at",
+              "desc": 1
+            }
+          ],
+          "sql": "CREATE INDEX ix_files_user_created ON files ( user_id , created_at DESC )"
+        },
+        {
+          "name": "sqlite_autoindex_files_1",
+          "unique": 1,
+          "origin": "pk",
+          "partial": 0,
+          "columns": [
+            {
+              "seqno": 0,
+              "name": "id",
+              "desc": 0
+            }
+          ],
+          "sql": null
+        },
+        {
+          "name": "sqlite_autoindex_files_2",
+          "unique": 1,
+          "origin": "u",
+          "partial": 0,
+          "columns": [
+            {
+              "seqno": 0,
+              "name": "storage_path",
+              "desc": 0
+            }
+          ],
+          "sql": null
+        },
+        {
+          "name": "ux_files_idempotency_key",
+          "unique": 1,
+          "origin": "c",
+          "partial": 1,
+          "columns": [
+            {
+              "seqno": 0,
+              "name": "idempotency_key",
+              "desc": 0
+            }
+          ],
+          "sql": "CREATE UNIQUE INDEX ux_files_idempotency_key ON files ( idempotency_key ) WHERE idempotency_key IS NOT NULL"
+        }
+      ],
+      "triggers": []
+    },
+    "knowledge_item_summaries": {
+      "columns": [
+        {
+          "cid": 0,
+          "name": "knowledge_item_id",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 1
+        },
+        {
+          "cid": 1,
+          "name": "summary_id",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 2,
+          "name": "created_at",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": "strftime('%Y-%m-%dT%H:%M:%fZ', 'now')",
+          "pk": 0
+        },
+        {
+          "cid": 3,
+          "name": "updated_at",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": "strftime('%Y-%m-%dT%H:%M:%fZ', 'now')",
+          "pk": 0
+        }
+      ],
+      "foreignKeys": [
+        {
+          "id": 0,
+          "seq": 0,
+          "table": "summaries",
+          "from": "summary_id",
+          "to": "id",
+          "on_update": "NO ACTION",
+          "on_delete": "CASCADE"
+        },
+        {
+          "id": 1,
+          "seq": 0,
+          "table": "knowledge_items",
+          "from": "knowledge_item_id",
+          "to": "id",
+          "on_update": "NO ACTION",
+          "on_delete": "CASCADE"
+        }
+      ],
+      "sql": "CREATE TABLE knowledge_item_summaries ( knowledge_item_id TEXT NOT NULL PRIMARY KEY , summary_id TEXT NOT NULL , created_at TEXT NOT NULL DEFAULT ( strftime ( '%Y-%m-%dT%H:%M:%fZ' , 'now' ) ) , updated_at TEXT NOT NULL DEFAULT ( strftime ( '%Y-%m-%dT%H:%M:%fZ' , 'now' ) ) , CONSTRAINT uq_knowledge_item_summaries_summary UNIQUE ( summary_id ) , CONSTRAINT fk_knowledge_item_summaries_item FOREIGN KEY ( knowledge_item_id ) REFERENCES knowledge_items ( id ) ON DELETE CASCADE , CONSTRAINT fk_knowledge_item_summaries_summary FOREIGN KEY ( summary_id ) REFERENCES summaries ( id ) ON DELETE CASCADE )",
+      "indexes": [
+        {
+          "name": "sqlite_autoindex_knowledge_item_summaries_1",
+          "unique": 1,
+          "origin": "pk",
+          "partial": 0,
+          "columns": [
+            {
+              "seqno": 0,
+              "name": "knowledge_item_id",
+              "desc": 0
+            }
+          ],
+          "sql": null
+        },
+        {
+          "name": "sqlite_autoindex_knowledge_item_summaries_2",
+          "unique": 1,
+          "origin": "u",
+          "partial": 0,
+          "columns": [
+            {
+              "seqno": 0,
+              "name": "summary_id",
+              "desc": 0
+            }
+          ],
+          "sql": null
+        }
+      ],
+      "triggers": []
+    },
+    "knowledge_items": {
+      "columns": [
+        {
+          "cid": 0,
+          "name": "id",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 1
+        },
+        {
+          "cid": 1,
+          "name": "source_type",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 2,
+          "name": "source_id",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 3,
+          "name": "title",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 4,
+          "name": "status",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": "'ACTIVE'",
+          "pk": 0
+        },
+        {
+          "cid": 5,
+          "name": "created_at",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": "strftime('%Y-%m-%dT%H:%M:%fZ', 'now')",
+          "pk": 0
+        },
+        {
+          "cid": 6,
+          "name": "updated_at",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": "strftime('%Y-%m-%dT%H:%M:%fZ', 'now')",
+          "pk": 0
+        }
+      ],
+      "foreignKeys": [],
+      "sql": "CREATE TABLE knowledge_items ( id TEXT NOT NULL PRIMARY KEY , source_type TEXT NOT NULL CHECK ( source_type IN ( 'PDF' , 'RECORDING' , 'NOTE' ) ) , source_id TEXT NOT NULL CHECK ( length ( trim ( source_id ) ) > 0 ) , title TEXT NOT NULL CHECK ( length ( trim ( title ) ) > 0 ) , status TEXT NOT NULL DEFAULT 'ACTIVE' CHECK ( status IN ( 'ACTIVE' , 'DELETED' ) ) , created_at TEXT NOT NULL DEFAULT ( strftime ( '%Y-%m-%dT%H:%M:%fZ' , 'now' ) ) , updated_at TEXT NOT NULL DEFAULT ( strftime ( '%Y-%m-%dT%H:%M:%fZ' , 'now' ) ) )",
+      "indexes": [
+        {
+          "name": "ix_knowledge_items_status",
+          "unique": 0,
+          "origin": "c",
+          "partial": 0,
+          "columns": [
+            {
+              "seqno": 0,
+              "name": "status",
+              "desc": 0
+            },
+            {
+              "seqno": 1,
+              "name": "updated_at",
+              "desc": 0
+            }
+          ],
+          "sql": "CREATE INDEX ix_knowledge_items_status ON knowledge_items ( status , updated_at )"
+        },
+        {
+          "name": "sqlite_autoindex_knowledge_items_1",
+          "unique": 1,
+          "origin": "pk",
+          "partial": 0,
+          "columns": [
+            {
+              "seqno": 0,
+              "name": "id",
+              "desc": 0
+            }
+          ],
+          "sql": null
+        },
+        {
+          "name": "uq_knowledge_items_source",
+          "unique": 1,
+          "origin": "c",
+          "partial": 0,
+          "columns": [
+            {
+              "seqno": 0,
+              "name": "source_type",
+              "desc": 0
+            },
+            {
+              "seqno": 1,
+              "name": "source_id",
+              "desc": 0
+            }
+          ],
+          "sql": "CREATE UNIQUE INDEX uq_knowledge_items_source ON knowledge_items ( source_type , source_id )"
+        }
+      ],
+      "triggers": [
+        {
+          "name": "trg_knowledge_items_require_pdf_file_insert",
+          "sql": "CREATE TRIGGER trg_knowledge_items_require_pdf_file_insert BEFORE INSERT ON knowledge_items FOR EACH ROW WHEN NEW . source_type = 'PDF' BEGIN SELECT RAISE ( ABORT , 'PDF source file not found' ) WHERE ( SELECT id FROM files WHERE id = NEW . source_id ) IS NULL ; END"
+        },
+        {
+          "name": "trg_knowledge_items_require_pdf_file_update",
+          "sql": "CREATE TRIGGER trg_knowledge_items_require_pdf_file_update BEFORE UPDATE OF source_type , source_id ON knowledge_items FOR EACH ROW WHEN NEW . source_type = 'PDF' BEGIN SELECT RAISE ( ABORT , 'PDF source file not found' ) WHERE ( SELECT id FROM files WHERE id = NEW . source_id ) IS NULL ; END"
+        }
+      ]
+    },
+    "knowledge_points": {
+      "columns": [
+        {
+          "cid": 0,
+          "name": "id",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 1
+        },
+        {
+          "cid": 1,
+          "name": "knowledge_item_id",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 2,
+          "name": "recording_id",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 3,
+          "name": "source_segment_id",
+          "type": "TEXT",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 4,
+          "name": "content",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 5,
+          "name": "start_time_ms",
+          "type": "INTEGER",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 6,
+          "name": "end_time_ms",
+          "type": "INTEGER",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 7,
+          "name": "speaker_id",
+          "type": "TEXT",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 8,
+          "name": "created_at",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": "strftime('%Y-%m-%dT%H:%M:%fZ', 'now')",
+          "pk": 0
+        }
+      ],
+      "foreignKeys": [
+        {
+          "id": 0,
+          "seq": 0,
+          "table": "transcript_segments",
+          "from": "source_segment_id",
+          "to": "id",
+          "on_update": "NO ACTION",
+          "on_delete": "SET NULL"
+        },
+        {
+          "id": 1,
+          "seq": 0,
+          "table": "recordings",
+          "from": "recording_id",
+          "to": "id",
+          "on_update": "NO ACTION",
+          "on_delete": "CASCADE"
+        },
+        {
+          "id": 2,
+          "seq": 0,
+          "table": "knowledge_items",
+          "from": "knowledge_item_id",
+          "to": "id",
+          "on_update": "NO ACTION",
+          "on_delete": "CASCADE"
+        }
+      ],
+      "sql": "CREATE TABLE knowledge_points ( id TEXT NOT NULL PRIMARY KEY , knowledge_item_id TEXT NOT NULL , recording_id TEXT NOT NULL , source_segment_id TEXT NULL , content TEXT NOT NULL CHECK ( length ( trim ( content ) ) > 0 ) , start_time_ms INTEGER NULL CHECK ( start_time_ms IS NULL OR start_time_ms >= 0 ) , end_time_ms INTEGER NULL CHECK ( end_time_ms IS NULL OR end_time_ms >= 0 ) , speaker_id TEXT NULL CHECK ( speaker_id IS NULL OR length ( trim ( speaker_id ) ) > 0 ) , created_at TEXT NOT NULL DEFAULT ( strftime ( '%Y-%m-%dT%H:%M:%fZ' , 'now' ) ) , CONSTRAINT fk_knowledge_points_item FOREIGN KEY ( knowledge_item_id ) REFERENCES knowledge_items ( id ) ON DELETE CASCADE , CONSTRAINT fk_knowledge_points_recording FOREIGN KEY ( recording_id ) REFERENCES recordings ( id ) ON DELETE CASCADE , CONSTRAINT fk_knowledge_points_segment FOREIGN KEY ( source_segment_id ) REFERENCES transcript_segments ( id ) ON DELETE SET NULL )",
+      "indexes": [
+        {
+          "name": "sqlite_autoindex_knowledge_points_1",
+          "unique": 1,
+          "origin": "pk",
+          "partial": 0,
+          "columns": [
+            {
+              "seqno": 0,
+              "name": "id",
+              "desc": 0
+            }
+          ],
+          "sql": null
+        }
+      ],
+      "triggers": [
+        {
+          "name": "trg_knowledge_points_time_order_insert",
+          "sql": "CREATE TRIGGER trg_knowledge_points_time_order_insert BEFORE INSERT ON knowledge_points FOR EACH ROW WHEN NEW . start_time_ms IS NOT NULL AND NEW . end_time_ms IS NOT NULL AND NEW . end_time_ms < NEW . start_time_ms BEGIN SELECT RAISE ( ABORT , 'invalid knowledge point time range' ) ; END"
+        }
+      ]
+    },
+    "notes": {
+      "columns": [
+        {
+          "cid": 0,
+          "name": "id",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 1
+        },
+        {
+          "cid": 1,
+          "name": "status",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": "'CREATED'",
+          "pk": 0
+        },
+        {
+          "cid": 2,
+          "name": "created_at",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": "strftime('%Y-%m-%dT%H:%M:%fZ', 'now')",
+          "pk": 0
+        },
+        {
+          "cid": 3,
+          "name": "updated_at",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": "strftime('%Y-%m-%dT%H:%M:%fZ', 'now')",
+          "pk": 0
+        }
+      ],
+      "foreignKeys": [],
+      "sql": "CREATE TABLE notes ( id TEXT NOT NULL PRIMARY KEY , status TEXT NOT NULL DEFAULT 'CREATED' CHECK ( status IN ( 'CREATED' , 'DELETED' ) ) , created_at TEXT NOT NULL DEFAULT ( strftime ( '%Y-%m-%dT%H:%M:%fZ' , 'now' ) ) , updated_at TEXT NOT NULL DEFAULT ( strftime ( '%Y-%m-%dT%H:%M:%fZ' , 'now' ) ) )",
+      "indexes": [
+        {
+          "name": "sqlite_autoindex_notes_1",
+          "unique": 1,
+          "origin": "pk",
+          "partial": 0,
+          "columns": [
+            {
+              "seqno": 0,
+              "name": "id",
+              "desc": 0
+            }
+          ],
+          "sql": null
+        }
+      ],
+      "triggers": []
+    },
+    "operation_logs": {
+      "columns": [
+        {
+          "cid": 0,
+          "name": "id",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 1
+        },
+        {
+          "cid": 1,
+          "name": "request_id",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 2,
+          "name": "task_id",
+          "type": "TEXT",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 3,
+          "name": "file_id",
+          "type": "TEXT",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 4,
+          "name": "operation",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 5,
+          "name": "status",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 6,
+          "name": "duration_ms",
+          "type": "INTEGER",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 7,
+          "name": "error_message",
+          "type": "TEXT",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 8,
+          "name": "created_at",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": "strftime('%Y-%m-%dT%H:%M:%fZ', 'now')",
+          "pk": 0
+        }
+      ],
+      "foreignKeys": [
+        {
+          "id": 0,
+          "seq": 0,
+          "table": "files",
+          "from": "file_id",
+          "to": "id",
+          "on_update": "NO ACTION",
+          "on_delete": "SET NULL"
+        },
+        {
+          "id": 1,
+          "seq": 0,
+          "table": "tasks",
+          "from": "task_id",
+          "to": "id",
+          "on_update": "NO ACTION",
+          "on_delete": "SET NULL"
+        }
+      ],
+      "sql": "CREATE TABLE operation_logs ( id TEXT NOT NULL PRIMARY KEY , request_id TEXT NOT NULL , task_id TEXT NULL , file_id TEXT NULL , operation TEXT NOT NULL CHECK ( operation IN ( 'FILE_UPLOAD_STARTED' , 'FILE_UPLOAD_COMPLETED' , 'FILE_UPLOAD_FAILED' , 'FILE_DELETE_FAILED' , 'TASK_CREATED' , 'PDF_EXTRACTION_STARTED' , 'PDF_EXTRACTION_COMPLETED' , 'PDF_EXTRACTION_FAILED' , 'SUMMARY_STARTED' , 'LLM_REQUEST_STARTED' , 'LLM_REQUEST_COMPLETED' , 'LLM_REQUEST_FAILED' , 'SUMMARY_SAVED' , 'TASK_COMPLETED' , 'TASK_FAILED' , 'TASK_RETRY_CREATED' ) ) , status TEXT NOT NULL CHECK ( status IN ( 'STARTED' , 'SUCCEEDED' , 'FAILED' ) ) , duration_ms INTEGER NULL CHECK ( duration_ms IS NULL OR duration_ms >= 0 ) , error_message TEXT NULL , created_at TEXT NOT NULL DEFAULT ( strftime ( '%Y-%m-%dT%H:%M:%fZ' , 'now' ) ) , CONSTRAINT fk_operation_logs_task FOREIGN KEY ( task_id ) REFERENCES tasks ( id ) ON DELETE SET NULL , CONSTRAINT fk_operation_logs_file FOREIGN KEY ( file_id ) REFERENCES files ( id ) ON DELETE SET NULL )",
+      "indexes": [
+        {
+          "name": "ix_operation_logs_file_created",
+          "unique": 0,
+          "origin": "c",
+          "partial": 0,
+          "columns": [
+            {
+              "seqno": 0,
+              "name": "file_id",
+              "desc": 0
+            },
+            {
+              "seqno": 1,
+              "name": "created_at",
+              "desc": 1
+            }
+          ],
+          "sql": "CREATE INDEX ix_operation_logs_file_created ON operation_logs ( file_id , created_at DESC )"
+        },
+        {
+          "name": "ix_operation_logs_operation_status",
+          "unique": 0,
+          "origin": "c",
+          "partial": 0,
+          "columns": [
+            {
+              "seqno": 0,
+              "name": "operation",
+              "desc": 0
+            },
+            {
+              "seqno": 1,
+              "name": "status",
+              "desc": 0
+            }
+          ],
+          "sql": "CREATE INDEX ix_operation_logs_operation_status ON operation_logs ( operation , status )"
+        },
+        {
+          "name": "ix_operation_logs_request_id",
+          "unique": 0,
+          "origin": "c",
+          "partial": 0,
+          "columns": [
+            {
+              "seqno": 0,
+              "name": "request_id",
+              "desc": 0
+            }
+          ],
+          "sql": "CREATE INDEX ix_operation_logs_request_id ON operation_logs ( request_id )"
+        },
+        {
+          "name": "ix_operation_logs_task_created",
+          "unique": 0,
+          "origin": "c",
+          "partial": 0,
+          "columns": [
+            {
+              "seqno": 0,
+              "name": "task_id",
+              "desc": 0
+            },
+            {
+              "seqno": 1,
+              "name": "created_at",
+              "desc": 1
+            }
+          ],
+          "sql": "CREATE INDEX ix_operation_logs_task_created ON operation_logs ( task_id , created_at DESC )"
+        },
+        {
+          "name": "sqlite_autoindex_operation_logs_1",
+          "unique": 1,
+          "origin": "pk",
+          "partial": 0,
+          "columns": [
+            {
+              "seqno": 0,
+              "name": "id",
+              "desc": 0
+            }
+          ],
+          "sql": null
+        }
+      ],
+      "triggers": []
+    },
+    "recording_audio_chunks": {
+      "columns": [
+        {
+          "cid": 0,
+          "name": "id",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 1
+        },
+        {
+          "cid": 1,
+          "name": "recording_id",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 2,
+          "name": "sequence",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 3,
+          "name": "storage_path",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 4,
+          "name": "byte_size",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 5,
+          "name": "sha256",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 6,
+          "name": "mime_type",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 7,
+          "name": "asr_status",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": "'SKIPPED'",
+          "pk": 0
+        },
+        {
+          "cid": 8,
+          "name": "created_at",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": "strftime('%Y-%m-%dT%H:%M:%fZ', 'now')",
+          "pk": 0
+        }
+      ],
+      "foreignKeys": [
+        {
+          "id": 0,
+          "seq": 0,
+          "table": "recordings",
+          "from": "recording_id",
+          "to": "id",
+          "on_update": "NO ACTION",
+          "on_delete": "CASCADE"
+        }
+      ],
+      "sql": "CREATE TABLE recording_audio_chunks ( id TEXT NOT NULL PRIMARY KEY , recording_id TEXT NOT NULL , sequence INTEGER NOT NULL CHECK ( sequence >= 0 ) , storage_path TEXT NOT NULL UNIQUE , byte_size INTEGER NOT NULL CHECK ( byte_size > 0 ) , sha256 TEXT NOT NULL CHECK ( length ( sha256 ) = 64 ) , mime_type TEXT NOT NULL , asr_status TEXT NOT NULL DEFAULT 'SKIPPED' CHECK ( asr_status IN ( 'SKIPPED' , 'SUCCEEDED' , 'FAILED' ) ) , created_at TEXT NOT NULL DEFAULT ( strftime ( '%Y-%m-%dT%H:%M:%fZ' , 'now' ) ) , CONSTRAINT uq_recording_audio_chunks_sequence UNIQUE ( recording_id , sequence ) , CONSTRAINT fk_recording_audio_chunks_recording FOREIGN KEY ( recording_id ) REFERENCES recordings ( id ) ON DELETE CASCADE )",
+      "indexes": [
+        {
+          "name": "sqlite_autoindex_recording_audio_chunks_1",
+          "unique": 1,
+          "origin": "pk",
+          "partial": 0,
+          "columns": [
+            {
+              "seqno": 0,
+              "name": "id",
+              "desc": 0
+            }
+          ],
+          "sql": null
+        },
+        {
+          "name": "sqlite_autoindex_recording_audio_chunks_2",
+          "unique": 1,
+          "origin": "u",
+          "partial": 0,
+          "columns": [
+            {
+              "seqno": 0,
+              "name": "storage_path",
+              "desc": 0
+            }
+          ],
+          "sql": null
+        },
+        {
+          "name": "sqlite_autoindex_recording_audio_chunks_3",
+          "unique": 1,
+          "origin": "u",
+          "partial": 0,
+          "columns": [
+            {
+              "seqno": 0,
+              "name": "recording_id",
+              "desc": 0
+            },
+            {
+              "seqno": 1,
+              "name": "sequence",
+              "desc": 0
+            }
+          ],
+          "sql": null
+        }
+      ],
+      "triggers": []
+    },
+    "recordings": {
+      "columns": [
+        {
+          "cid": 0,
+          "name": "id",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 1
+        },
+        {
+          "cid": 1,
+          "name": "title",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": "'录音'",
+          "pk": 0
+        },
+        {
+          "cid": 2,
+          "name": "status",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": "'CREATED'",
+          "pk": 0
+        },
+        {
+          "cid": 3,
+          "name": "mime_type",
+          "type": "TEXT",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 4,
+          "name": "sample_rate",
+          "type": "INTEGER",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 5,
+          "name": "started_at",
+          "type": "TEXT",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 6,
+          "name": "ended_at",
+          "type": "TEXT",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 7,
+          "name": "interrupted_at",
+          "type": "TEXT",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 8,
+          "name": "error_code",
+          "type": "TEXT",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 9,
+          "name": "error_message",
+          "type": "TEXT",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 10,
+          "name": "created_at",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": "strftime('%Y-%m-%dT%H:%M:%fZ', 'now')",
+          "pk": 0
+        },
+        {
+          "cid": 11,
+          "name": "updated_at",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": "strftime('%Y-%m-%dT%H:%M:%fZ', 'now')",
+          "pk": 0
+        }
+      ],
+      "foreignKeys": [],
+      "sql": "CREATE TABLE \"recordings\" ( id TEXT NOT NULL PRIMARY KEY , title TEXT NOT NULL DEFAULT '录音' CHECK ( length ( trim ( title ) ) > 0 ) , status TEXT NOT NULL DEFAULT 'CREATED' CHECK ( status IN ( 'CREATED' , 'RECORDING' , 'PAUSED' , 'INTERRUPTED' , 'ENDED' , 'DELETED' ) ) , mime_type TEXT NULL , sample_rate INTEGER NULL CHECK ( sample_rate IS NULL OR sample_rate > 0 ) , started_at TEXT NULL , ended_at TEXT NULL , interrupted_at TEXT NULL , error_code TEXT NULL , error_message TEXT NULL , created_at TEXT NOT NULL DEFAULT ( strftime ( '%Y-%m-%dT%H:%M:%fZ' , 'now' ) ) , updated_at TEXT NOT NULL DEFAULT ( strftime ( '%Y-%m-%dT%H:%M:%fZ' , 'now' ) ) )",
+      "indexes": [
+        {
+          "name": "ix_recordings_status",
+          "unique": 0,
+          "origin": "c",
+          "partial": 0,
+          "columns": [
+            {
+              "seqno": 0,
+              "name": "status",
+              "desc": 0
+            },
+            {
+              "seqno": 1,
+              "name": "updated_at",
+              "desc": 0
+            }
+          ],
+          "sql": "CREATE INDEX ix_recordings_status ON recordings ( status , updated_at )"
+        },
+        {
+          "name": "sqlite_autoindex_recordings_1",
+          "unique": 1,
+          "origin": "pk",
+          "partial": 0,
+          "columns": [
+            {
+              "seqno": 0,
+              "name": "id",
+              "desc": 0
+            }
+          ],
+          "sql": null
+        }
+      ],
+      "triggers": []
+    },
+    "summaries": {
+      "columns": [
+        {
+          "cid": 0,
+          "name": "id",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 1
+        },
+        {
+          "cid": 1,
+          "name": "file_id",
+          "type": "TEXT",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 2,
+          "name": "recording_id",
+          "type": "TEXT",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 3,
+          "name": "task_id",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 4,
+          "name": "content",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": "''",
+          "pk": 0
+        },
+        {
+          "cid": 5,
+          "name": "key_points",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": "'[]'",
+          "pk": 0
+        },
+        {
+          "cid": 6,
+          "name": "citations",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": "'[]'",
+          "pk": 0
+        },
+        {
+          "cid": 7,
+          "name": "model_name",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 8,
+          "name": "prompt_version",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 9,
+          "name": "input_tokens",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": "0",
+          "pk": 0
+        },
+        {
+          "cid": 10,
+          "name": "output_tokens",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": "0",
+          "pk": 0
+        },
+        {
+          "cid": 11,
+          "name": "created_at",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": "strftime('%Y-%m-%dT%H:%M:%fZ', 'now')",
+          "pk": 0
+        },
+        {
+          "cid": 12,
+          "name": "updated_at",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": "strftime('%Y-%m-%dT%H:%M:%fZ', 'now')",
+          "pk": 0
+        }
+      ],
+      "foreignKeys": [
+        {
+          "id": 0,
+          "seq": 0,
+          "table": "tasks",
+          "from": "task_id",
+          "to": "id",
+          "on_update": "NO ACTION",
+          "on_delete": "CASCADE"
+        },
+        {
+          "id": 1,
+          "seq": 0,
+          "table": "recordings",
+          "from": "recording_id",
+          "to": "id",
+          "on_update": "NO ACTION",
+          "on_delete": "CASCADE"
+        },
+        {
+          "id": 2,
+          "seq": 0,
+          "table": "files",
+          "from": "file_id",
+          "to": "id",
+          "on_update": "NO ACTION",
+          "on_delete": "CASCADE"
+        }
+      ],
+      "sql": "CREATE TABLE \"summaries\" ( id TEXT NOT NULL PRIMARY KEY , file_id TEXT NULL , recording_id TEXT NULL , task_id TEXT NOT NULL , content TEXT NOT NULL DEFAULT '' , key_points TEXT NOT NULL DEFAULT '[]' , citations TEXT NOT NULL DEFAULT '[]' , model_name TEXT NOT NULL , prompt_version TEXT NOT NULL , input_tokens INTEGER NOT NULL DEFAULT 0 CHECK ( input_tokens >= 0 ) , output_tokens INTEGER NOT NULL DEFAULT 0 CHECK ( output_tokens >= 0 ) , created_at TEXT NOT NULL DEFAULT ( strftime ( '%Y-%m-%dT%H:%M:%fZ' , 'now' ) ) , updated_at TEXT NOT NULL DEFAULT ( strftime ( '%Y-%m-%dT%H:%M:%fZ' , 'now' ) ) , CONSTRAINT ck_summaries_one_source CHECK ( ( file_id IS NOT NULL AND recording_id IS NULL ) OR ( file_id IS NULL AND recording_id IS NOT NULL ) ) , CONSTRAINT uq_summaries_task UNIQUE ( task_id ) , CONSTRAINT fk_summaries_file FOREIGN KEY ( file_id ) REFERENCES files ( id ) ON DELETE CASCADE , CONSTRAINT fk_summaries_recording FOREIGN KEY ( recording_id ) REFERENCES recordings ( id ) ON DELETE CASCADE , CONSTRAINT fk_summaries_task FOREIGN KEY ( task_id ) REFERENCES tasks ( id ) ON DELETE CASCADE )",
+      "indexes": [
+        {
+          "name": "ix_summaries_file_created",
+          "unique": 0,
+          "origin": "c",
+          "partial": 0,
+          "columns": [
+            {
+              "seqno": 0,
+              "name": "file_id",
+              "desc": 0
+            },
+            {
+              "seqno": 1,
+              "name": "created_at",
+              "desc": 1
+            }
+          ],
+          "sql": "CREATE INDEX ix_summaries_file_created ON summaries ( file_id , created_at DESC )"
+        },
+        {
+          "name": "ix_summaries_recording_created",
+          "unique": 0,
+          "origin": "c",
+          "partial": 0,
+          "columns": [
+            {
+              "seqno": 0,
+              "name": "recording_id",
+              "desc": 0
+            },
+            {
+              "seqno": 1,
+              "name": "created_at",
+              "desc": 1
+            }
+          ],
+          "sql": "CREATE INDEX ix_summaries_recording_created ON summaries ( recording_id , created_at DESC )"
+        },
+        {
+          "name": "sqlite_autoindex_summaries_1",
+          "unique": 1,
+          "origin": "pk",
+          "partial": 0,
+          "columns": [
+            {
+              "seqno": 0,
+              "name": "id",
+              "desc": 0
+            }
+          ],
+          "sql": null
+        },
+        {
+          "name": "sqlite_autoindex_summaries_2",
+          "unique": 1,
+          "origin": "u",
+          "partial": 0,
+          "columns": [
+            {
+              "seqno": 0,
+              "name": "task_id",
+              "desc": 0
+            }
+          ],
+          "sql": null
+        }
+      ],
+      "triggers": []
+    },
+    "tasks": {
+      "columns": [
+        {
+          "cid": 0,
+          "name": "id",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 1
+        },
+        {
+          "cid": 1,
+          "name": "file_id",
+          "type": "TEXT",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 2,
+          "name": "recording_id",
+          "type": "TEXT",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 3,
+          "name": "note_id",
+          "type": "TEXT",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 4,
+          "name": "task_type",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": "'PROCESS_PDF'",
+          "pk": 0
+        },
+        {
+          "cid": 5,
+          "name": "status",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": "'QUEUED'",
+          "pk": 0
+        },
+        {
+          "cid": 6,
+          "name": "current_step",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": "'EXTRACT_TEXT'",
+          "pk": 0
+        },
+        {
+          "cid": 7,
+          "name": "progress",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": "0",
+          "pk": 0
+        },
+        {
+          "cid": 8,
+          "name": "retry_count",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": "0",
+          "pk": 0
+        },
+        {
+          "cid": 9,
+          "name": "request_id",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 10,
+          "name": "idempotency_key",
+          "type": "TEXT",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 11,
+          "name": "error_code",
+          "type": "TEXT",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 12,
+          "name": "error_message",
+          "type": "TEXT",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 13,
+          "name": "started_at",
+          "type": "TEXT",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 14,
+          "name": "finished_at",
+          "type": "TEXT",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 15,
+          "name": "created_at",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": "strftime('%Y-%m-%dT%H:%M:%fZ', 'now')",
+          "pk": 0
+        },
+        {
+          "cid": 16,
+          "name": "updated_at",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": "strftime('%Y-%m-%dT%H:%M:%fZ', 'now')",
+          "pk": 0
+        }
+      ],
+      "foreignKeys": [
+        {
+          "id": 0,
+          "seq": 0,
+          "table": "notes",
+          "from": "note_id",
+          "to": "id",
+          "on_update": "NO ACTION",
+          "on_delete": "CASCADE"
+        },
+        {
+          "id": 1,
+          "seq": 0,
+          "table": "recordings",
+          "from": "recording_id",
+          "to": "id",
+          "on_update": "NO ACTION",
+          "on_delete": "CASCADE"
+        },
+        {
+          "id": 2,
+          "seq": 0,
+          "table": "files",
+          "from": "file_id",
+          "to": "id",
+          "on_update": "NO ACTION",
+          "on_delete": "CASCADE"
+        }
+      ],
+      "sql": "CREATE TABLE \"tasks\" ( id TEXT NOT NULL PRIMARY KEY , file_id TEXT NULL , recording_id TEXT NULL , note_id TEXT NULL , task_type TEXT NOT NULL DEFAULT 'PROCESS_PDF' CHECK ( task_type IN ( 'PROCESS_PDF' , 'PROCESS_RECORDING' , 'PROCESS_NOTE' ) ) , status TEXT NOT NULL DEFAULT 'QUEUED' CHECK ( status IN ( 'QUEUED' , 'RUNNING' , 'SUCCEEDED' , 'FAILED' ) ) , current_step TEXT NOT NULL DEFAULT 'EXTRACT_TEXT' CHECK ( current_step IN ( 'EXTRACT_TEXT' , 'SAVE_DOCUMENT_TEXT' , 'CREATE_CHUNKS' , 'GENERATE_SUMMARY' , 'SAVE_SUMMARY' , 'COMPLETED' , 'PERSIST_AUDIO' , 'TRANSCRIBE_AUDIO' , 'SAVE_TRANSCRIPT' , 'EXTRACT_KNOWLEDGE' ) ) , progress INTEGER NOT NULL DEFAULT 0 CHECK ( progress >= 0 AND progress <= 100 ) , retry_count INTEGER NOT NULL DEFAULT 0 CHECK ( retry_count >= 0 ) , request_id TEXT NOT NULL , idempotency_key TEXT NULL , error_code TEXT NULL , error_message TEXT NULL , started_at TEXT NULL , finished_at TEXT NULL , created_at TEXT NOT NULL DEFAULT ( strftime ( '%Y-%m-%dT%H:%M:%fZ' , 'now' ) ) , updated_at TEXT NOT NULL DEFAULT ( strftime ( '%Y-%m-%dT%H:%M:%fZ' , 'now' ) ) , CONSTRAINT ck_tasks_source_matches_type CHECK ( ( task_type = 'PROCESS_PDF' AND file_id IS NOT NULL AND recording_id IS NULL AND note_id IS NULL ) OR ( task_type = 'PROCESS_RECORDING' AND file_id IS NULL AND recording_id IS NOT NULL AND note_id IS NULL ) OR ( task_type = 'PROCESS_NOTE' AND file_id IS NULL AND recording_id IS NULL AND note_id IS NOT NULL ) ) , CONSTRAINT fk_tasks_file FOREIGN KEY ( file_id ) REFERENCES files ( id ) ON DELETE CASCADE , CONSTRAINT fk_tasks_recording FOREIGN KEY ( recording_id ) REFERENCES recordings ( id ) ON DELETE CASCADE , CONSTRAINT fk_tasks_note FOREIGN KEY ( note_id ) REFERENCES notes ( id ) ON DELETE CASCADE )",
+      "indexes": [
+        {
+          "name": "ix_tasks_file_created",
+          "unique": 0,
+          "origin": "c",
+          "partial": 0,
+          "columns": [
+            {
+              "seqno": 0,
+              "name": "file_id",
+              "desc": 0
+            },
+            {
+              "seqno": 1,
+              "name": "created_at",
+              "desc": 1
+            }
+          ],
+          "sql": "CREATE INDEX ix_tasks_file_created ON tasks ( file_id , created_at DESC )"
+        },
+        {
+          "name": "ix_tasks_request_id",
+          "unique": 0,
+          "origin": "c",
+          "partial": 0,
+          "columns": [
+            {
+              "seqno": 0,
+              "name": "request_id",
+              "desc": 0
+            }
+          ],
+          "sql": "CREATE INDEX ix_tasks_request_id ON tasks ( request_id )"
+        },
+        {
+          "name": "ix_tasks_status_updated",
+          "unique": 0,
+          "origin": "c",
+          "partial": 0,
+          "columns": [
+            {
+              "seqno": 0,
+              "name": "status",
+              "desc": 0
+            },
+            {
+              "seqno": 1,
+              "name": "updated_at",
+              "desc": 0
+            }
+          ],
+          "sql": "CREATE INDEX ix_tasks_status_updated ON tasks ( status , updated_at )"
+        },
+        {
+          "name": "sqlite_autoindex_tasks_1",
+          "unique": 1,
+          "origin": "pk",
+          "partial": 0,
+          "columns": [
+            {
+              "seqno": 0,
+              "name": "id",
+              "desc": 0
+            }
+          ],
+          "sql": null
+        },
+        {
+          "name": "ux_tasks_idempotency_key",
+          "unique": 1,
+          "origin": "c",
+          "partial": 1,
+          "columns": [
+            {
+              "seqno": 0,
+              "name": "idempotency_key",
+              "desc": 0
+            }
+          ],
+          "sql": "CREATE UNIQUE INDEX ux_tasks_idempotency_key ON tasks ( idempotency_key ) WHERE idempotency_key IS NOT NULL"
+        },
+        {
+          "name": "ux_tasks_one_active_per_file",
+          "unique": 1,
+          "origin": "c",
+          "partial": 1,
+          "columns": [
+            {
+              "seqno": 0,
+              "name": "file_id",
+              "desc": 0
+            }
+          ],
+          "sql": "CREATE UNIQUE INDEX ux_tasks_one_active_per_file ON tasks ( file_id ) WHERE status IN ( 'QUEUED' , 'RUNNING' ) AND file_id IS NOT NULL"
+        },
+        {
+          "name": "ux_tasks_one_active_per_note",
+          "unique": 1,
+          "origin": "c",
+          "partial": 1,
+          "columns": [
+            {
+              "seqno": 0,
+              "name": "note_id",
+              "desc": 0
+            }
+          ],
+          "sql": "CREATE UNIQUE INDEX ux_tasks_one_active_per_note ON tasks ( note_id ) WHERE status IN ( 'QUEUED' , 'RUNNING' ) AND note_id IS NOT NULL"
+        },
+        {
+          "name": "ux_tasks_one_active_per_recording",
+          "unique": 1,
+          "origin": "c",
+          "partial": 1,
+          "columns": [
+            {
+              "seqno": 0,
+              "name": "recording_id",
+              "desc": 0
+            }
+          ],
+          "sql": "CREATE UNIQUE INDEX ux_tasks_one_active_per_recording ON tasks ( recording_id ) WHERE status IN ( 'QUEUED' , 'RUNNING' ) AND recording_id IS NOT NULL"
+        }
+      ],
+      "triggers": [
+        {
+          "name": "trg_tasks_step_matches_type_insert",
+          "sql": "CREATE TRIGGER trg_tasks_step_matches_type_insert BEFORE INSERT ON tasks FOR EACH ROW WHEN NEW . task_type IN ( 'PROCESS_PDF' , 'PROCESS_RECORDING' , 'PROCESS_NOTE' ) AND NEW . current_step IN ( 'EXTRACT_TEXT' , 'SAVE_DOCUMENT_TEXT' , 'CREATE_CHUNKS' , 'GENERATE_SUMMARY' , 'SAVE_SUMMARY' , 'COMPLETED' , 'PERSIST_AUDIO' , 'TRANSCRIBE_AUDIO' , 'SAVE_TRANSCRIPT' , 'EXTRACT_KNOWLEDGE' ) AND NOT ( ( NEW . task_type = 'PROCESS_PDF' AND NEW . current_step IN ( 'EXTRACT_TEXT' , 'SAVE_DOCUMENT_TEXT' , 'CREATE_CHUNKS' , 'GENERATE_SUMMARY' , 'SAVE_SUMMARY' , 'COMPLETED' ) ) OR ( NEW . task_type = 'PROCESS_RECORDING' AND NEW . current_step IN ( 'PERSIST_AUDIO' , 'TRANSCRIBE_AUDIO' , 'SAVE_TRANSCRIPT' , 'GENERATE_SUMMARY' , 'SAVE_SUMMARY' , 'EXTRACT_KNOWLEDGE' , 'COMPLETED' ) ) OR ( NEW . task_type = 'PROCESS_NOTE' AND NEW . current_step IN ( 'GENERATE_SUMMARY' , 'SAVE_SUMMARY' , 'EXTRACT_KNOWLEDGE' , 'COMPLETED' ) ) ) BEGIN SELECT RAISE ( ABORT , 'task step is not valid for task type' ) ; END"
+        },
+        {
+          "name": "trg_tasks_step_matches_type_update",
+          "sql": "CREATE TRIGGER trg_tasks_step_matches_type_update BEFORE UPDATE OF task_type , current_step ON tasks FOR EACH ROW WHEN NEW . task_type IN ( 'PROCESS_PDF' , 'PROCESS_RECORDING' , 'PROCESS_NOTE' ) AND NEW . current_step IN ( 'EXTRACT_TEXT' , 'SAVE_DOCUMENT_TEXT' , 'CREATE_CHUNKS' , 'GENERATE_SUMMARY' , 'SAVE_SUMMARY' , 'COMPLETED' , 'PERSIST_AUDIO' , 'TRANSCRIBE_AUDIO' , 'SAVE_TRANSCRIPT' , 'EXTRACT_KNOWLEDGE' ) AND NOT ( ( NEW . task_type = 'PROCESS_PDF' AND NEW . current_step IN ( 'EXTRACT_TEXT' , 'SAVE_DOCUMENT_TEXT' , 'CREATE_CHUNKS' , 'GENERATE_SUMMARY' , 'SAVE_SUMMARY' , 'COMPLETED' ) ) OR ( NEW . task_type = 'PROCESS_RECORDING' AND NEW . current_step IN ( 'PERSIST_AUDIO' , 'TRANSCRIBE_AUDIO' , 'SAVE_TRANSCRIPT' , 'GENERATE_SUMMARY' , 'SAVE_SUMMARY' , 'EXTRACT_KNOWLEDGE' , 'COMPLETED' ) ) OR ( NEW . task_type = 'PROCESS_NOTE' AND NEW . current_step IN ( 'GENERATE_SUMMARY' , 'SAVE_SUMMARY' , 'EXTRACT_KNOWLEDGE' , 'COMPLETED' ) ) ) BEGIN SELECT RAISE ( ABORT , 'task step is not valid for task type' ) ; END"
+        }
+      ]
+    },
+    "text_chunks": {
+      "columns": [
+        {
+          "cid": 0,
+          "name": "id",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 1
+        },
+        {
+          "cid": 1,
+          "name": "file_id",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 2,
+          "name": "page_number",
+          "type": "INTEGER",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 3,
+          "name": "chunk_index",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 4,
+          "name": "content",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": "''",
+          "pk": 0
+        },
+        {
+          "cid": 5,
+          "name": "token_count",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": "0",
+          "pk": 0
+        },
+        {
+          "cid": 6,
+          "name": "embedding_status",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": "'NOT_READY'",
+          "pk": 0
+        },
+        {
+          "cid": 7,
+          "name": "created_at",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": "strftime('%Y-%m-%dT%H:%M:%fZ', 'now')",
+          "pk": 0
+        },
+        {
+          "cid": 8,
+          "name": "start_time",
+          "type": "INTEGER",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 9,
+          "name": "end_time",
+          "type": "INTEGER",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 10,
+          "name": "speaker_id",
+          "type": "TEXT",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 11,
+          "name": "note_id",
+          "type": "TEXT",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        }
+      ],
+      "foreignKeys": [
+        {
+          "id": 0,
+          "seq": 0,
+          "table": "files",
+          "from": "file_id",
+          "to": "id",
+          "on_update": "NO ACTION",
+          "on_delete": "CASCADE"
+        }
+      ],
+      "sql": "CREATE TABLE text_chunks ( id TEXT NOT NULL PRIMARY KEY , file_id TEXT NOT NULL , page_number INTEGER NULL CHECK ( page_number IS NULL OR page_number >= 1 ) , chunk_index INTEGER NOT NULL CHECK ( chunk_index >= 0 ) , content TEXT NOT NULL DEFAULT '' , token_count INTEGER NOT NULL DEFAULT 0 CHECK ( token_count >= 0 ) , embedding_status TEXT NOT NULL DEFAULT 'NOT_READY' CHECK ( embedding_status IN ( 'NOT_READY' , 'PENDING' , 'READY' , 'FAILED' ) ) , created_at TEXT NOT NULL DEFAULT ( strftime ( '%Y-%m-%dT%H:%M:%fZ' , 'now' ) ) , start_time INTEGER NULL CHECK ( start_time IS NULL OR start_time >= 0 ) , end_time INTEGER NULL CHECK ( end_time IS NULL OR end_time >= 0 ) , speaker_id TEXT NULL CHECK ( speaker_id IS NULL OR length ( trim ( speaker_id ) ) > 0 ) , note_id TEXT NULL CHECK ( note_id IS NULL OR length ( trim ( note_id ) ) > 0 ) , CONSTRAINT uq_text_chunks_file_index UNIQUE ( file_id , chunk_index ) , CONSTRAINT fk_text_chunks_file FOREIGN KEY ( file_id ) REFERENCES files ( id ) ON DELETE CASCADE )",
+      "indexes": [
+        {
+          "name": "ix_text_chunks_file_page",
+          "unique": 0,
+          "origin": "c",
+          "partial": 0,
+          "columns": [
+            {
+              "seqno": 0,
+              "name": "file_id",
+              "desc": 0
+            },
+            {
+              "seqno": 1,
+              "name": "page_number",
+              "desc": 0
+            }
+          ],
+          "sql": "CREATE INDEX ix_text_chunks_file_page ON text_chunks ( file_id , page_number )"
+        },
+        {
+          "name": "sqlite_autoindex_text_chunks_1",
+          "unique": 1,
+          "origin": "pk",
+          "partial": 0,
+          "columns": [
+            {
+              "seqno": 0,
+              "name": "id",
+              "desc": 0
+            }
+          ],
+          "sql": null
+        },
+        {
+          "name": "sqlite_autoindex_text_chunks_2",
+          "unique": 1,
+          "origin": "u",
+          "partial": 0,
+          "columns": [
+            {
+              "seqno": 0,
+              "name": "file_id",
+              "desc": 0
+            },
+            {
+              "seqno": 1,
+              "name": "chunk_index",
+              "desc": 0
+            }
+          ],
+          "sql": null
+        }
+      ],
+      "triggers": [
+        {
+          "name": "trg_text_chunks_time_order_insert",
+          "sql": "CREATE TRIGGER trg_text_chunks_time_order_insert BEFORE INSERT ON text_chunks FOR EACH ROW WHEN NEW . start_time IS NOT NULL AND NEW . end_time IS NOT NULL AND NEW . end_time < NEW . start_time BEGIN SELECT RAISE ( ABORT , 'invalid chunk time range' ) ; END"
+        },
+        {
+          "name": "trg_text_chunks_time_order_update",
+          "sql": "CREATE TRIGGER trg_text_chunks_time_order_update BEFORE UPDATE OF start_time , end_time ON text_chunks FOR EACH ROW WHEN NEW . start_time IS NOT NULL AND NEW . end_time IS NOT NULL AND NEW . end_time < NEW . start_time BEGIN SELECT RAISE ( ABORT , 'invalid chunk time range' ) ; END"
+        }
+      ]
+    },
+    "transcript_segments": {
+      "columns": [
+        {
+          "cid": 0,
+          "name": "id",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 1
+        },
+        {
+          "cid": 1,
+          "name": "recording_id",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 2,
+          "name": "segment_index",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 3,
+          "name": "audio_sequence",
+          "type": "INTEGER",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 4,
+          "name": "content",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 5,
+          "name": "start_time_ms",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 6,
+          "name": "end_time_ms",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 7,
+          "name": "speaker_id",
+          "type": "TEXT",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 8,
+          "name": "created_at",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": "strftime('%Y-%m-%dT%H:%M:%fZ', 'now')",
+          "pk": 0
+        }
+      ],
+      "foreignKeys": [
+        {
+          "id": 0,
+          "seq": 0,
+          "table": "recordings",
+          "from": "recording_id",
+          "to": "id",
+          "on_update": "NO ACTION",
+          "on_delete": "CASCADE"
+        }
+      ],
+      "sql": "CREATE TABLE transcript_segments ( id TEXT NOT NULL PRIMARY KEY , recording_id TEXT NOT NULL , segment_index INTEGER NOT NULL CHECK ( segment_index >= 0 ) , audio_sequence INTEGER NULL CHECK ( audio_sequence IS NULL OR audio_sequence >= 0 ) , content TEXT NOT NULL CHECK ( length ( trim ( content ) ) > 0 ) , start_time_ms INTEGER NOT NULL CHECK ( start_time_ms >= 0 ) , end_time_ms INTEGER NOT NULL CHECK ( end_time_ms >= start_time_ms ) , speaker_id TEXT NULL CHECK ( speaker_id IS NULL OR length ( trim ( speaker_id ) ) > 0 ) , created_at TEXT NOT NULL DEFAULT ( strftime ( '%Y-%m-%dT%H:%M:%fZ' , 'now' ) ) , CONSTRAINT uq_transcript_segments_index UNIQUE ( recording_id , segment_index ) , CONSTRAINT fk_transcript_segments_recording FOREIGN KEY ( recording_id ) REFERENCES recordings ( id ) ON DELETE CASCADE )",
+      "indexes": [
+        {
+          "name": "sqlite_autoindex_transcript_segments_1",
+          "unique": 1,
+          "origin": "pk",
+          "partial": 0,
+          "columns": [
+            {
+              "seqno": 0,
+              "name": "id",
+              "desc": 0
+            }
+          ],
+          "sql": null
+        },
+        {
+          "name": "sqlite_autoindex_transcript_segments_2",
+          "unique": 1,
+          "origin": "u",
+          "partial": 0,
+          "columns": [
+            {
+              "seqno": 0,
+              "name": "recording_id",
+              "desc": 0
+            },
+            {
+              "seqno": 1,
+              "name": "segment_index",
+              "desc": 0
+            }
+          ],
+          "sql": null
+        }
+      ],
+      "triggers": []
+    }
+  }
+}

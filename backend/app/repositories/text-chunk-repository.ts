@@ -2,7 +2,7 @@ import type Database from 'better-sqlite3'
 import { getDatabaseConnection } from '../db/connection.js'
 import type { CreateTextChunkInput, TextChunk } from '../models/text-chunk.js'
 
-type TextChunkRow = { id: string; file_id: string; page_number: number | null; chunk_index: number; content: string; token_count: number; embedding_status: TextChunk['embeddingStatus']; created_at: string }
+type TextChunkRow = { id: string; file_id: string; page_number: number | null; chunk_index: number; content: string; token_count: number; embedding_status: TextChunk['embeddingStatus']; start_time: number | null; end_time: number | null; speaker_id: string | null; note_id: string | null; created_at: string }
 
 export class TextChunkRepository {
   constructor(private readonly database: Database.Database = getDatabaseConnection()) {}
@@ -67,7 +67,7 @@ export class TextChunkRepository {
   }
 
   private findById(id: string): TextChunk | null { const row = this.database.prepare('SELECT * FROM text_chunks WHERE id = ?').get(id) as TextChunkRow | undefined; return row ? this.toModel(row) : null }
-  private toModel(row: TextChunkRow): TextChunk { return { id: row.id, fileId: row.file_id, pageNumber: row.page_number, chunkIndex: row.chunk_index, content: row.content, tokenCount: row.token_count, embeddingStatus: row.embedding_status, createdAt: row.created_at } }
+  private toModel(row: TextChunkRow): TextChunk { return { id: row.id, fileId: row.file_id, pageNumber: row.page_number, chunkIndex: row.chunk_index, content: row.content, tokenCount: row.token_count, embeddingStatus: row.embedding_status, startTime: row.start_time ?? null, endTime: row.end_time ?? null, speakerId: row.speaker_id ?? null, noteId: row.note_id ?? null, createdAt: row.created_at } }
 }
 
 function escapeLike(value: string): string {

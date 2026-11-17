@@ -20,7 +20,7 @@ afterEach(async () => {
 })
 
 describe('initial database schema', () => {
-  it('creates the six business tables, indexes, constraints, and is repeatable', async () => {
+  it('creates the business tables, indexes, constraints, and is repeatable', async () => {
     temporaryDirectory = await mkdtemp(join(tmpdir(), 'xiaodou-schema-'))
     const database = createDatabaseConnection(join(temporaryDirectory, 'schema.db'))
 
@@ -37,10 +37,20 @@ describe('initial database schema', () => {
     expect(tables).toEqual([
       'document_texts',
       'files',
+      'knowledge_item_summaries',
+      'knowledge_items',
+      'knowledge_points',
+      'notes',
       'operation_logs',
+      'recording_audio_chunks',
+      'recordings',
+      'schema_migration_lock',
+      'schema_migration_state',
+      'schema_migrations',
       'summaries',
       'tasks',
       'text_chunks',
+      'transcript_segments',
     ])
 
     const indexes = database.prepare(`
@@ -52,6 +62,8 @@ describe('initial database schema', () => {
     expect(indexes).toEqual(expect.arrayContaining([
       'ux_files_idempotency_key',
       'ux_tasks_one_active_per_file',
+      'ux_tasks_one_active_per_recording',
+      'ux_tasks_one_active_per_note',
       'ux_tasks_idempotency_key',
       'ix_text_chunks_file_page',
       'ix_summaries_file_created',

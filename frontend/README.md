@@ -1,3 +1,7 @@
+# Frontend
+
+当前前端说明以仓库根目录的 `README.md` 和 `docs/development.md` 为准。下面保留 Vite 模板的原始说明。
+
 # React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.

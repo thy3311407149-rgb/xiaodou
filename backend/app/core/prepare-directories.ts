@@ -4,5 +4,6 @@ import type { AppConfig } from './config.js'
 
 export async function prepareDirectories(appConfig: AppConfig): Promise<void> {
   await mkdir(resolve(appConfig.uploadDir), { recursive: true })
+  await mkdir(resolve(appConfig.recordingDir), { recursive: true })
   await mkdir(resolve(dirname(appConfig.databasePath)), { recursive: true })
 }

@@ -11,6 +11,7 @@ import { DocumentTextRepository } from '../repositories/document-text-repository
 import { FileRepository } from '../repositories/file-repository.js'
 import { SummaryRepository } from '../repositories/summary-repository.js'
 import { TaskRepository } from '../repositories/task-repository.js'
+import { KnowledgeItemService } from './knowledge-item-service.js'
 import { OperationLogger } from './operation-logger.js'
 
 function isActiveTaskConflict(error: unknown): boolean {
@@ -30,6 +31,7 @@ export type FileServiceDependencies = {
   summaryRepository?: SummaryRepository
   documentTextRepository?: DocumentTextRepository
   operationLogger?: OperationLogger
+  knowledgeItemService?: KnowledgeItemService
   database?: ReturnType<typeof getDatabaseConnection>
   uploadDir?: string
 }
@@ -54,6 +56,7 @@ export class FileService {
   private readonly summaryRepository: SummaryRepository
   private readonly documentTextRepository: DocumentTextRepository
   private readonly operationLogger: OperationLogger
+  private readonly knowledgeItems: KnowledgeItemService
   private readonly database: ReturnType<typeof getDatabaseConnection>
   private readonly uploadDir: string
 
@@ -64,6 +67,7 @@ export class FileService {
     this.summaryRepository = dependencies.summaryRepository ?? new SummaryRepository(this.database)
     this.documentTextRepository = dependencies.documentTextRepository ?? new DocumentTextRepository(this.database)
     this.operationLogger = dependencies.operationLogger ?? new OperationLogger()
+    this.knowledgeItems = dependencies.knowledgeItemService ?? new KnowledgeItemService({ database: this.database })
     this.uploadDir = resolve(dependencies.uploadDir ?? './uploads')
   }
 
@@ -89,6 +93,12 @@ export class FileService {
           fileSize: input.size,
           storagePath,
           status: 'UPLOADED',
+        })
+        this.knowledgeItems.ensureForSource({
+          sourceType: 'PDF',
+          sourceId: fileId,
+          title: input.originalName,
+          status: 'ACTIVE',
         })
         const task = this.taskRepository.create({
           id: taskId,
@@ -180,6 +190,7 @@ export class FileService {
     const markDeleted = this.database.transaction(() => {
       const updated = this.fileRepository.update(fileId, { status: 'DELETED', errorCode: null, errorMessage: null })
       if (!updated) throw new ApplicationError('FILE_NOT_FOUND', { fileId })
+      this.knowledgeItems.markSourceDeleted('PDF', fileId)
       return updated
     })
     const deletedFile = markDeleted()

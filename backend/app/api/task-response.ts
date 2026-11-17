@@ -2,7 +2,7 @@ import type { Task } from '../models/task.js'
 
 export type PublicTask = {
   id: string
-  fileId: string
+  fileId: string | null
   taskType: Task['taskType']
   status: Task['status']
   currentStep: Task['currentStep']
